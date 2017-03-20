@@ -15,8 +15,11 @@ def index(request):
         return render(request, 'hardlanding/index.html', context)
 
 def show_map(request):
-    data = helpers.get_maxvrtg_in_airports()
-    context = {'title': '重着陆地图', 'map_title': '全国主要机场着陆情况', "data": data}
+    months, options = helpers.get_maxvrtg_in_airports()
+    context = {'title': '重着陆地图', \
+               'map_title': '全国主要机场着陆情况', \
+               'months': months, \
+               'options': options}
     return render(request, 'hardlanding/map.html', context)
 
         

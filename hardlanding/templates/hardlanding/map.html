@@ -12,81 +12,96 @@
         var dom = document.getElementById("map");
         var myChart = echarts.init(dom);
         var app = {};
-        var data = JSON.parse('{{ data }}');
+        var options_data = JSON.parse('{{ options|safe }}');
         option = null;
         option = {
-            backgroundColor: '#404a59',
-            title: {
-                text: '{{ map_title }}',
-                left: 'center',
-                textStyle: {
-                    color: '#fff'
-                }
-            },
-            tooltip: {
-                trigger: 'item'
-            },
-            legend: {
-                orient: 'vertical',
-                top: 'bottom',
-                left: 'right',
-                data:['vrtg'],
-                textStyle: {
-                    color: '#fff'
-                }
-            },
-            visualMap: {
-                min: 1,
-                max: 2,
-                calculable: true,
-                inRange: {
-                    color: ['#50a3ba', '#eac736', '#d94e5d']
-                },
-                textStyle: {
-                    color: '#fff'
-                }
-            },
-            geo: {
-                map: 'china',
-                roam: true,
-                label: {
-                    emphasis: {
-                        show: false
-                    }
-                },
-                itemStyle: {
-                    normal: {
-                        areaColor: '#323c48',
-                        borderColor: '#111'
-                    },
-                    emphasis: {
-                        areaColor: '#2a333d'
-                    }
-                }
-            },
-            series: [
-                {
-                    name: 'vrtg',
-                    type: 'scatter',
-                    coordinateSystem: 'geo',
-                    data: data,
-                    symbolSize: 12,
+            baseOption: {
+                timeline: {
+                    axisType: 'category',
+                    autoPlay: true,
+                    playInterval: 1000,
+                    data: JSON.parse('{{ months }}'),
+                    playInterval: 5000,
                     label: {
-                        normal: {
-                            show: false
-                        },
+                        formatter : function(s) {
+                            return '2016年'+s+'月';
+                        }
+                    }
+                },
+                backgroundColor: '#aaa',
+                title: {
+                    text: '{{ map_title }}',
+                    left: 'center',
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    top: 'bottom',
+                    left: 'right',
+                    data:['vrtg'],
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                visualMap: {
+                    min: 1,
+                    max: 2,
+                    calculable: true,
+                    inRange: {
+                        color: ['#50a3ba', '#eac736', '#d94e5d']
+                    },
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                geo: {
+                    map: 'china',
+                    roam: true,
+                    label: {
                         emphasis: {
                             show: false
                         }
                     },
                     itemStyle: {
+                        normal: {
+                            areaColor: '#323c48',
+                            borderColor: '#111'
+                        },
                         emphasis: {
-                            borderColor: '#fff',
-                            borderWidth: 1
+                            areaColor: '#2a333d'
                         }
                     }
-                }
-            ]
+                },
+                series: [
+                    {
+                        name: 'vrtg',
+                        type: 'scatter',
+                        coordinateSystem: 'geo',
+                        symbolSize: 12,
+                        label: {
+                            normal: {
+                                show: false
+                            },
+                            emphasis: {
+                                show: false
+                            }
+                        },
+                        itemStyle: {
+                            emphasis: {
+                                borderColor: '#fff',
+                                borderWidth: 1
+                            }
+                        }
+                    }
+                ]
+            },
+            options: options_data,
+            animation: false
         };
         if (option && typeof option === "object") {
             myChart.setOption(option, true);

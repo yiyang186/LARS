@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 
 def show_the_column(col):
     table = pd.read_csv('I:/Data/cast/table_with_airports.csv')
@@ -15,6 +16,18 @@ def get_column_names():
 
 def get_maxvrtg_in_airports():
     df = pd.read_csv('I:/Data/cast/table_with_airports.csv')
-    data = df.loc[df['Country'] == 'CHN', ['AIRPORT', 'Longitude', 'Latitude', 'VRTG_MAX']] \
-             .groupby("AIRPORT").max().round(3).values.tolist()
-    return data
+    df = df.loc[df['Country'] == 'CHN', :]
+    months = df.loc[:, 'MONTH'].sort_values().unique().tolist()
+    data = df[['AIRPORT','MONTH', 'City', 'Latitude', 'Longitude', 'VRTG_MAX']] \
+        .groupby(['MONTH','AIRPORT']).max().round(3)
+    
+    options = []
+    for month in months:
+        optionItem = {}
+        itemTitle = '2016年{0}月全国机场着陆情况'.format(month)
+        optionItem["title"] = {"text": itemTitle}
+        seriesData = data.ix[month, ['Longitude', 'Latitude', 'VRTG_MAX']].values.tolist()
+        optionItem["series"] = [{"data": seriesData}]
+        options.append(optionItem)
+    #months = list(map(lambda m: str(m), months))
+    return months, json.dumps(options)
