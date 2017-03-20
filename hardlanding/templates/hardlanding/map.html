@@ -21,7 +21,7 @@
                     autoPlay: true,
                     playInterval: 1000,
                     data: JSON.parse('{{ months }}'),
-                    playInterval: 5000,
+                    playInterval: 2000,
                     label: {
                         formatter : function(s) {
                             return '2016年'+s+'月';
@@ -53,7 +53,7 @@
                     max: 2,
                     calculable: true,
                     inRange: {
-                        color: ['#50a3ba', '#eac736', '#d94e5d']
+                        color: ['#00a3ba', '#eac736', '#f94e5d']
                     },
                     textStyle: {
                         color: '#fff'
@@ -82,7 +82,9 @@
                         name: 'vrtg',
                         type: 'scatter',
                         coordinateSystem: 'geo',
-                        symbolSize: 12,
+                        symbolSize: function(value) {
+                            return (value[2]-1) * 30;
+                        },
                         label: {
                             normal: {
                                 show: false

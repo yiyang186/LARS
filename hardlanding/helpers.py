@@ -18,7 +18,7 @@ def get_maxvrtg_in_airports():
     df = pd.read_csv('I:/Data/cast/table_with_airports.csv')
     df = df.loc[df['Country'] == 'CHN', :]
     months = df.loc[:, 'MONTH'].sort_values().unique().tolist()
-    data = df[['AIRPORT','MONTH', 'City', 'Latitude', 'Longitude', 'VRTG_MAX']] \
+    data = df[['AIRPORT','MONTH', 'City', 'Name', 'Latitude', 'Longitude', 'VRTG_MAX']] \
         .groupby(['MONTH','AIRPORT']).max().round(3)
     
     options = []
@@ -26,7 +26,8 @@ def get_maxvrtg_in_airports():
         optionItem = {}
         itemTitle = '2016年{0}月全国机场着陆情况'.format(month)
         optionItem["title"] = {"text": itemTitle}
-        seriesData = data.ix[month, ['Longitude', 'Latitude', 'VRTG_MAX']].values.tolist()
+        seriesData = data.ix[month, ['City', 'Name', 'Longitude', 'Latitude', 'VRTG_MAX']].values.tolist()
+        seriesData = list(map(lambda r: {"name": r[0].replace('\'', '-')+' '+r[1], "value": r[2:]}, seriesData))
         optionItem["series"] = [{"data": seriesData}]
         options.append(optionItem)
     #months = list(map(lambda m: str(m), months))
