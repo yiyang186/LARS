@@ -26,9 +26,19 @@ def get_maxvrtg_in_airports():
         optionItem = {}
         itemTitle = '2016年{0}月全国机场着陆情况'.format(month)
         optionItem["title"] = {"text": itemTitle}
+
         seriesData = data.ix[month, ['City', 'Name', 'Longitude', 'Latitude', 'VRTG_MAX']].values.tolist()
-        seriesData = list(map(lambda r: {"name": r[0].replace('\'', '-')+' '+r[1], "value": r[2:]}, seriesData))
-        optionItem["series"] = [{"data": seriesData}]
+        # seriesData: [{"name": City+Name, "value": [longitude, latitude', VRTG_MAX]} , {...}, ...]
+        seriesData = list(map(lambda r: {"name": r[0].replace('\'', '-'), "value": r[2:]}, seriesData))
+        top10Data = sorted(seriesData, key=lambda x:x["value"][2], reverse=True)[:10][::-1]
+        top10Data = list(map(lambda x: {"name": x["name"], "value": x["value"][2]}, top10Data))
+        optionItem["series"] = [{"data": seriesData}, {"data": top10Data}]
+
+        yAxisLabels = list(map(lambda item: item["name"], top10Data))
+        optionItem["yAxis"] = [{"data": yAxisLabels}]
+        # options: [{"title": itemTitle}, 
+        #           {"series": [{"data": seriesData}, {"data": top10Data}]}, 
+        #           {"yAxis": {"data": yAxisLabels}}]
         options.append(optionItem)
-    #months = list(map(lambda m: str(m), months))
+
     return months, json.dumps(options)
