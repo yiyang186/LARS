@@ -72,5 +72,6 @@ def get_data_in_month_and_airport(month, city):
         temp = df.loc[df['City'] == city, ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX', 'AIRPORT', 'Name']]
     code, name = temp.iloc[0][['AIRPORT', 'Name']].values.tolist()
     title = '城市:{0}\r机场名称:{1}\r机场代码:{2}'.format(city, name, code)
-    data = temp.loc[:, ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX']].round(3).values.tolist()
+    data = temp.loc[:, ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX']] \
+               .sort_values(by='VRTG_MAX').round(3).values.tolist()
     return title, data
