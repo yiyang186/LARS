@@ -24,7 +24,11 @@
                     playInterval: 2000,
                     label: {
                         formatter : function(s) {
-                            return '2016年'+s+'月';
+                            if(s==0){
+                                return '2016年';
+                            }else{
+                                return '2016年'+s+'月';
+                            }
                         }
                     }
                 },
