@@ -211,6 +211,9 @@
         }
 
         myChart.on('click', function (params) {
+            var re = /^\d+$/;
+            if(!re.test(params.seriesName))
+                return;
             var requestJson = {"month": params.seriesName, "city": params.name}
             $.getJSON("{% url 'hardlanding:map' %}", requestJson, function (res) {
                 myChart.setOption({
