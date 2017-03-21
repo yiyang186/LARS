@@ -15,12 +15,18 @@ def index(request):
         return render(request, 'hardlanding/index.html', context)
 
 def show_map(request):
-    months, options = helpers.get_maxvrtg_in_airports()
-    context = {'title': '重着陆地图', \
-               'map_title': '全国主要机场着陆情况', \
-               'months': months, \
-               'options': options}
-    return render(request, 'hardlanding/map.html', context)
+    if request.GET:
+        month = request.GET.get('month')
+        city = request.GET.get('city')
+        title, data = helpers.get_data_in_month_and_airport(month, city)
+        return JsonResponse({'title': title, 'data': data})
+    else:
+        months, options = helpers.get_maxvrtg_in_airports()
+        context = {'title': '重着陆地图', \
+                'mapTitle': '全国主要机场着陆情况', \
+                'months': months, \
+                'options': options}
+        return render(request, 'hardlanding/map.html', context)
 
         
 
