@@ -1,8 +1,17 @@
 import pandas as pd
 import json
 
+class Table(object):
+    df = None
+    def __init__(self):
+        pass
+    def get_dataFrame(self):
+        if Table.df is None: # use 'is', not '==', DataFrame can not be compared with 'None'
+            Table.df = pd.read_csv('I:/Data/cast/table_with_airports.csv')
+        return Table.df
+        
 def show_the_column(col):
-    table = pd.read_csv('I:/Data/cast/table_with_airports.csv')
+    table = Table().get_dataFrame()
     if col == 'HOUR' or col == 'MONTH':
         temp = table[col].value_counts().sort_index()
         data = map(lambda value, name:  {'value': int(value), 'name': str(name)}, \
@@ -10,13 +19,13 @@ def show_the_column(col):
         return list(data)
 
 def get_column_names():
-    df = pd.read_csv('I:/Data/cast/table_with_airports.csv')
+    df = Table().get_dataFrame()
     names = df.columns.tolist()
     return names
 
 def get_maxvrtg_in_airports():
-    df = pd.read_csv('I:/Data/cast/table_with_airports.csv')
-    df = df.loc[df['Country'] == 'CHN', :]
+    table = Table().get_dataFrame()
+    df = table.loc[table['Country'] == 'CHN', :]
     months = df.loc[:, 'MONTH'].sort_values().unique().tolist()
     data = df[['AIRPORT','MONTH', 'City', 'Name', 'Latitude', 'Longitude', 'VRTG_MAX']] \
         .groupby(['MONTH','AIRPORT']).max().round(3)
@@ -44,7 +53,7 @@ def get_maxvrtg_in_airports():
     return months, json.dumps(options)
 
 def get_data_in_month_and_airport(month, city):
-    df = pd.read_csv('I:/Data/cast/table_with_airports.csv')
+    df = Table().get_dataFrame()
     city = city.replace('-', '\'') # Because of "XI'AN"
     temp = df.loc[(df['MONTH'] == int(month)) & (df['City'] == city), \
         ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX', 'AIRPORT', 'Name']]
