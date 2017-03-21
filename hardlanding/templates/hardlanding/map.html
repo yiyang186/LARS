@@ -11,8 +11,7 @@
         <script type="text/javascript">
         var dom = document.getElementById("map");
         var myChart = echarts.init(dom);
-        var app = {};
-        var options_data = JSON.parse('{{ options|safe }}');
+        var alldata = JSON.parse('{{ allData|safe }}');
         option = null;
         option = {
             baseOption: {
@@ -20,7 +19,7 @@
                     axisType: 'category',
                     autoPlay: true,
                     playInterval: 1000,
-                    data: JSON.parse('{{ months }}'),
+                    data: alldata.world.months,
                     playInterval: 2000,
                     label: {
                         formatter : function(s) {
@@ -68,6 +67,7 @@
                     max: 2,
                     seriesIndex: [0, 2],
                     calculable: true,
+                    precision:2,
                     inRange: {
                         color: ['#00a3ba', '#eac736', '#ff4e5d']
                     },
@@ -76,11 +76,11 @@
                     }
                 },
                 geo: {
-                    map: 'china',
+                    map: 'world',
                     left: '10',
                     right: '35%',
-                    center: [110, 35],
-                    zoom: 0.8,
+                    center: [110, 25],
+                    zoom: 3,
                     roam: true,
                     label: {
                         emphasis: {
@@ -120,7 +120,7 @@
                         type: 'value',
                         id: 'littleScatterX',
                         min: 0,
-                        max: 5,
+                        max: 4,
                         nameTextStyle: {color: '#fff'}, 
                         splitLine: {show: false},
                         axisLine: {show: false},
@@ -145,7 +145,7 @@
                         type: 'value',
                         id: 'littleScatterY',
                         min: 0,
-                        max: 0.5,
+                        max: 0.4,
                         nameTextStyle: {color: '#fff'}, 
                         splitLine: {show: false},
                         axisLine: {show: false},
@@ -192,7 +192,7 @@
                         data: []
                     },
                     {
-                        name: 'oneAirport',
+                        id: 'oneAirport',
                         type: 'scatter',
                         xAxisIndex: 1,
                         yAxisIndex: 1,
@@ -203,17 +203,14 @@
                     }
                 ]
             },
-            options: options_data,
+            options: alldata.world.options,
             animation: false
         };
         if (option && typeof option === "object") {
             myChart.setOption(option, true);
         }
 
-        myChart.on('click', function (params) {
-            var re = /^\d+$/;
-            if(!re.test(params.seriesName))
-                return;
+        function show_scatter(params) {
             var requestJson = {"month": params.seriesName, "city": params.name}
             $.getJSON("{% url 'hardlanding:map' %}", requestJson, function (res) {
                 myChart.setOption({
@@ -232,11 +229,45 @@
                         axisLabel: {show: true}
                     }],
                     series: [{
-                        name: 'oneAirport',
+                        id: 'oneAirport',
+                        name: params.name,
                         data: res.data
                     }]
                 });
             });
+        }
+
+        myChart.on('click', function (params) {
+            var re = /^\d+$/;
+            if(params.name == 'China'){
+                myChart.setOption({
+                    baseOption: {geo: {
+                        map: 'china',
+                        center: [110, 35],
+                        zoom: 0.8,
+                    }},
+                    options: alldata.china.options
+                });
+            }
+            if(re.test(params.seriesName)) {
+                show_scatter(params);
+            }
+            
+        });
+
+        myChart.on('dblclick', function (params) {
+            myChart.setOption({
+                baseOption: {geo: {
+                    map: 'world',
+                    center: [110, 25],
+                    zoom: 3,
+                }},
+                options: alldata.world.options
+            });
+        });
+
+        myChart.on('geoselectchanged', function(params){
+            alert(params.selected[params.name]);
         });
 
         </script>

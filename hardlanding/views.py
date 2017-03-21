@@ -21,11 +21,10 @@ def show_map(request):
         title, data = helpers.get_data_in_month_and_airport(month, city)
         return JsonResponse({'title': title, 'data': data})
     else:
-        months, options = helpers.get_maxvrtg_in_airports()
+        result = helpers.get_maxvrtg_in_airports('world')
         context = {'title': '重着陆地图', \
-                'mapTitle': '全国主要机场着陆情况', \
-                'months': months, \
-                'options': options}
+                'mapTitle': '机场着陆情况', \
+                'allData': result}
         return render(request, 'hardlanding/map.html', context)
 
         

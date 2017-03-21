@@ -10,6 +10,13 @@ class Table(object):
             Table.df = pd.read_csv('I:/Data/cast/table_with_airports.csv').dropna()
         return Table.df
         
+# class Options(object):
+#     options = None
+#     def __init__(self):
+#         pass
+#     def get_options(self):
+#         if Options.options is None:
+
 def show_the_column(col):
     table = Table().get_dataFrame()
     if col == 'HOUR' or col == 'MONTH':
@@ -42,9 +49,7 @@ def get_options(data, month):
     return optionItem
     
 
-def get_maxvrtg_in_airports():
-    table = Table().get_dataFrame()
-    df = table.loc[table['Country'] == 'CHN', :]
+def get_geo_json(df):
     months = df.loc[:, 'MONTH'].sort_values().unique().tolist()
     data0 = df[['AIRPORT','MONTH', 'City', 'Name', 'Latitude', 'Longitude', 'VRTG_MAX']] \
             .groupby('AIRPORT').max().round(3)
@@ -59,7 +64,18 @@ def get_maxvrtg_in_airports():
         #           {"yAxis": {"data": yAxisLabels}}]
         options.append(optionItem)
     months.insert(0, 0)
-    return months, json.dumps(options)
+    return months, options #
+
+def get_maxvrtg_in_airports(area):
+    result = {}
+    table_world = Table().get_dataFrame()
+    months, options = get_geo_json(table_world)
+    result['world'] = {'months': months, 'options': options}
+
+    table_china = table_world.loc[table_world['Country'] == 'CHN', :]
+    months, options = get_geo_json(table_china)
+    result['china'] = {'months': months, 'options': options}
+    return json.dumps(result)
 
 def get_data_in_month_and_airport(month, city):
     df = Table().get_dataFrame()
@@ -71,7 +87,7 @@ def get_data_in_month_and_airport(month, city):
     else:
         temp = df.loc[df['City'] == city, ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX', 'AIRPORT', 'Name']]
     code, name = temp.iloc[0][['AIRPORT', 'Name']].values.tolist()
-    title = '城市:{0}\r机场名称:{1}\r机场代码:{2}'.format(city, name, code)
+    title = '城市:{0}\r名称:{1}\r代码:{2}\r航班量:{3}'.format(city, name, code, temp.shape[0])
     data = temp.loc[:, ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX']] \
                .sort_values(by='VRTG_MAX').round(3).values.tolist()
     return title, data
