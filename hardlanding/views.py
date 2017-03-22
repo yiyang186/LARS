@@ -23,8 +23,7 @@ def show_map(request):
     else:
         result = helpers.get_maxvrtg_in_airports('world')
         context = {'title': '重着陆地图', \
-                'mapTitle': '机场着陆情况', \
-                'allData': result}
+                   'alldata': result}
         return render(request, 'hardlanding/map.html', context)
 
         

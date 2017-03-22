@@ -68,6 +68,8 @@ def get_maxvrtg_in_airports(area):
     table_china = table_world.loc[table_world['Country'] == 'CHN', :]
     months, options = get_geo_json(table_china)
     result['china'] = {'months': months, 'options': options}
+
+    result["maptitle"] = '机场着陆情况'
     return json.dumps(result)
 
 def get_data_in_month_and_airport(month, city):
