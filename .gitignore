@@ -1,4 +1,5 @@
 *.pyc
 *.csv
 *.xml
-LRAS/__pycache__
+LARS/__pycache__
+*.sqlite3

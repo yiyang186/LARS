@@ -9,13 +9,6 @@ class Table(object):
         if Table.df is None: # use 'is', not '==', DataFrame can not be compared with 'None'
             Table.df = pd.read_csv('I:/Data/cast/table_with_airports.csv').dropna()
         return Table.df
-        
-# class Options(object):
-#     options = None
-#     def __init__(self):
-#         pass
-#     def get_options(self):
-#         if Options.options is None:
 
 def show_the_column(col):
     table = Table().get_dataFrame()
