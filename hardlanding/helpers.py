@@ -7,7 +7,8 @@ class Table(object):
         pass
     def get_dataFrame(self):
         if Table.df is None: # use 'is', not '==', DataFrame can not be compared with 'None'
-            Table.df = pd.read_csv('I:/Data/cast/table_with_airports.csv').dropna()
+            path = 'I:/Workspaces/python/django/LRAS/hardlanding/static/csv/table_with_airports.csv'
+            Table.df = pd.read_csv(path).dropna()
         return Table.df
 
 def show_the_column(col):
@@ -86,3 +87,41 @@ def get_data_in_month_and_airport(month, city):
     data = temp.loc[:, ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX']] \
                .sort_values(by='VRTG_MAX').round(3).values.tolist()
     return title, data
+
+def get_kline(vrtg=1.4, span='W'):
+    df = Table().get_dataFrame()
+    df['DATETIME'] = pd.to_datetime(df['DATETIME'])
+    ts = df.sort_values('DATETIME').set_index('DATETIME')['VRTG_MAX']
+
+    means = (ts > vrtg).resample(span, closed='left').mean().dropna()
+    means_date = means.index.map(lambda x: x.strftime('%Y-%m-%d'))
+    means = pd.DataFrame({'DATE': means_date, 'means': means.values}).round(3).values.tolist()
+    name = {'D': 'daily', 'W': 'weekly', 'M': 'monthly', 'Q': 'seasonally'}
+    return json.dumps({'means': means, 'name':name[span]})
+
+def get_kline_ma(vrtg=1.4, window=100):
+    df = Table().get_dataFrame()
+    df['DATETIME'] = pd.to_datetime(df['DATETIME'])
+    ts = df.sort_values('DATETIME').set_index('DATETIME')['VRTG_MAX']
+
+    means = (ts > vrtg).rolling(window=window, center=False).mean().dropna()
+    means_date = means.index.map(lambda x: x.strftime('%Y-%m-%d'))
+    means = pd.DataFrame({'DATE': means_date, 'means': means.values}).round(3).values.tolist()
+    categoryData = ts.index.map(lambda x: x.strftime('%Y-%m-%d')).tolist()
+    name = 'MA_' + str(window)
+    return json.dumps({'means': means, 'name':name})
+
+def get_date_range(start, periods, freq):
+    rng = pd.date_range(start, periods=periods, freq=freq)
+    rng = rng.map(lambda x: x.strftime('%Y-%m-%d')).tolist()
+    return json.dumps(rng)
+
+def get_kline_counts(vrtg=1.4):
+    df = Table().get_dataFrame()
+    df['DATETIME'] = pd.to_datetime(df['DATETIME'])
+    ts = df.sort_values('DATETIME').set_index('DATETIME')['VRTG_MAX']
+
+    counts = (ts > vrtg).resample('D', closed='left').count().dropna()
+    counts_date = counts.index.map(lambda x: x.strftime('%Y-%m-%d'))
+    counts = pd.DataFrame({'DATE': counts_date, 'counts': counts.values}).round(3).values.tolist()
+    return json.dumps(counts)
