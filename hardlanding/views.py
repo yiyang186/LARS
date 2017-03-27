@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from . import helpers
+import json
 
 # Create your views here.
 def index(request):
@@ -28,16 +29,20 @@ def show_map(request):
 
 def show_kline(request):
     if request.GET:
-        month = request.GET.get('month')
         city = request.GET.get('city')
-        title, data = helpers.get_data_in_month_and_airport(month, city)
-        return JsonResponse({'title': title, 'data': data})
+        counts = helpers.get_kline_counts(vrtg=1.4, city=city)
+        res = {'title': city+'重着陆K线图', 'counts': counts}
+        for span in list('DWMQ'):
+            res['data_'+span] = helpers.get_kline(vrtg=1.4, span=span, city=city)
+        print(res['data_D'])
+        return JsonResponse(res)
     else:
         dates = helpers.get_date_range('2016-01-01', 380, 'D')
-        counts = helpers.get_kline_counts(vrtg=1.4)
-        context = {'title': '重着陆K线图','dates': dates, 'counts': counts}
+        counts = json.dumps(helpers.get_kline_counts(vrtg=1.4))
+        geodata = helpers.get_airports()
+        context = {'title': '重着陆K线图','dates': dates, 'counts': counts, 'geodata': geodata}
         for span in list('DWMQ'):
-            context['data_'+span] = helpers.get_kline(vrtg=1.4, span=span)
+            context['data_'+span] = json.dumps(helpers.get_kline(vrtg=1.4, span=span, city=None))
         return render(request, 'hardlanding/kline.html', context)
         
 

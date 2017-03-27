@@ -11,6 +11,19 @@ class Table(object):
             Table.df = pd.read_csv(path).dropna()
         return Table.df
 
+class Airport(object):
+    df = None
+    def __init__(self):
+        pass
+    def get_dataFrame(self):
+        if Airport.df is None:
+            path = 'I:/Workspaces/python/django/LRAS/hardlanding/static/csv/airports.csv'
+            airport_info = ['Airport ICAO code', 'Name', 'City', 'Country', 'Area', 'Altitude', 
+                'Latitude', 'Longitude', 'Magnetic Variation', 'Length', 'Width', 'Magnetic Bearing', 
+                'LDA Start Latitude', 'LDA Start Longitude', 'LDA Start Elevation']
+            Airport.df = pd.read_csv(path, usecols=airport_info).dropna()
+        return Airport.df
+
 def show_the_column(col):
     table = Table().get_dataFrame()
     if col == 'HOUR' or col == 'MONTH':
@@ -88,16 +101,21 @@ def get_data_in_month_and_airport(month, city):
                .sort_values(by='VRTG_MAX').round(3).values.tolist()
     return title, data
 
-def get_kline(vrtg=1.4, span='W'):
+def get_kline(vrtg=1.4, span='W', city=None):
     df = Table().get_dataFrame()
     df['DATETIME'] = pd.to_datetime(df['DATETIME'])
-    ts = df.sort_values('DATETIME').set_index('DATETIME')['VRTG_MAX']
-
+    name = {'D': 'daily', 'W': 'weekly', 'M': 'monthly', 'Q': 'seasonally'}
+    if city:
+        ts = df.sort_values('DATETIME').set_index('DATETIME')
+        ts = ts.loc[ts['City'] == city, 'VRTG_MAX']
+        if ts.shape[0] == 0:
+            return {'means': [], 'name':name[span]}
+    else:
+        ts = df.sort_values('DATETIME').set_index('DATETIME')['VRTG_MAX']
     means = (ts > vrtg).resample(span, closed='left').mean().dropna()
     means_date = means.index.map(lambda x: x.strftime('%Y-%m-%d'))
     means = pd.DataFrame({'DATE': means_date, 'means': means.values}).round(3).values.tolist()
-    name = {'D': 'daily', 'W': 'weekly', 'M': 'monthly', 'Q': 'seasonally'}
-    return json.dumps({'means': means, 'name':name[span]})
+    return {'means': means, 'name':name[span]}
 
 def get_kline_ma(vrtg=1.4, window=100):
     df = Table().get_dataFrame()
@@ -116,12 +134,25 @@ def get_date_range(start, periods, freq):
     rng = rng.map(lambda x: x.strftime('%Y-%m-%d')).tolist()
     return json.dumps(rng)
 
-def get_kline_counts(vrtg=1.4):
+def get_kline_counts(vrtg=1.4, city=None):
     df = Table().get_dataFrame()
     df['DATETIME'] = pd.to_datetime(df['DATETIME'])
-    ts = df.sort_values('DATETIME').set_index('DATETIME')['VRTG_MAX']
+    if city:
+        ts = df.sort_values('DATETIME').set_index('DATETIME')
+        ts = ts.loc[ts['City'] == city, 'VRTG_MAX']
+        if ts.shape[0] == 0:
+            return []
+    else:
+        ts = df.sort_values('DATETIME').set_index('DATETIME')['VRTG_MAX']
 
     counts = (ts > vrtg).resample('D', closed='left').count().dropna()
     counts_date = counts.index.map(lambda x: x.strftime('%Y-%m-%d'))
     counts = pd.DataFrame({'DATE': counts_date, 'counts': counts.values}).round(3).values.tolist()
-    return json.dumps(counts)
+    return counts
+
+def get_airports():
+    ap = Airport().get_dataFrame()
+    temp = ap.loc[ap['Country'] == 'CHN', ['City', 'Longitude', 'Latitude', 'Altitude']]\
+             .round(3).values.tolist()
+    geodata = list(map(lambda r: {"name": r[0].replace('\'', '-'), "value": r[1:]}, temp))
+    return json.dumps(geodata)
