@@ -33,16 +33,20 @@ def show_kline(request):
         counts = helpers.get_kline_counts(vrtg=1.4, city=city)
         res = {'title': city+'重着陆K线图', 'counts': counts}
         for span in list('DWMQ'):
-            res['data_'+span] = helpers.get_kline(vrtg=1.4, span=span, city=city)
-        print(res['data_D'])
+            res['data'+span] = helpers.get_kline(vrtg=1.4, span=span, city=city)
+        for window in [100, 500, 1000]:
+            res['data'+str(window)] = helpers.get_kline_ma(vrtg=1.4, window=window, city=city)
         return JsonResponse(res)
     else:
         dates = helpers.get_date_range('2016-01-01', 380, 'D')
-        counts = json.dumps(helpers.get_kline_counts(vrtg=1.4))
-        geodata = helpers.get_airports()
-        context = {'title': '重着陆K线图','dates': dates, 'counts': counts, 'geodata': geodata}
+        counts = helpers.get_kline_counts(vrtg=1.4)
+        geo = helpers.get_airports()
+        alldata = {'dates': dates, 'counts': counts, 'geo': geo}
         for span in list('DWMQ'):
-            context['data_'+span] = json.dumps(helpers.get_kline(vrtg=1.4, span=span, city=None))
+            alldata['data'+span] = helpers.get_kline(vrtg=1.4, span=span, city=None)
+        for window in [100, 500, 1000]:
+            alldata['data'+str(window)] = helpers.get_kline_ma(vrtg=1.4, window=window, city=None)
+        context = {'title': '重着陆K线图', 'alldata': json.dumps(alldata)}
         return render(request, 'hardlanding/kline.html', context)
         
 

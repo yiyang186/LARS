@@ -1,25 +1,18 @@
 var dom = document.getElementById("kline");
 var myChart = echarts.init(dom);
-var dates = JSON.parse(document.getElementById("dates").textContent);
-var counts = JSON.parse(document.getElementById("counts").textContent);
-var datad = JSON.parse(document.getElementById("datad").textContent);
-var dataw = JSON.parse(document.getElementById("dataw").textContent);
-var datam = JSON.parse(document.getElementById("datam").textContent);
-var dataq = JSON.parse(document.getElementById("dataq").textContent);
-var geodata = JSON.parse(document.getElementById("geodata").textContent);
+var alldata = JSON.parse(document.getElementById("alldata").textContent);
 var urlkline = document.getElementById("klineurl").textContent;
 
 option = {
     title : {
         text: '每k次着陆重着陆发生频率',
-        subtext: '滑动平均值',
         x: 'center',
         align: 'right'
     },
     // backgroundColor: '#696969',
     grid: [
-        {left: "55%", top: "10%", height: '55%', width: '40%'},
-        {left: "55%", top: "75%", height: '10%', width: '40%'}
+        {left: "45%", top: "10%", height: '45%', right: '5%'},
+        {left: "45%", top: "65%", height: '25%', right: '5%'}
     ],
     toolbox: {
         feature: {
@@ -42,8 +35,9 @@ option = {
     },
     visualMap: {
         min: 0,
-        max: 15000,
+        max: 10000,
         seriesIndex: 0,
+        dimension: 2,
         calculable: true,
         precision: 0,
         inRange: {
@@ -54,7 +48,9 @@ option = {
         }
     },
     legend: {
-        data:['海拔', datad.name, dataw.name, datam.name, dataq.name],
+        data:['海拔', alldata.dataD.name, alldata.dataW.name, 
+        alldata.dataM.name, alldata.dataQ.name, alldata.data100.name,
+        alldata.data500.name, alldata.data1000.name],
         x: 'left'
     },
     geo: {
@@ -62,7 +58,7 @@ option = {
         left: '10',
         right: '55%',
         center: [110, 35],
-        zoom: 0.8,
+        zoom: 0.9,
         roam: true,
         label: {
             emphasis: {
@@ -81,16 +77,16 @@ option = {
     },
     dataZoom: [
         {
-            show: true,
+            type: 'inside',
             realtime: true,
-            xAxisIndex: [0, 1],
+            xAxisIndex: [1, 0],
             start: 65,
             end: 85
         },
         {
-            type: 'inside',
+            show: true,
             realtime: true,
-            xAxisIndex: [0, 1],
+            xAxisIndex: [1, 0],
             start: 65,
             end: 85
         }
@@ -101,14 +97,14 @@ option = {
             gridIndex: 0,
             boundaryGap : false,
             axisLine: {onZero: false},
-            data : dates
+            data : alldata.dates
         },
         {
             type : 'category',
             gridIndex: 1,
             boundaryGap : false,
             axisLine: {onZero: false},
-            data : dates
+            data : alldata.dates
         }
     ],
     yAxis: [
@@ -127,7 +123,9 @@ option = {
         {
             type: 'scatter',
             coordinateSystem: 'geo',
-            symbolSize: 10,
+            symbolSize: function(value) {
+                return (value[3] - 5000) / 400;
+            },
             label: {
                 normal: {
                     show: false
@@ -142,12 +140,13 @@ option = {
                     borderWidth: 1
                 }
             },
-            data: geodata
+            data: alldata.geo
         },
         {
             id: 'daily',
-            name:datad.name,
+            name:alldata.dataD.name,
             type:'line',
+            xAxisIndex:0,
             yAxisIndex:0,
             animation: false,
             lineStyle: {
@@ -155,12 +154,13 @@ option = {
                     width: 1
                 }
             },
-            data: datad.means
+            data: alldata.dataD.means
         },
         {
             id: 'weekly',
-            name:dataw.name,
+            name:alldata.dataW.name,
             type:'line',
+            xAxisIndex:0,
             yAxisIndex:0,
             animation: false,
             lineStyle: {
@@ -168,12 +168,13 @@ option = {
                     width: 1
                 }
             },
-            data: dataw.means
+            data: alldata.dataW.means
         },
         {
             id: 'monthly',
-            name:datam.name,
+            name: alldata.dataM.name,
             type:'line',
+            xAxisIndex:0,
             yAxisIndex:0,
             animation: false,
             lineStyle: {
@@ -181,12 +182,13 @@ option = {
                     width: 1
                 }
             },
-            data: datam.means
+            data: alldata.dataM.means
         },
         {
             id: 'seasonally',
-            name:dataq.name,
+            name: alldata.dataQ.name,
             type:'line',
+            xAxisIndex:0,
             yAxisIndex:0,
             animation: false,
             lineStyle: {
@@ -194,7 +196,7 @@ option = {
                     width: 1
                 }
             },
-            data: dataq.means
+            data: alldata.dataQ.means
         },
         {
             id: 'counts',
@@ -208,8 +210,50 @@ option = {
                     width: 1
                 }
             },
-            data: counts
+            data: alldata.counts
         },
+        {
+            id: 'ma100',
+            name:alldata.data100.name,
+            type:'line',
+            xAxisIndex:0,
+            yAxisIndex:0,
+            animation: false,
+            lineStyle: {
+                normal: {
+                    width: 1
+                }
+            },
+            data: alldata.data100.means
+        },
+        {
+            id: 'ma500',
+            name: alldata.data500.name,
+            type:'line',
+            xAxisIndex:0,
+            yAxisIndex:0,
+            animation: false,
+            lineStyle: {
+                normal: {
+                    width: 1
+                }
+            },
+            data: alldata.data500.means
+        },
+        {
+            id: 'ma1000',
+            name: alldata.data1000.name,
+            type:'line',
+            xAxisIndex:0,
+            yAxisIndex:0,
+            animation: false,
+            lineStyle: {
+                normal: {
+                    width: 1
+                }
+            },
+            data: alldata.data1000.means
+        }
     ]
 };
 
@@ -224,10 +268,13 @@ function show_kline(params) {
             title : {text: res.title},
             series: [
                 {id: 'counts', data: res.counts},
-                {id: 'daily', data: res.data_D.means},
-                {id: 'weekly', data: res.data_W.means},
-                {id: 'monthly', data: res.data_M.means},
-                {id: 'seasonally', data: res.data_Q.means}
+                {id: 'daily', data: res.dataD.means},
+                {id: 'weekly', data: res.dataW.means},
+                {id: 'monthly', data: res.dataM.means},
+                {id: 'seasonally', data: res.dataQ.means},
+                {id: 'ma100', data: res.data100.means},
+                {id: 'ma500', data: res.data500.means},
+                {id: 'ma1000', data: res.data1000.means},
             ]
         });
     });

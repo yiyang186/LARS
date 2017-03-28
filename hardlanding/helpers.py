@@ -117,22 +117,29 @@ def get_kline(vrtg=1.4, span='W', city=None):
     means = pd.DataFrame({'DATE': means_date, 'means': means.values}).round(3).values.tolist()
     return {'means': means, 'name':name[span]}
 
-def get_kline_ma(vrtg=1.4, window=100):
+def get_kline_ma(vrtg=1.4, window=100, city=None):
     df = Table().get_dataFrame()
+    name = 'MA_' + str(window)
     df['DATETIME'] = pd.to_datetime(df['DATETIME'])
-    ts = df.sort_values('DATETIME').set_index('DATETIME')['VRTG_MAX']
+    if city:
+        ts = df.sort_values('DATETIME').set_index('DATETIME')
+        ts = ts.loc[ts['City'] == city, 'VRTG_MAX']
+        if ts.shape[0] == 0:
+            return {'means': [], 'name':name}
+    else:
+        ts = df.sort_values('DATETIME').set_index('DATETIME')['VRTG_MAX']
 
-    means = (ts > vrtg).rolling(window=window, center=False).mean().dropna()
+    means = (ts > vrtg).rolling(window=window, center=False).mean().dropna() # maybe use min_periods=5
     means_date = means.index.map(lambda x: x.strftime('%Y-%m-%d'))
     means = pd.DataFrame({'DATE': means_date, 'means': means.values}).round(3).values.tolist()
     categoryData = ts.index.map(lambda x: x.strftime('%Y-%m-%d')).tolist()
-    name = 'MA_' + str(window)
-    return json.dumps({'means': means, 'name':name})
+    
+    return {'means': means, 'name':name}
 
 def get_date_range(start, periods, freq):
     rng = pd.date_range(start, periods=periods, freq=freq)
     rng = rng.map(lambda x: x.strftime('%Y-%m-%d')).tolist()
-    return json.dumps(rng)
+    return rng
 
 def get_kline_counts(vrtg=1.4, city=None):
     df = Table().get_dataFrame()
@@ -151,8 +158,10 @@ def get_kline_counts(vrtg=1.4, city=None):
     return counts
 
 def get_airports():
-    ap = Airport().get_dataFrame()
-    temp = ap.loc[ap['Country'] == 'CHN', ['City', 'Longitude', 'Latitude', 'Altitude']]\
-             .round(3).values.tolist()
-    geodata = list(map(lambda r: {"name": r[0].replace('\'', '-'), "value": r[1:]}, temp))
-    return json.dumps(geodata)
+    df = Table().get_dataFrame()
+    temp = df.loc[df['Country'] == 'CHN', :].groupby('AIRPORT')\
+             .max()[['City', 'Longitude', 'Latitude', 'Altitude', 'Length']]\
+             .round(3)
+    data = list(map(lambda r: {"name": r[0].replace('\'', '-'), "value": r[1:]}, \
+                temp.values.tolist()))
+    return data

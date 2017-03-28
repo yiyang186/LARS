@@ -1,13 +1,7 @@
 {% extends 'base.html' %}
     {% block content %}
         <div id="kline" style="width: 100%;height:800px;"></div>
-        <p id='dates' hidden='hidden'>{{ dates|safe }}</p>
-        <p id='counts' hidden='hidden'>{{ counts|safe }}</p>
-        <p id='datad' hidden='hidden'>{{ data_D|safe }}</p>
-        <p id='dataw' hidden='hidden'>{{ data_W|safe }}</p>
-        <p id='datam' hidden='hidden'>{{ data_M|safe }}</p>
-        <p id='dataq' hidden='hidden'>{{ data_Q|safe }}</p>
-        <p id='geodata' hidden='hidden'>{{ geodata|safe }}</p>
+        <p id='alldata' hidden='hidden'>{{ alldata|safe }}</p>
         <p id='klineurl' hidden='hidden'>{% url 'hardlanding:kline' %}</p>
 
         {% load staticfiles %}
