@@ -7,7 +7,7 @@ class Table(object):
         pass
     def get_dataFrame(self):
         if Table.df is None: # use 'is', not '==', DataFrame can not be compared with 'None'
-            path = 'I:/Workspaces/python/django/LRAS/hardlanding/static/csv/table_with_airports.csv'
+            path = './static/csv/table_with_airports.csv'
             Table.df = pd.read_csv(path).dropna()
         return Table.df
 
@@ -17,7 +17,7 @@ class Airport(object):
         pass
     def get_dataFrame(self):
         if Airport.df is None:
-            path = 'I:/Workspaces/python/django/LRAS/hardlanding/static/csv/airports.csv'
+            path = './static/csv/airports.csv'
             airport_info = ['Airport ICAO code', 'Name', 'City', 'Country', 'Area', 'Altitude', 
                 'Latitude', 'Longitude', 'Magnetic Variation', 'Length', 'Width', 'Magnetic Bearing', 
                 'LDA Start Latitude', 'LDA Start Longitude', 'LDA Start Elevation']
