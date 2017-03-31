@@ -34,7 +34,7 @@ def show_kline(request):
         vrtg = float(request.GET['vrtg'])
         print(city, vrtg)
         counts = helpers.get_kline_counts(vrtg=vrtg, city=city)
-        res = {'title': city+'重着陆K线图', 'counts': counts}
+        res = {'title': '{0}重着陆(>{1})发生频率'.format(city, vrtg), 'counts': counts}
         for span in list('DWMQ'):
             res['data'+span] = helpers.get_kline(vrtg=vrtg, span=span, city=city)
         for window in [100, 500, 1000]:

@@ -6,7 +6,7 @@ var vrtg = '1.40';
 option = {
     title : [
         {
-            text: '每k次着陆重着陆发生频率',
+            text: '着陆重(>'+vrtg+')着陆发生频率',
             x: 'center',
             align: 'right'
         },
@@ -51,13 +51,19 @@ option = {
             alldata.dataM.name, alldata.dataQ.name, alldata.data100.name,
             alldata.data500.name, alldata.data1000.name],
             left: '35%',
-            top: '5%'
+            top: '5%',
+            selected: {
+                'seasonally': false, 
+                'monthly': false,
+                'MA_100': false,
+                'MA_1000': false
+            }
         },
         {
             orient: 'vertical',
             right: '16%',
             data: alldata.pyramid_vrtg.legend
-        },
+        }
     ],
     geo: {
         map: 'china',

@@ -41,7 +41,7 @@ def get_pyramid_vrtg():
     table = Table().get_dataFrame()
     data = []
     legend = []
-    for i, vrtg in enumerate([1.0, 1.25, 1.3, 1.35, 1.4, 1.45, 1.5]):
+    for i, vrtg in enumerate([1.3, 1.4, 1.5, 1.6, 1.7]):
         value = table.loc[table['VRTG_MAX'] > vrtg, :].shape[0]
         if i == 0:
             name = '>{0:.2f}: {1}%'.format(vrtg, 100)
