@@ -17,10 +17,8 @@ option = {
         },
     ],
     // backgroundColor: '#696969',
-    grid: [
-        {left: "33%", top: "10%", height: '45%', right: '25%'},
-        {left: "33%", top: "65%", height: '25%', right: '25%'}
-    ],
+    grid: {left: "33%", top: "10%", height: '70%', right: '25%'},
+        // {left: "33%", top: "65%", height: '25%', right: '25%'}
     tooltip : {
         trigger: 'item',
         axisPointer: {
@@ -91,14 +89,12 @@ option = {
         {
             type: 'inside',
             realtime: true,
-            xAxisIndex: [1, 0],
             start: 65,
             end: 85
         },
         {
             show: true,
             realtime: true,
-            xAxisIndex: [1, 0],
             start: 65,
             end: 85
         }
@@ -106,14 +102,6 @@ option = {
     xAxis : [
         {
             type : 'category',
-            gridIndex: 0,
-            boundaryGap : false,
-            axisLine: {onZero: false},
-            data : alldata.dates
-        },
-        {
-            type : 'category',
-            gridIndex: 1,
             boundaryGap : false,
             axisLine: {onZero: false},
             data : alldata.dates
@@ -121,14 +109,16 @@ option = {
     ],
     yAxis: [
         {
-            gridIndex: 0,
             name: '重着陆频率',
             type: 'value',
+            max: 1.1
         },
         {
-            gridIndex: 1,
             name: '每天航段数',
+            nameLocation: 'start',
             type: 'value',
+            max: 400,
+            inverse: true
         }
     ],
     series: [
@@ -215,7 +205,7 @@ option = {
             name:'每天航段数',
             type:'bar',
             yAxisIndex:1,
-            xAxisIndex:1,
+            xAxisIndex:0,
             animation: false,
             lineStyle: {
                 normal: {
