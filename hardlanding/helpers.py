@@ -1,5 +1,5 @@
 import pandas as pd
-import json
+# import json
 
 class Table(object):
     df = None
@@ -36,6 +36,22 @@ def get_column_names():
     df = Table().get_dataFrame()
     names = df.columns.tolist()
     return names
+
+def get_pyramid_vrtg():
+    table = Table().get_dataFrame()
+    data = []
+    legend = []
+    for i, vrtg in enumerate(range(10, 16)):
+        vrtg = vrtg / 10.0
+        value = table.loc[table['VRTG_MAX'] > vrtg, :].shape[0]
+        if i == 0:
+            name = '>{0}: {1}%'.format(vrtg, 100)
+        else:
+            name = '>{0}: {1}%'.format(vrtg, int(100 * value / data[i-1]['value']))
+        data.append({'value': value, 'name': name})
+        legend.append(name)
+    return {'data': data, 'legend': legend}
+
 
 def get_options(data, month):
     optionItem = {}
@@ -84,7 +100,7 @@ def get_maxvrtg_in_airports(area):
     result['china'] = {'months': months, 'options': options}
 
     result["maptitle"] = '机场着陆情况'
-    return json.dumps(result)
+    return result
 
 def get_data_in_month_and_airport(month, city):
     df = Table().get_dataFrame()

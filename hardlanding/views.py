@@ -23,13 +23,14 @@ def show_map(request):
         return JsonResponse({'title': title, 'data': data})
     else:
         result = helpers.get_maxvrtg_in_airports('world')
+        result['pyramid_vrtg'] = helpers.get_pyramid_vrtg()
         context = {'title': '重着陆地图', \
-                   'alldata': result}
+                   'alldata': json.dumps(result)}
         return render(request, 'hardlanding/map.html', context)
 
 def show_kline(request):
     if request.GET:
-        city = request.GET.get('city')
+        city = request.GET['city']
         counts = helpers.get_kline_counts(vrtg=1.4, city=city)
         res = {'title': city+'重着陆K线图', 'counts': counts}
         for span in list('DWMQ'):
@@ -41,7 +42,8 @@ def show_kline(request):
         dates = helpers.get_date_range('2016-01-01', 380, 'D')
         counts = helpers.get_kline_counts(vrtg=1.4)
         geo = helpers.get_airports()
-        alldata = {'dates': dates, 'counts': counts, 'geo': geo}
+        pyramid_vrtg = helpers.get_pyramid_vrtg()
+        alldata = {'dates': dates, 'counts': counts, 'geo': geo, 'pyramid_vrtg': pyramid_vrtg}
         for span in list('DWMQ'):
             alldata['data'+span] = helpers.get_kline(vrtg=1.4, span=span, city=None)
         for window in [100, 500, 1000]:

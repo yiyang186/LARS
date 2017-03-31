@@ -196,9 +196,6 @@ option = {
     options: alldata.world.options,
     animation: false
 };
-if (option && typeof option === "object") {
-    myChart.setOption(option, true);
-}
 
 function show_scatter(params) {
     var requestJson = {"month": params.seriesName, "city": params.name}
@@ -259,3 +256,9 @@ myChart.on('dblclick', function (params) {
 myChart.on('geoselectchanged', function(params){
     alert(params.selected[params.name]);
 });
+
+
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+}
+

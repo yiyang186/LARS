@@ -4,25 +4,23 @@ var alldata = JSON.parse(document.getElementById("alldata").textContent);
 var urlkline = document.getElementById("klineurl").textContent;
 
 option = {
-    title : {
-        text: '每k次着陆重着陆发生频率',
-        x: 'center',
-        align: 'right'
-    },
+    title : [
+        {
+            text: '每k次着陆重着陆发生频率',
+            x: 'center',
+            align: 'right'
+        },
+        {
+            text: '重着陆风险隐患',
+            left: 'right',
+            top: 'top'
+        },
+    ],
     // backgroundColor: '#696969',
     grid: [
-        {left: "45%", top: "10%", height: '45%', right: '5%'},
-        {left: "45%", top: "65%", height: '25%', right: '5%'}
+        {left: "33%", top: "10%", height: '45%', right: '25%'},
+        {left: "33%", top: "65%", height: '25%', right: '25%'}
     ],
-    toolbox: {
-        feature: {
-            dataZoom: {
-                yAxisIndex: 'none'
-            },
-            restore: {},
-            saveAsImage: {}
-        }
-    },
     tooltip : {
         trigger: 'item',
         axisPointer: {
@@ -47,16 +45,24 @@ option = {
             color: '#000'
         }
     },
-    legend: {
-        data:['海拔', alldata.dataD.name, alldata.dataW.name, 
-        alldata.dataM.name, alldata.dataQ.name, alldata.data100.name,
-        alldata.data500.name, alldata.data1000.name],
-        x: 'left'
-    },
+    legend: [
+        {
+            data:['海拔', alldata.dataD.name, alldata.dataW.name, 
+            alldata.dataM.name, alldata.dataQ.name, alldata.data100.name,
+            alldata.data500.name, alldata.data1000.name],
+            left: '35%',
+            top: '5%'
+        },
+        {
+            orient: 'vertical',
+            right: '16%',
+            data: alldata.pyramid_vrtg.legend
+        },
+    ],
     geo: {
         map: 'china',
-        left: '10',
-        right: '55%',
+        left: '1%',
+        width: '35%',
         center: [110, 35],
         zoom: 0.9,
         roam: true,
@@ -253,7 +259,18 @@ option = {
                 }
             },
             data: alldata.data1000.means
-        }
+        },
+        {
+            name: '转化率',
+            id: 'pyramid_vrtg',
+            type: 'funnel',
+            width: '14%',
+            height: '40%',
+            left: '80%',
+            top: '4%',
+            sort: 'ascending',
+            data: alldata.pyramid_vrtg.data
+        },
     ]
 };
 
