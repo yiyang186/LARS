@@ -2,7 +2,7 @@ var dom = document.getElementById("kline");
 var myChart = echarts.init(dom);
 var alldata = JSON.parse(document.getElementById("alldata").textContent);
 var urlkline = document.getElementById("klineurl").textContent;
-
+var vrtg = '1.40';
 option = {
     title : [
         {
@@ -279,7 +279,7 @@ if (option && typeof option === "object") {
 }
 
 function show_kline(params) {
-    var requestJson = {"city": params.name};
+    var requestJson = {"city": params.name, "vrtg": vrtg};
     $.getJSON(urlkline, requestJson, function (res) {
         myChart.setOption({
             title : {text: res.title},
@@ -300,5 +300,9 @@ function show_kline(params) {
 myChart.on('click', function (params) {
     if(params.seriesType == 'scatter'){
         show_kline(params);
+    }
+    if(params.seriesType == 'funnel'){
+        vrtg = params.name.slice(1,5); // 这里的vrtg是全局变量，用于界定重着陆
+        show_kline({"name": ''});
     }
 });

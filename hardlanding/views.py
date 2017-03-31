@@ -31,12 +31,14 @@ def show_map(request):
 def show_kline(request):
     if request.GET:
         city = request.GET['city']
-        counts = helpers.get_kline_counts(vrtg=1.4, city=city)
+        vrtg = float(request.GET['vrtg'])
+        print(city, vrtg)
+        counts = helpers.get_kline_counts(vrtg=vrtg, city=city)
         res = {'title': city+'重着陆K线图', 'counts': counts}
         for span in list('DWMQ'):
-            res['data'+span] = helpers.get_kline(vrtg=1.4, span=span, city=city)
+            res['data'+span] = helpers.get_kline(vrtg=vrtg, span=span, city=city)
         for window in [100, 500, 1000]:
-            res['data'+str(window)] = helpers.get_kline_ma(vrtg=1.4, window=window, city=city)
+            res['data'+str(window)] = helpers.get_kline_ma(vrtg=vrtg, window=window, city=city)
         return JsonResponse(res)
     else:
         dates = helpers.get_date_range('2016-01-01', 380, 'D')
