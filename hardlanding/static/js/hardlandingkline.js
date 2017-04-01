@@ -30,8 +30,10 @@ option = {
         }
     },
     visualMap: {
+        type: "piecewise",
+        splitNumber: 4,
         min: 0,
-        max: 10000,
+        max: 8000,
         seriesIndex: 0,
         dimension: 2,
         calculable: true,
@@ -275,7 +277,8 @@ if (option && typeof option === "object") {
 }
 
 function show_kline(params) {
-    var requestJson = {"city": params.name, "vrtg": vrtg};
+    var airport = params.name.match(/[A-Z]+/)+'';
+    var requestJson = {"airport": airport, "vrtg": vrtg};
     $.getJSON(urlkline, requestJson, function (res) {
         myChart.setOption({
             title : {text: res.title},

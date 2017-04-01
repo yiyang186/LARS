@@ -18,27 +18,30 @@ def index(request):
 def show_map(request):
     if request.GET:
         month = request.GET.get('month')
-        city = request.GET.get('city')
-        title, data = helpers.get_data_in_month_and_airport(month, city)
+        airport = request.GET.get('airport')
+        title, data = helpers.get_data_in_month_and_airport(month, airport)
         return JsonResponse({'title': title, 'data': data})
     else:
-        result = helpers.get_maxvrtg_in_airports('world')
-        result['pyramid_vrtg'] = helpers.get_pyramid_vrtg()
+        result = helpers.get_maxvrtg_in_airports()
         context = {'title': '重着陆地图', \
                    'alldata': json.dumps(result)}
         return render(request, 'hardlanding/map.html', context)
 
 def show_kline(request):
     if request.GET:
-        city = request.GET['city']
+        airport = request.GET['airport']
+        if airport == 'null':
+            airport = None
+            chinese_airport = '全国'
+        else:
+            chinese_airport = helpers.get_chinese_airport_name(airport)
         vrtg = float(request.GET['vrtg'])
-        print(city, vrtg)
-        counts = helpers.get_kline_counts(vrtg=vrtg, city=city)
-        res = {'title': '{0}重着陆(>{1})发生频率'.format(city, vrtg), 'counts': counts}
+        counts = helpers.get_kline_counts(vrtg=vrtg, airport=airport)
+        res = {'title': '{0}机场重着陆(>{1})发生频率'.format(chinese_airport, vrtg), 'counts': counts}
         for span in list('DWMQ'):
-            res['data'+span] = helpers.get_kline(vrtg=vrtg, span=span, city=city)
+            res['data'+span] = helpers.get_kline(vrtg=vrtg, span=span, airport=airport)
         for window in [100, 500, 1000]:
-            res['data'+str(window)] = helpers.get_kline_ma(vrtg=vrtg, window=window, city=city)
+            res['data'+str(window)] = helpers.get_kline_ma(vrtg=vrtg, window=window, airport=airport)
         return JsonResponse(res)
     else:
         dates = helpers.get_date_range('2016-01-01', 380, 'D')
@@ -47,9 +50,9 @@ def show_kline(request):
         pyramid_vrtg = helpers.get_pyramid_vrtg()
         alldata = {'dates': dates, 'counts': counts, 'geo': geo, 'pyramid_vrtg': pyramid_vrtg}
         for span in list('DWMQ'):
-            alldata['data'+span] = helpers.get_kline(vrtg=1.4, span=span, city=None)
+            alldata['data'+span] = helpers.get_kline(vrtg=1.4, span=span, airport=None)
         for window in [100, 500, 1000]:
-            alldata['data'+str(window)] = helpers.get_kline_ma(vrtg=1.4, window=window, city=None)
+            alldata['data'+str(window)] = helpers.get_kline_ma(vrtg=1.4, window=window, airport=None)
         context = {'title': '重着陆K线图', 'alldata': json.dumps(alldata)}
         return render(request, 'hardlanding/kline.html', context)
         

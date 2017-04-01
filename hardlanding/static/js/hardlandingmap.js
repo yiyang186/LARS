@@ -57,6 +57,7 @@ option = {
             max: 2,
             seriesIndex: [0, 2],
             calculable: true,
+            dimension: 2,
             precision:2,
             inRange: {
                 color: ['#00a3ba', '#eac736', '#ff4e5d']
@@ -198,7 +199,8 @@ option = {
 };
 
 function show_scatter(params) {
-    var requestJson = {"month": params.seriesName, "city": params.name}
+    var airport = params.name.match(/[A-Z]+/) + ''; //params.name.match(/[A-Z]+/)得到的不是字符串，需要转成字符串
+    var requestJson = {'airport': airport, 'month': params.seriesName};
     $.getJSON(urlmap, requestJson, function (res) {
         myChart.setOption({
             title: {
