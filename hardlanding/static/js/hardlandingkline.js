@@ -31,12 +31,20 @@ option = {
         extraCssText: 'width: 170px',
     },
     // backgroundColor: '#696969',
-    grid: {left: "33%", top: "10%", height: '70%', right: '25%',
-        tooltip: {
-            trigger: 'axis',
-            // formatter: '{b}:<br />{c}'
+    grid: [
+        {left: "33%", top: "10%", height: '50%', right: '25%',
+            tooltip: {
+                trigger: 'axis',
+                // formatter: '{b}:<br />{c}'
+            },
         },
-    },
+        {left: "33%", top: "68%", height: '20%', right: '25%',
+            tooltip: {
+                trigger: 'axis',
+                // formatter: '{b}:<br />{c}'
+            },
+        }
+    ],
         // {left: "33%", top: "65%", height: '25%', right: '25%'}
     visualMap: {
         type: "piecewise",
@@ -56,16 +64,23 @@ option = {
     },
     legend: [
         {
-            data:['海拔', alldata.dataD.name, alldata.dataW.name, 
-            alldata.dataM.name, alldata.dataQ.name, alldata.data100.name,
-            alldata.data500.name, alldata.data1000.name],
+            // data:['海拔', alldata.dataD.name, alldata.dataW.name, 
+            // alldata.dataM.name, alldata.dataQ.name, alldata.data100.name,
+            // alldata.data500.name, alldata.data1000.name],
+            data:['每天重着陆频率', '每天环境熵', '每天逆转率',
+                '每周重着陆频率', '每周环境熵', '每周逆转率'],
             left: '35%',
             top: '5%',
+            // selected: {
+            //     'seasonally': false, 
+            //     'monthly': false,
+            //     'MA_100': false,
+            //     'MA_1000': false
+            // }
             selected: {
-                'seasonally': false, 
-                'monthly': false,
-                'MA_100': false,
-                'MA_1000': false
+                '每天重着陆频率': false, 
+                '每天环境熵': false,
+                '每天逆转率': false
             }
         },
         {
@@ -99,12 +114,14 @@ option = {
     dataZoom: [
         {
             type: 'inside',
+            xAxisIndex: [0, 1],
             realtime: true,
             start: 65,
             end: 85
         },
         {
             show: true,
+            xAxisIndex: [0, 1],
             realtime: true,
             start: 65,
             end: 85
@@ -113,6 +130,14 @@ option = {
     xAxis : [
         {
             type : 'category',
+            gridIndex: 0, 
+            boundaryGap : false,
+            axisLine: {onZero: false},
+            data : alldata.dates
+        },
+        {
+            type : 'category',
+            gridIndex: 1, 
             boundaryGap : false,
             axisLine: {onZero: false},
             data : alldata.dates
@@ -120,17 +145,29 @@ option = {
     ],
     yAxis: [
         {
+            gridIndex: 0, 
             name: '重着陆频率',
             type: 'value',
-            max: 1.1
+            // max: 1.1
         },
         {
+            gridIndex: 0, 
             name: '每天航段数',
             nameLocation: 'start',
             type: 'value',
             max: 400,
             inverse: true
-        }
+        },
+        {
+            gridIndex: 1, 
+            name: '环境熵',
+            type: 'value',
+        },
+        {
+            gridIndex: 1, 
+            name: '逆转率',
+            type: 'value',
+        },
     ],
     series: [
         {
@@ -196,34 +233,34 @@ option = {
             },
             data: alldata.dataW.means
         },
-        {
-            id: 'monthly',
-            name: alldata.dataM.name,
-            type:'line',
-            xAxisIndex:0,
-            yAxisIndex:0,
-            animation: false,
-            lineStyle: {
-                normal: {
-                    width: 1
-                }
-            },
-            data: alldata.dataM.means
-        },
-        {
-            id: 'seasonally',
-            name: alldata.dataQ.name,
-            type:'line',
-            xAxisIndex:0,
-            yAxisIndex:0,
-            animation: false,
-            lineStyle: {
-                normal: {
-                    width: 1
-                }
-            },
-            data: alldata.dataQ.means
-        },
+        // {
+        //     id: 'monthly',
+        //     name: alldata.dataM.name,
+        //     type:'line',
+        //     xAxisIndex:0,
+        //     yAxisIndex:0,
+        //     animation: false,
+        //     lineStyle: {
+        //         normal: {
+        //             width: 1
+        //         }
+        //     },
+        //     data: alldata.dataM.means
+        // },
+        // {
+        //     id: 'seasonally',
+        //     name: alldata.dataQ.name,
+        //     type:'line',
+        //     xAxisIndex:0,
+        //     yAxisIndex:0,
+        //     animation: false,
+        //     lineStyle: {
+        //         normal: {
+        //             width: 1
+        //         }
+        //     },
+        //     data: alldata.dataQ.means
+        // },
         {
             id: 'counts',
             name:'每天航段数',
@@ -238,48 +275,48 @@ option = {
             },
             data: alldata.counts
         },
-        {
-            id: 'ma100',
-            name:alldata.data100.name,
-            type:'line',
-            xAxisIndex:0,
-            yAxisIndex:0,
-            animation: false,
-            lineStyle: {
-                normal: {
-                    width: 1
-                }
-            },
-            data: alldata.data100.means
-        },
-        {
-            id: 'ma500',
-            name: alldata.data500.name,
-            type:'line',
-            xAxisIndex:0,
-            yAxisIndex:0,
-            animation: false,
-            lineStyle: {
-                normal: {
-                    width: 1
-                }
-            },
-            data: alldata.data500.means
-        },
-        {
-            id: 'ma1000',
-            name: alldata.data1000.name,
-            type:'line',
-            xAxisIndex:0,
-            yAxisIndex:0,
-            animation: false,
-            lineStyle: {
-                normal: {
-                    width: 1
-                }
-            },
-            data: alldata.data1000.means
-        },
+        // {
+        //     id: 'ma100',
+        //     name:alldata.data100.name,
+        //     type:'line',
+        //     xAxisIndex:0,
+        //     yAxisIndex:0,
+        //     animation: false,
+        //     lineStyle: {
+        //         normal: {
+        //             width: 1
+        //         }
+        //     },
+        //     data: alldata.data100.means
+        // },
+        // {
+        //     id: 'ma500',
+        //     name: alldata.data500.name,
+        //     type:'line',
+        //     xAxisIndex:0,
+        //     yAxisIndex:0,
+        //     animation: false,
+        //     lineStyle: {
+        //         normal: {
+        //             width: 1
+        //         }
+        //     },
+        //     data: alldata.data500.means
+        // },
+        // {
+        //     id: 'ma1000',
+        //     name: alldata.data1000.name,
+        //     type:'line',
+        //     xAxisIndex:0,
+        //     yAxisIndex:0,
+        //     animation: false,
+        //     lineStyle: {
+        //         normal: {
+        //             width: 1
+        //         }
+        //     },
+        //     data: alldata.data1000.means
+        // },
         {
             name: '转化率',
             id: 'pyramid_vrtg',
@@ -294,6 +331,62 @@ option = {
                 formatter: '{b}:<br />{c}'
             },
             data: alldata.pyramid_vrtg.data
+        },
+        {
+            id: 'daily_entropy',
+            name: alldata.entropyD.name,
+            type:'line',
+            xAxisIndex:1,
+            yAxisIndex:2,
+            animation: false,
+            lineStyle: {
+                normal: {
+                    width: 1
+                }
+            },
+            data: alldata.entropyD.means
+        },
+        {
+            id: 'weekly_entropy',
+            name: alldata.entropyW.name,
+            type:'line',
+            xAxisIndex:1,
+            yAxisIndex:2,
+            animation: false,
+            lineStyle: {
+                normal: {
+                    width: 1
+                }
+            },
+            data: alldata.entropyW.means
+        },
+                {
+            id: 'daily_crossrate',
+            name: alldata.crossrateD.name,
+            type:'line',
+            xAxisIndex:1,
+            yAxisIndex:3,
+            animation: false,
+            lineStyle: {
+                normal: {
+                    width: 1
+                }
+            },
+            data: alldata.crossrateD.means
+        },
+        {
+            id: 'weekly_crossrate',
+            name: alldata.crossrateW.name,
+            type:'line',
+            xAxisIndex:1,
+            yAxisIndex:3,
+            animation: false,
+            lineStyle: {
+                normal: {
+                    width: 1
+                }
+            },
+            data: alldata.crossrateW.means
         },
     ]
 };
@@ -311,12 +404,17 @@ function show_kline(params) {
             series: [
                 {id: 'counts', data: res.counts},
                 {id: 'daily', data: res.dataD.means},
+                {id: 'daily_entropy', data: res.entropyD.means},
+                {id: 'daily_crossrate', data: res.crossrateD.means},
                 {id: 'weekly', data: res.dataW.means},
-                {id: 'monthly', data: res.dataM.means},
-                {id: 'seasonally', data: res.dataQ.means},
-                {id: 'ma100', data: res.data100.means},
-                {id: 'ma500', data: res.data500.means},
-                {id: 'ma1000', data: res.data1000.means},
+                {id: 'weekly_entropy', data: res.entropyW.means},
+                {id: 'weekly_crossrate', data: res.crossrateW.means},
+                
+                // {id: 'monthly', data: res.dataM.means},
+                // {id: 'seasonally', data: res.dataQ.means},
+                // {id: 'ma100', data: res.data100.means},
+                // {id: 'ma500', data: res.data500.means},
+                // {id: 'ma1000', data: res.data1000.means},
             ]
         });
     });
@@ -330,4 +428,13 @@ myChart.on('click', function (params) {
         vrtg = params.name.slice(1,5); // 这里的vrtg是全局变量，用于界定重着陆
         show_kline({"name": ''});
     }
+});
+
+myChart.on('legendselectchanged', function (params) {
+    // 获取点击图例的选中状态
+    var isSelected = params.selected[params.name];
+    // 在控制台中打印
+    console.log((isSelected ? '选中了' : '取消选中了') + '图例' + params.name);
+    // 打印所有图例的状态
+    // console.log(params.selected);
 });

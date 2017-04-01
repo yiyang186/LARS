@@ -38,10 +38,13 @@ def show_kline(request):
         vrtg = float(request.GET['vrtg'])
         counts = helpers.get_kline_counts(vrtg=vrtg, airport=airport)
         res = {'title': '{0}机场重着陆(>{1})发生频率'.format(chinese_airport, vrtg), 'counts': counts}
-        for span in list('DWMQ'):
-            res['data'+span] = helpers.get_kline(vrtg=vrtg, span=span, airport=airport)
-        for window in [100, 500, 1000]:
-            res['data'+str(window)] = helpers.get_kline_ma(vrtg=vrtg, window=window, airport=airport)
+        for span in list('DW'):
+            data_temp = helpers.get_kline(vrtg=vrtg, span=span, airport=airport)
+            res['data'+span] = data_temp['vrtgp']
+            res['entropy'+span] = data_temp['entropy']
+            res['crossrate'+span] = data_temp['crossrate']
+        # for window in [500]:
+        #     res['data'+str(window)] = helpers.get_kline_ma(vrtg=vrtg, window=window, airport=airport)
         return JsonResponse(res)
     else:
         dates = helpers.get_date_range('2016-01-01', 380, 'D')
@@ -49,10 +52,13 @@ def show_kline(request):
         geo = helpers.get_airports()
         pyramid_vrtg = helpers.get_pyramid_vrtg()
         alldata = {'dates': dates, 'counts': counts, 'geo': geo, 'pyramid_vrtg': pyramid_vrtg}
-        for span in list('DWMQ'):
-            alldata['data'+span] = helpers.get_kline(vrtg=1.4, span=span, airport=None)
-        for window in [100, 500, 1000]:
-            alldata['data'+str(window)] = helpers.get_kline_ma(vrtg=1.4, window=window, airport=None)
+        for span in list('DW'):
+            data_temp = helpers.get_kline(vrtg=1.4, span=span, airport=None)
+            alldata['data'+span] = data_temp['vrtgp']
+            alldata['entropy'+span] = data_temp['entropy']
+            alldata['crossrate'+span] = data_temp['crossrate']
+        # for window in [500]:
+        #     alldata['data'+str(window)] = helpers.get_kline_ma(vrtg=1.4, window=window, airport=None)
         context = {'title': '重着陆K线图', 'alldata': json.dumps(alldata)}
         return render(request, 'hardlanding/kline.html', context)
         

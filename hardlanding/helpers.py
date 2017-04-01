@@ -136,21 +136,33 @@ def get_data_in_month_and_airport(month, airport):
                .sort_values(by='VRTG_MAX').round(3).values.tolist()
     return title, data
 
+def get_dict_of_date_and_means(ts, vrtg, span, col):
+    if col == 'VRTG_MAX':
+        means = (ts[col] > vrtg).resample(span, closed='left').mean().dropna()
+    else:
+        means = ts[col].resample(span, closed='left').mean().dropna()
+    date = means.index.map(lambda x: x.strftime('%Y-%m-%d'))
+    means = pd.DataFrame({'DATE': date, 'means': means.values}).round(3).values.tolist()
+    span_dict = {'D': '每天', 'W': '每周', 'M': '每月', 'Q': '每季'}
+    col_dict = {'VRTG_MAX': '重着陆频率', 'ENTROPY': '环境熵', 'MIX_CROSS_RATE': '逆转率'}
+    return {'means': means, 'name':span_dict[span]+col_dict[col]}
+
 def get_kline(vrtg=1.4, span='W', airport=None):
     df = Table().get_dataFrame()
     df['DATETIME'] = pd.to_datetime(df['DATETIME'])
-    name = {'D': 'daily', 'W': 'weekly', 'M': 'monthly', 'Q': 'seasonally'}
+    
     if airport:
         ts = df.sort_values('DATETIME').set_index('DATETIME')
-        ts = ts.loc[ts['AIRPORT'] == airport, 'VRTG_MAX']
+        ts = ts.loc[ts['AIRPORT'] == airport, :]
         if ts.shape[0] == 0:
             return {'means': [], 'name':name[span]}
     else:
-        ts = df.sort_values('DATETIME').set_index('DATETIME')['VRTG_MAX']
-    means = (ts > vrtg).resample(span, closed='left').mean().dropna()
-    means_date = means.index.map(lambda x: x.strftime('%Y-%m-%d'))
-    means = pd.DataFrame({'DATE': means_date, 'means': means.values}).round(3).values.tolist()
-    return {'means': means, 'name':name[span]}
+        ts = df.sort_values('DATETIME').set_index('DATETIME')
+    
+    vrtgs_prob_means = get_dict_of_date_and_means(ts, vrtg, span, 'VRTG_MAX')
+    entropy_means = get_dict_of_date_and_means(ts, vrtg, span, 'ENTROPY')
+    crossRate_means = get_dict_of_date_and_means(ts, vrtg, span, 'MIX_CROSS_RATE')
+    return {'vrtgp': vrtgs_prob_means, 'entropy':entropy_means, 'crossrate':crossRate_means}
 
 def get_kline_ma(vrtg=1.4, window=100, airport=None):
     df = Table().get_dataFrame()
@@ -158,13 +170,13 @@ def get_kline_ma(vrtg=1.4, window=100, airport=None):
     df['DATETIME'] = pd.to_datetime(df['DATETIME'])
     if airport:
         ts = df.sort_values('DATETIME').set_index('DATETIME')
-        ts = ts.loc[ts['AIRPORT'] == airport, 'VRTG_MAX']
+        ts = ts.loc[ts['AIRPORT'] == airport, :]
         if ts.shape[0] == 0:
             return {'means': [], 'name':name}
     else:
-        ts = df.sort_values('DATETIME').set_index('DATETIME')['VRTG_MAX']
+        ts = df.sort_values('DATETIME').set_index('DATETIME')
 
-    means = (ts > vrtg).rolling(window=window, center=False).mean().dropna() # maybe use min_periods=5
+    means = (ts['VRTG_MAX'] > vrtg).rolling(window=window, center=False).mean().dropna() # maybe use min_periods=5
     means_date = means.index.map(lambda x: x.strftime('%Y-%m-%d'))
     means = pd.DataFrame({'DATE': means_date, 'means': means.values}).round(3).values.tolist()
     categoryData = ts.index.map(lambda x: x.strftime('%Y-%m-%d')).tolist()
