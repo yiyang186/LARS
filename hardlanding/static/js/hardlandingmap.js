@@ -41,7 +41,18 @@ option = {
             }
         ],
         tooltip: {
-            trigger: 'item'
+            trigger: 'item',
+            axisPointer: {
+                type: 'cross'
+            },
+            backgroundColor: 'rgba(245, 245, 245, 0.8)',
+            borderWidth: 1,
+            borderColor: '#ccc',
+            padding: 10,
+            textStyle: {
+                color: '#000'
+            },
+            extraCssText: 'width: 170px',
         },
         legend: {
             orient: 'vertical',
@@ -166,6 +177,17 @@ option = {
                         borderWidth: 1
                     }
                 },
+                tooltip: {
+                    formatter: function (param) {
+                        // param = param[0];
+                        return [
+                            '机场: ' + param.name + '<hr size=1 style="margin: 3px 0">',
+                            '经度: ' + param.value[0] + '<br/>',
+                            '纬度: ' + param.value[1] + '<br/>',
+                            '最重垂直过载: ' + param.value[2] + '<br/>'
+                        ].join('');
+                    }
+                },
                 data: []
             },
             {
@@ -175,6 +197,14 @@ option = {
                 xAxisIndex: 0,
                 yAxisIndex: 0,
                 symbol: 'none',
+                tooltip: {
+                    formatter: function (param) {
+                        return [
+                            '机场: ' + param.name + '<hr size=1 style="margin: 3px 0">',
+                            '最重垂直过载: ' + param.value + '<br/>'
+                        ].join('');
+                    }                    
+                },
                 itemStyle: {
                     normal: {
                         color: '#ddb926'
@@ -189,6 +219,15 @@ option = {
                 yAxisIndex: 1,
                 symbolSize: function(value) {
                     return (value[2]-1) * 30;
+                },
+                tooltip: {
+                    formatter: function (param) {
+                        return [
+                            '环境熵: ' + param.value[0] + '<br/>',
+                            '逆转率: ' + param.value[1] + '<br/>',
+                            '垂直过载: ' + param.value[2] + '<br/>'
+                        ].join('');
+                    }                    
                 },
                 data: [],
             }

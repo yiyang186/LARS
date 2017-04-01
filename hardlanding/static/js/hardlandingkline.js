@@ -16,19 +16,28 @@ option = {
             top: 'top'
         },
     ],
-    // backgroundColor: '#696969',
-    grid: {left: "33%", top: "10%", height: '70%', right: '25%'},
-        // {left: "33%", top: "65%", height: '25%', right: '25%'}
-    tooltip : {
-        trigger: 'item',
+    tooltip: {
+        trigger: 'axis',
         axisPointer: {
-            type: 'cross',
-            animation: false,
-            label: {
-                backgroundColor: '#505765'
-            }
-        }
+            type: 'cross'
+        },
+        backgroundColor: 'rgba(245, 245, 245, 0.8)',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        padding: 10,
+        textStyle: {
+            color: '#000'
+        },
+        extraCssText: 'width: 170px',
     },
+    // backgroundColor: '#696969',
+    grid: {left: "33%", top: "10%", height: '70%', right: '25%',
+        tooltip: {
+            trigger: 'axis',
+            // formatter: '{b}:<br />{c}'
+        },
+    },
+        // {left: "33%", top: "65%", height: '25%', right: '25%'}
     visualMap: {
         type: "piecewise",
         splitNumber: 4,
@@ -136,6 +145,19 @@ option = {
                 },
                 emphasis: {
                     show: false
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: function (param) {
+                    // param = param[0];
+                    return [
+                        '机场: ' + param.name + '<hr size=1 style="margin: 3px 0">',
+                        '经度: ' + param.value[0] + '<br/>',
+                        '纬度: ' + param.value[1] + '<br/>',
+                        '跑道长度: ' + param.value[2] + 'ft<br/>',
+                        '海拔： ' + param.value[3]+'ft'
+                    ].join('');
                 }
             },
             itemStyle: {
@@ -267,6 +289,10 @@ option = {
             left: '80%',
             top: '4%',
             sort: 'ascending',
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b}:<br />{c}'
+            },
             data: alldata.pyramid_vrtg.data
         },
     ]
