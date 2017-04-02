@@ -52,7 +52,7 @@ option = {
     ],
         // {left: "33%", top: "65%", height: '25%', right: '25%'}
     visualMap: {
-        type: "piecewise",
+        type: "continuous",
         splitNumber: 4,
         min: 0,
         max: 8000,
@@ -153,14 +153,14 @@ option = {
             gridIndex: 0, 
             name: '重着陆频率',
             type: 'value',
-            // max: 1.1
+            max: 1.0
         },
         {
             gridIndex: 0, 
             name: '每天航段数',
             nameLocation: 'start',
             type: 'value',
-            max: 400,
+            max: 300,
             inverse: true
         },
         {
@@ -410,7 +410,7 @@ option = {
                 }
             },
             tooltip: {trigger: 'item'},
-            data:alldata.altitude
+            data:alldata.altitude.counts
         },
         {
             name:'跑道长',
@@ -419,7 +419,7 @@ option = {
             radius: ['25%', '35%'],
             center: ['87%', '75%'],
             tooltip: {trigger: 'item'},
-            data:alldata.length
+            data:alldata.length.counts
         },
     ]
 };
@@ -428,9 +428,7 @@ if (option && typeof option === "object") {
     myChart.setOption(option, true);
 }
 
-function show_kline(params) {
-    var airport = params.name.match(/[A-Z]+/)+'';
-    var requestJson = {"airport": airport, "vrtg": vrtg};
+function update_kline(requestJson) {
     $.getJSON(urlkline, requestJson, function (res) {
         myChart.setOption({
             title : {text: res.title},
@@ -442,7 +440,7 @@ function show_kline(params) {
                 {id: 'weekly', data: res.dataW.means},
                 {id: 'weekly_entropy', data: res.entropyW.means},
                 {id: 'weekly_crossrate', data: res.crossrateW.means},
-                
+                                
                 // {id: 'monthly', data: res.dataM.means},
                 // {id: 'seasonally', data: res.dataQ.means},
                 // {id: 'ma100', data: res.data100.means},
@@ -453,7 +451,29 @@ function show_kline(params) {
     });
 }
 
+function show_kline(params) {
+    var airport = params.name.match(/[A-Z]+/)+'';
+    var requestJson = {"airport": airport, "vrtg": vrtg};
+    update_kline(requestJson);
+}
+
+function show_kline_by_pie(params) {
+    if(params.seriesName == '海拔'){
+        var codes = alldata.altitude.codes
+    }else if(params.seriesName == '跑道长') {
+        var codes = alldata.length.codes
+    }
+    var requestJson = {
+        "title":params.seriesName + params.name.replace('\n', ''), 
+        "airport_codes": '['+codes[params.name]+']', 
+        "vrtg": vrtg
+    };
+    update_kline(requestJson);
+}
+
 myChart.on('click', function (params) {
+    // alert(params.seriesName);
+    // alert(params.dataIndex);
     if(params.seriesType == 'scatter'){
         show_kline(params);
     }
@@ -461,13 +481,16 @@ myChart.on('click', function (params) {
         vrtg = params.name.slice(1,5); // 这里的vrtg是全局变量，用于界定重着陆
         show_kline({"name": ''});
     }
+    if(params.seriesType == 'pie'){
+        show_kline_by_pie(params);
+    }
 });
 
-myChart.on('legendselectchanged', function (params) {
-    // 获取点击图例的选中状态
-    var isSelected = params.selected[params.name];
-    // 在控制台中打印
-    console.log((isSelected ? '选中了' : '取消选中了') + '图例' + params.name);
-    // 打印所有图例的状态
-    // console.log(params.selected);
-});
+// myChart.on('legendselectchanged', function (params) {
+//     // 获取点击图例的选中状态
+//     var isSelected = params.selected[params.name];
+//     // 在控制台中打印
+//     console.log((isSelected ? '选中了' : '取消选中了') + '图例' + params.name);
+//     // 打印所有图例的状态
+//     // console.log(params.selected);
+// });

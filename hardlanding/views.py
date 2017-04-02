@@ -29,12 +29,18 @@ def show_map(request):
 
 def show_kline(request):
     if request.GET:
-        airport = request.GET['airport']
-        if airport == 'null':
-            airport = None
-            chinese_airport = '全国'
-        else:
-            chinese_airport = helpers.get_chinese_airport_name(airport)
+        airport = request.GET.get('airport')
+        airports = request.GET.get('airport_codes')
+        
+        if airport:    
+            if airport == 'null':
+                airport = None
+                chinese_airport = '全国'
+            else:
+                chinese_airport = helpers.get_chinese_airport_name(airport)
+        if airports:
+            airport = airports[1: -1].split(',')
+            chinese_airport = request.GET.get('title')
         vrtg = float(request.GET['vrtg'])
         counts = helpers.get_kline_counts(vrtg=vrtg, airport=airport)
         res = {'title': '{0}机场重着陆(>{1})发生频率'.format(chinese_airport, vrtg), 'counts': counts}

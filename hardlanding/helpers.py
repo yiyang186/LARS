@@ -150,12 +150,14 @@ def get_dict_of_date_and_means(ts, vrtg, span, col):
 def get_kline(vrtg=1.4, span='W', airport=None):
     df = Table().get_dataFrame()
     df['DATETIME'] = pd.to_datetime(df['DATETIME'])
-    
     if airport:
         ts = df.sort_values('DATETIME').set_index('DATETIME')
-        ts = ts.loc[ts['AIRPORT'] == airport, :]
+        if type(airport) == list:
+            ts = ts.loc[ts['AIRPORT'].map(lambda x: x in airport), :]
+        elif type(airport) == str:
+            ts = ts.loc[ts['AIRPORT'] == airport, :]
         if ts.shape[0] == 0:
-            return {'means': [], 'name':name[span]}
+            return {'means': [], 'name':''}
     else:
         ts = df.sort_values('DATETIME').set_index('DATETIME')
     
@@ -170,7 +172,10 @@ def get_kline_ma(vrtg=1.4, window=100, airport=None):
     df['DATETIME'] = pd.to_datetime(df['DATETIME'])
     if airport:
         ts = df.sort_values('DATETIME').set_index('DATETIME')
-        ts = ts.loc[ts['AIRPORT'] == airport, :]
+        if type(airport) == list:
+            ts = ts.loc[ts['AIRPORT'].map(lambda x: x in airport), :]
+        elif type(airport) == str:
+            ts = ts.loc[ts['AIRPORT'] == airport, :]
         if ts.shape[0] == 0:
             return {'means': [], 'name':name}
     else:
@@ -193,7 +198,10 @@ def get_kline_counts(vrtg=1.4, airport=None):
     df['DATETIME'] = pd.to_datetime(df['DATETIME'])
     if airport:
         ts = df.sort_values('DATETIME').set_index('DATETIME')
-        ts = ts.loc[ts['AIRPORT'] == airport, 'VRTG_MAX']
+        if type(airport) == list:
+            ts = ts.loc[ts['AIRPORT'].map(lambda x: x in airport), 'VRTG_MAX']
+        elif type(airport) == str:
+            ts = ts.loc[ts['AIRPORT'] == airport, 'VRTG_MAX']
         if ts.shape[0] == 0:
             return []
     else:
@@ -209,28 +217,39 @@ def m_2_ft(m):
     return m * 3.28
 
 def airports_divided_by_altitude(df, a, b):
-    plain_port = df.loc[df['Altitude'] <= m_2_ft(a), :].shape[0]
-    hill_port = df.loc[(df['Altitude'] > m_2_ft(a)) & (df['Altitude'] <= m_2_ft(b)), :].shape[0]
-    plateau_port = df.loc[df['Altitude'] > m_2_ft(b), :].shape[0]
-    altitude = [
-        {'name': '平原\n<{0}m'.format(a), 'value': plain_port},
-        {'name': '丘陵\n{0}~{1}m'.format(a,b), 'value': hill_port},
-        {'name': '高原\n>{0}m'.format(b), 'value': plateau_port}
+    plain_port = df.loc[df['Altitude'] <= m_2_ft(a), :]
+    hill_port = df.loc[(df['Altitude'] > m_2_ft(a)) & (df['Altitude'] <= m_2_ft(b)), :]
+    plateau_port = df.loc[df['Altitude'] > m_2_ft(b), :]
+    counts = [
+        {'name': '平原\n<{0}m'.format(a), 'value': plain_port.shape[0]},
+        {'name': '丘陵\n{0}~{1}m'.format(a,b), 'value': hill_port.shape[0]},
+        {'name': '高原\n>{0}m'.format(b), 'value': plateau_port.shape[0]}
     ]
-    return altitude
+    codes = {
+        '平原\n<{0}m'.format(a): plain_port.index.values.tolist(),
+        '丘陵\n{0}~{1}m'.format(a,b): hill_port.index.values.tolist(),
+        '高原\n>{0}m'.format(b): plateau_port.index.values.tolist()
+    }
+    return {'counts': counts, 'codes': codes}
 
 def airports_divided_by_length(df, a, b, c):
-    l1 = df.loc[df['Length'] <= m_2_ft(a), :].shape[0]
-    l2 = df.loc[(df['Length'] > m_2_ft(a)) & (df['Length'] <= m_2_ft(b)), :].shape[0]
-    l3 = df.loc[(df['Length'] > m_2_ft(b)) & (df['Length'] <= m_2_ft(c)), :].shape[0]
-    l4 = df.loc[df['Length'] > m_2_ft(c), :].shape[0]
-    length = [
-        {'name': '<{0}m'.format(a), 'value': l1},
-        {'name': '{0}~{1}m'.format(a, b), 'value': l2},
-        {'name': '{0}~{1}m'.format(b, c), 'value': l3},
-        {'name': '>{0}m'.format(c), 'value': l4}
+    l1 = df.loc[df['Length'] <= m_2_ft(a), :]
+    l2 = df.loc[(df['Length'] > m_2_ft(a)) & (df['Length'] <= m_2_ft(b)), :]
+    l3 = df.loc[(df['Length'] > m_2_ft(b)) & (df['Length'] <= m_2_ft(c)), :]
+    l4 = df.loc[df['Length'] > m_2_ft(c), :]
+    counts = [
+        {'name': '<{0}m'.format(a), 'value': l1.shape[0]},
+        {'name': '{0}~{1}m'.format(a, b), 'value': l2.shape[0]},
+        {'name': '{0}~{1}m'.format(b, c), 'value': l3.shape[0]},
+        {'name': '>{0}m'.format(c), 'value': l4.shape[0]}
     ]
-    return length
+    codes = {
+        '<{0}m'.format(a): l1.index.values.tolist(),
+        '{0}~{1}m'.format(a, b): l2.index.values.tolist(),
+        '{0}~{1}m'.format(b, c): l3.index.values.tolist(),
+        '>{0}m'.format(c): l4.index.values.tolist()
+    }
+    return {'counts': counts, 'codes': codes}
 
 def get_airports():
     df = Table().get_dataFrame()
