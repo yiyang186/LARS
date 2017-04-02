@@ -204,11 +204,43 @@ def get_kline_counts(vrtg=1.4, airport=None):
     counts = pd.DataFrame({'DATE': counts_date, 'counts': counts.values}).round(3).values.tolist()
     return counts
 
+
+def m_2_ft(m):
+    return m * 3.28
+
+def airports_divided_by_altitude(df, a, b):
+    plain_port = df.loc[df['Altitude'] <= m_2_ft(a), :].shape[0]
+    hill_port = df.loc[(df['Altitude'] > m_2_ft(a)) & (df['Altitude'] <= m_2_ft(b)), :].shape[0]
+    plateau_port = df.loc[df['Altitude'] > m_2_ft(b), :].shape[0]
+    altitude = [
+        {'name': '平原\n<{0}m'.format(a), 'value': plain_port},
+        {'name': '丘陵\n{0}~{1}m'.format(a,b), 'value': hill_port},
+        {'name': '高原\n>{0}m'.format(b), 'value': plateau_port}
+    ]
+    return altitude
+
+def airports_divided_by_length(df, a, b, c):
+    l1 = df.loc[df['Length'] <= m_2_ft(a), :].shape[0]
+    l2 = df.loc[(df['Length'] > m_2_ft(a)) & (df['Length'] <= m_2_ft(b)), :].shape[0]
+    l3 = df.loc[(df['Length'] > m_2_ft(b)) & (df['Length'] <= m_2_ft(c)), :].shape[0]
+    l4 = df.loc[df['Length'] > m_2_ft(c), :].shape[0]
+    length = [
+        {'name': '<{0}m'.format(a), 'value': l1},
+        {'name': '{0}~{1}m'.format(a, b), 'value': l2},
+        {'name': '{0}~{1}m'.format(b, c), 'value': l3},
+        {'name': '>{0}m'.format(c), 'value': l4}
+    ]
+    return length
+
 def get_airports():
     df = Table().get_dataFrame()
     temp = df.loc[df['Country'] == 'CHN', :].groupby('AIRPORT')\
              .max()[['ChineseCityName', 'ChineseName', 'Longitude', 'Latitude', 'Altitude', 'Length']]\
              .round(3)
-    data = list(map(lambda i, r: {"name": r[0]+r[1]+i, "value": r[2:]}, \
+
+    altitude = airports_divided_by_altitude(temp, 100, 1000)
+    length = airports_divided_by_length(temp, 3000, 3500, 4000)
+
+    airport_info = list(map(lambda i, r: {"name": r[0]+r[1]+i, "value": r[2:]}, \
                 temp.index, temp.values.tolist()))
-    return data
+    return {'altitude': altitude, 'length': length, 'info': airport_info}

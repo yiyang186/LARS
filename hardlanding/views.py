@@ -51,7 +51,8 @@ def show_kline(request):
         counts = helpers.get_kline_counts(vrtg=1.4)
         geo = helpers.get_airports()
         pyramid_vrtg = helpers.get_pyramid_vrtg()
-        alldata = {'dates': dates, 'counts': counts, 'geo': geo, 'pyramid_vrtg': pyramid_vrtg}
+        alldata = {'dates': dates, 'counts': counts, 'airportinfo': geo['info'], 
+            'altitude': geo['altitude'], 'length': geo['length'],  'pyramid_vrtg': pyramid_vrtg}
         for span in list('DW'):
             data_temp = helpers.get_kline(vrtg=1.4, span=span, airport=None)
             alldata['data'+span] = data_temp['vrtgp']

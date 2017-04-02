@@ -15,6 +15,11 @@ option = {
             left: 'right',
             top: 'top'
         },
+        {
+            text: '机场海拔与跑道长',
+            left: 'right',
+            top: 'bottom'
+        },
     ],
     tooltip: {
         trigger: 'axis',
@@ -192,8 +197,8 @@ option = {
                         '机场: ' + param.name + '<hr size=1 style="margin: 3px 0">',
                         '经度: ' + param.value[0] + '<br/>',
                         '纬度: ' + param.value[1] + '<br/>',
-                        '跑道长度: ' + param.value[2] + 'ft<br/>',
-                        '海拔： ' + param.value[3]+'ft'
+                        '海拔: ' + param.value[2] + 'ft<br/>',
+                        '跑道长度： ' + param.value[3]+'ft'
                     ].join('');
                 }
             },
@@ -203,7 +208,7 @@ option = {
                     borderWidth: 1
                 }
             },
-            data: alldata.geo
+            data: alldata.airportinfo
         },
         {
             id: 'daily',
@@ -387,6 +392,34 @@ option = {
                 }
             },
             data: alldata.crossrateW.means
+        },
+        {
+            name:'海拔',
+            type:'pie',
+            selectedMode: 'single',
+            radius: [0, '20%'],
+            center: ['87%', '75%'],
+            label: {
+                normal: {
+                    position: 'inner'
+                }
+            },
+            labelLine: {
+                normal: {
+                    show: false
+                }
+            },
+            tooltip: {trigger: 'item'},
+            data:alldata.altitude
+        },
+        {
+            name:'跑道长',
+            type:'pie',
+            selectedMode: 'single',
+            radius: ['25%', '35%'],
+            center: ['87%', '75%'],
+            tooltip: {trigger: 'item'},
+            data:alldata.length
         },
     ]
 };
