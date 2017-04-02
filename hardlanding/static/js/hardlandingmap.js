@@ -64,8 +64,14 @@ option = {
             }
         },
         visualMap: {
-            min: 1,
-            max: 2,
+            type: 'piecewise',
+            pieces: [
+                {min: 1.6},
+                {min: 1.5, max: 1.6},
+                {min: 1.4, max: 1.5},
+                {min: 1.3, max: 1.4},
+                {max: 1.3}  
+            ],
             seriesIndex: [0, 2],
             calculable: true,
             dimension: 2,

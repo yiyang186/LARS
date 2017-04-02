@@ -62,7 +62,7 @@ def get_pyramid_vrtg():
     for i, vrtg in enumerate([1.3, 1.35, 1.4, 1.45, 1.5, 1.55, 1.6, 1.65,1.7]):
         value = table.loc[table['VRTG_MAX'] > vrtg, :].shape[0]
         if i == 0:
-            name = '>{0:.2f}: {1}%'.format(vrtg, 100)
+            name = '>{0:.2f}: {1}%'.format(vrtg, int(100 * value / table.shape[0]))
         else:
             name = '>{0:.2f}: {1}%'.format(vrtg, int(100 * value / data[i-1]['value']))
         data.append({'value': value, 'name': name})
@@ -213,41 +213,38 @@ def get_kline_counts(vrtg=1.4, airport=None):
     return counts
 
 
-def m_2_ft(m):
-    return m * 3.28
-
 def airports_divided_by_altitude(df, a, b):
-    plain_port = df.loc[df['Altitude'] <= m_2_ft(a), :]
-    hill_port = df.loc[(df['Altitude'] > m_2_ft(a)) & (df['Altitude'] <= m_2_ft(b)), :]
-    plateau_port = df.loc[df['Altitude'] > m_2_ft(b), :]
+    plain_port = df.loc[df['Altitude'] <= a, :]
+    hill_port = df.loc[(df['Altitude'] > a) & (df['Altitude'] <= b), :]
+    plateau_port = df.loc[df['Altitude'] > b, :]
     counts = [
-        {'name': '平原\n<{0}m'.format(a), 'value': plain_port.shape[0]},
-        {'name': '丘陵\n{0}~{1}m'.format(a,b), 'value': hill_port.shape[0]},
-        {'name': '高原\n>{0}m'.format(b), 'value': plateau_port.shape[0]}
+        {'name': '平原\n<{0}ft'.format(a), 'value': plain_port.shape[0]},
+        {'name': '丘陵\n{0}~{1}ft'.format(a,b), 'value': hill_port.shape[0]},
+        {'name': '高原\n>{0}ft'.format(b), 'value': plateau_port.shape[0]}
     ]
     codes = {
-        '平原\n<{0}m'.format(a): plain_port.index.values.tolist(),
-        '丘陵\n{0}~{1}m'.format(a,b): hill_port.index.values.tolist(),
-        '高原\n>{0}m'.format(b): plateau_port.index.values.tolist()
+        '平原\n<{0}ft'.format(a): plain_port.index.values.tolist(),
+        '丘陵\n{0}~{1}ft'.format(a,b): hill_port.index.values.tolist(),
+        '高原\n>{0}ft'.format(b): plateau_port.index.values.tolist()
     }
     return {'counts': counts, 'codes': codes}
 
 def airports_divided_by_length(df, a, b, c):
-    l1 = df.loc[df['Length'] <= m_2_ft(a), :]
-    l2 = df.loc[(df['Length'] > m_2_ft(a)) & (df['Length'] <= m_2_ft(b)), :]
-    l3 = df.loc[(df['Length'] > m_2_ft(b)) & (df['Length'] <= m_2_ft(c)), :]
-    l4 = df.loc[df['Length'] > m_2_ft(c), :]
+    l1 = df.loc[df['Length'] <= a, :]
+    l2 = df.loc[(df['Length'] > a) & (df['Length'] <= b), :]
+    l3 = df.loc[(df['Length'] > b) & (df['Length'] <=c), :]
+    l4 = df.loc[df['Length'] > c, :]
     counts = [
-        {'name': '<{0}m'.format(a), 'value': l1.shape[0]},
-        {'name': '{0}~{1}m'.format(a, b), 'value': l2.shape[0]},
-        {'name': '{0}~{1}m'.format(b, c), 'value': l3.shape[0]},
-        {'name': '>{0}m'.format(c), 'value': l4.shape[0]}
+        {'name': '<{0}ft'.format(a), 'value': l1.shape[0]},
+        {'name': '{0}~{1}ft'.format(a, b), 'value': l2.shape[0]},
+        {'name': '{0}~{1}ft'.format(b, c), 'value': l3.shape[0]},
+        {'name': '>{0}ft'.format(c), 'value': l4.shape[0]}
     ]
     codes = {
-        '<{0}m'.format(a): l1.index.values.tolist(),
-        '{0}~{1}m'.format(a, b): l2.index.values.tolist(),
-        '{0}~{1}m'.format(b, c): l3.index.values.tolist(),
-        '>{0}m'.format(c): l4.index.values.tolist()
+        '<{0}ft'.format(a): l1.index.values.tolist(),
+        '{0}~{1}ft'.format(a, b): l2.index.values.tolist(),
+        '{0}~{1}ft'.format(b, c): l3.index.values.tolist(),
+        '>{0}ft'.format(c): l4.index.values.tolist()
     }
     return {'counts': counts, 'codes': codes}
 
@@ -257,8 +254,8 @@ def get_airports():
              .max()[['ChineseCityName', 'ChineseName', 'Longitude', 'Latitude', 'Altitude', 'Length']]\
              .round(3)
 
-    altitude = airports_divided_by_altitude(temp, 100, 1000)
-    length = airports_divided_by_length(temp, 3000, 3500, 4000)
+    altitude = airports_divided_by_altitude(temp, 300, 3000)
+    length = airports_divided_by_length(temp, 10000, 11000, 12000)
 
     airport_info = list(map(lambda i, r: {"name": r[0]+r[1]+i, "value": r[2:]}, \
                 temp.index, temp.values.tolist()))

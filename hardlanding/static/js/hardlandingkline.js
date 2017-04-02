@@ -21,6 +21,7 @@ option = {
             top: 'bottom'
         },
     ],
+    color: ['#00a3ba', '#eac736', '#ff4e5d', '#c23531','#2f4554', '#61a0a8', '#d48265', '#91c7ae'],
     tooltip: {
         trigger: 'axis',
         axisPointer: {
@@ -52,10 +53,12 @@ option = {
     ],
         // {left: "33%", top: "65%", height: '25%', right: '25%'}
     visualMap: {
-        type: "continuous",
-        splitNumber: 4,
-        min: 0,
-        max: 8000,
+        type: "piecewise",
+        pieces: [
+            {min: 3000},
+            {min: 300, max: 3000},
+            {max: 300}  
+        ],
         seriesIndex: 0,
         dimension: 2,
         calculable: true,
@@ -98,8 +101,8 @@ option = {
         map: 'china',
         left: '1%',
         width: '35%',
-        center: [110, 35],
-        zoom: 0.9,
+        center: [120, 35],
+        zoom: 1.5,
         roam: true,
         label: {
             emphasis: {
@@ -165,11 +168,15 @@ option = {
         },
         {
             gridIndex: 1, 
+            // min: 0.75,
+            // max: 2.8,
             name: '环境熵',
             type: 'value',
         },
         {
             gridIndex: 1, 
+            // min: 0.04,
+            // max: 0.16,
             name: '逆转率',
             type: 'value',
         },
