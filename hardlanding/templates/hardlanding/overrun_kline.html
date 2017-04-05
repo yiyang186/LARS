@@ -1,0 +1,1361 @@
+{% extends 'base.html' %}
+    {% block content %}
+        <div class="col-md-6">
+            <div id="main" style="height:600px;width:100%"></div>
+            <ul>
+              <li id="target1"></li>
+              <li id="target2"></li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+          <div id="kline" style="height:600px;width:100%"></div>
+
+          <input type="file" id="files" name="files[]" />
+          <button type="button" id="test" onclick="test()">绘图1</button>
+          <button type="button" id="test" onclick="test2()">绘图2</button>
+
+          <output id="list"></output>
+        </div>
+
+        {% load staticfiles %}
+        <script type="text/javascript" src="{% static 'js/echarts-all-3.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/dataTool.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/china.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/world.js' %}"></script>
+        <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+        <script type="text/javascript" src="{% static 'js/bmap.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/overrun.js' %}"></script>
+        <script type="text/javascript">
+          var myChart = echarts.init(document.getElementById('main'),'macarons');
+
+          var data1 = [{"airport":"ZBAA","runway":"1","length":3800,"width":60,"altitude":35.052},
+            {"airport":"ZBAA","runway":"18L","length":3800,"width":60,"altitude":35.052},
+            {"airport":"ZBAA","runway":"18R","length":3200,"width":50,"altitude":35.052},
+            {"airport":"ZBAA","runway":"19","length":3800,"width":60,"altitude":35.052},
+            {"airport":"ZBAA","runway":"36L","length":3200,"width":50,"altitude":35.052},
+            {"airport":"ZBAA","runway":"36R","length":3800,"width":60,"altitude":35.052},
+            {"airport":"ZBCF","runway":"3","length":2500,"width":50,"altitude":621.1824},
+            {"airport":"ZBCF","runway":"21","length":2500,"width":50,"altitude":621.1824},
+            {"airport":"ZBCZ","runway":"1","length":2440,"width":45,"altitude":923.2392},
+            {"airport":"ZBCZ","runway":"19","length":2440,"width":45,"altitude":923.2392},
+            {"airport":"ZBDS","runway":"13","length":2800,"width":45,"altitude":1399.3368},
+            {"airport":"ZBDS","runway":"31","length":2800,"width":45,"altitude":1399.3368},
+            {"airport":"ZBDT","runway":"14","length":2400,"width":45,"altitude":1056.7416},
+            {"airport":"ZBDT","runway":"32","length":2400,"width":45,"altitude":1056.7416},
+            {"airport":"ZBHD","runway":"5","length":2200,"width":45,"altitude":72.5424},
+            {"airport":"ZBHD","runway":"23","length":2200,"width":45,"altitude":72.5424},
+            {"airport":"ZBHH","runway":"8","length":3600,"width":45,"altitude":1083.8688},
+            {"airport":"ZBHH","runway":"26","length":3600,"width":45,"altitude":1083.8688},
+            {"airport":"ZBLA","runway":"9","length":2800,"width":45,"altitude":659.892},
+            {"airport":"ZBLA","runway":"27","length":2800,"width":45,"altitude":659.892},
+            {"airport":"ZBLL","runway":"18","length":2600,"width":45,"altitude":1167.384},
+            {"airport":"ZBLL","runway":"36","length":2600,"width":45,"altitude":1167.384},
+            {"airport":"ZBMZ","runway":"12","length":2800,"width":45,"altitude":680.0088},
+            {"airport":"ZBMZ","runway":"30","length":2800,"width":45,"altitude":680.0088},
+            {"airport":"ZBNY","runway":"18","length":3200,"width":50,"altitude":39.3192},
+            {"airport":"ZBNY","runway":"36","length":3200,"width":50,"altitude":39.3192},
+            {"airport":"ZBOW","runway":"13","length":2800,"width":45,"altitude":1012.2408},
+            {"airport":"ZBOW","runway":"31","length":2800,"width":45,"altitude":1012.2408},
+            {"airport":"ZBSH","runway":"6","length":2500,"width":50,"altitude":8.8392},
+            {"airport":"ZBSH","runway":"24","length":2500,"width":50,"altitude":8.8392},
+            {"airport":"ZBSJ","runway":"15","length":3400,"width":45,"altitude":71.0184},
+            {"airport":"ZBSJ","runway":"33","length":3400,"width":45,"altitude":71.0184},
+            {"airport":"ZBSN","runway":"10","length":2700,"width":50,"altitude":14.9352},
+            {"airport":"ZBSN","runway":"28","length":2700,"width":50,"altitude":14.9352},
+            {"airport":"ZBTJ","runway":"16L","length":3200,"width":45,"altitude":3.9624},
+            {"airport":"ZBTJ","runway":"16R","length":3600,"width":50,"altitude":3.9624},
+            {"airport":"ZBTJ","runway":"34L","length":3600,"width":50,"altitude":3.9624},
+            {"airport":"ZBTJ","runway":"34R","length":3200,"width":45,"altitude":3.9624},
+            {"airport":"ZBTL","runway":"2","length":2300,"width":45,"altitude":183.7944},
+            {"airport":"ZBTL","runway":"20","length":2300,"width":45,"altitude":183.7944},
+            {"airport":"ZBUH","runway":"1","length":2600,"width":45,"altitude":1111.3008},
+            {"airport":"ZBUH","runway":"19","length":2600,"width":45,"altitude":1111.3008},
+            {"airport":"ZBUL","runway":"14","length":2600,"width":45,"altitude":304.8},
+            {"airport":"ZBUL","runway":"32","length":2600,"width":45,"altitude":304.8},
+            {"airport":"ZBXH","runway":"4","length":2800,"width":45,"altitude":1017.1176},
+            {"airport":"ZBXH","runway":"22","length":2800,"width":45,"altitude":1017.1176},
+            {"airport":"ZBYC","runway":"8","length":3000,"width":60,"altitude":381.0},
+            {"airport":"ZBYC","runway":"26","length":3000,"width":60,"altitude":381.0},
+            {"airport":"ZBYN","runway":"13","length":3600,"width":45,"altitude":786.0792},
+            {"airport":"ZBYN","runway":"31","length":3600,"width":45,"altitude":786.0792},
+            {"airport":"ZBZJ","runway":"12","length":2500,"width":45,"altitude":715.6704},
+            {"airport":"ZBZJ","runway":"30","length":2500,"width":45,"altitude":715.6704},
+            {"airport":"ZGBH","runway":"1","length":3200,"width":45,"altitude":25.2984},
+            {"airport":"ZGBH","runway":"19","length":3200,"width":45,"altitude":25.2984},
+            {"airport":"ZGBS","runway":"12","length":2500,"width":45,"altitude":145.9992},
+            {"airport":"ZGBS","runway":"30","length":2500,"width":45,"altitude":145.9992},
+            {"airport":"ZGCD","runway":"2","length":2600,"width":45,"altitude":45.4152},
+            {"airport":"ZGCD","runway":"20","length":2600,"width":45,"altitude":45.4152},
+            {"airport":"ZGCJ","runway":"4","length":2000,"width":45,"altitude":263.3472},
+            {"airport":"ZGCJ","runway":"22","length":2000,"width":45,"altitude":263.3472},
+            {"airport":"ZGDY","runway":"8","length":2600,"width":45,"altitude":217.3224},
+            {"airport":"ZGDY","runway":"26","length":2600,"width":45,"altitude":217.3224},
+            {"airport":"ZGGG","runway":"02L","length":3600,"width":45,"altitude":15.24},
+            {"airport":"ZGGG","runway":"02R","length":3800,"width":60,"altitude":15.24},
+            {"airport":"ZGGG","runway":"20L","length":3800,"width":60,"altitude":15.24},
+            {"airport":"ZGGG","runway":"20R","length":3600,"width":45,"altitude":15.24},
+            {"airport":"ZGHA","runway":"18","length":3200,"width":45,"altitude":67.056},
+            {"airport":"ZGHA","runway":"36","length":3200,"width":45,"altitude":67.056},
+            {"airport":"ZGKL","runway":"1","length":3200,"width":45,"altitude":173.4312},
+            {"airport":"ZGKL","runway":"19","length":3200,"width":45,"altitude":173.4312},
+            {"airport":"ZGLG","runway":"18","length":2600,"width":50,"altitude":103.3272},
+            {"airport":"ZGLG","runway":"36","length":2600,"width":50,"altitude":103.3272},
+            {"airport":"ZGMX","runway":"4","length":1800,"width":40,"altitude":92.6592},
+            {"airport":"ZGMX","runway":"22","length":1800,"width":40,"altitude":92.6592},
+            {"airport":"ZGNN","runway":"5","length":3200,"width":45,"altitude":128.016},
+            {"airport":"ZGNN","runway":"23","length":3200,"width":45,"altitude":128.016},
+            {"airport":"ZGOW","runway":"4","length":2800,"width":45,"altitude":15.5448},
+            {"airport":"ZGOW","runway":"22","length":2800,"width":45,"altitude":15.5448},
+            {"airport":"ZGSD","runway":"5","length":4000,"width":45,"altitude":6.4008},
+            {"airport":"ZGSD","runway":"23","length":4000,"width":45,"altitude":6.4008},
+            {"airport":"ZGSZ","runway":"15","length":3400,"width":45,"altitude":3.9624},
+            {"airport":"ZGSZ","runway":"16","length":3800,"width":60,"altitude":3.9624},
+            {"airport":"ZGSZ","runway":"33","length":3400,"width":45,"altitude":3.9624},
+            {"airport":"ZGSZ","runway":"34","length":3800,"width":60,"altitude":3.9624},
+            {"airport":"ZGZH","runway":"16","length":2540,"width":45,"altitude":99.9744},
+            {"airport":"ZGZH","runway":"34","length":2540,"width":45,"altitude":99.9744},
+            {"airport":"ZGZJ","runway":"16","length":2400,"width":45,"altitude":42.9768},
+            {"airport":"ZGZJ","runway":"34","length":2400,"width":45,"altitude":42.9768},
+            {"airport":"ZHCC","runway":"12","length":3400,"width":60,"altitude":150.876},
+            {"airport":"ZHCC","runway":"30","length":3400,"width":60,"altitude":150.876},
+            {"airport":"ZHES","runway":"1","length":2350,"width":45,"altitude":494.9952},
+            {"airport":"ZHES","runway":"19","length":2350,"width":45,"altitude":494.9952},
+            {"airport":"ZHHH","runway":"4","length":3400,"width":45,"altitude":34.1376},
+            {"airport":"ZHHH","runway":"22","length":3400,"width":45,"altitude":34.1376},
+            {"airport":"ZHLY","runway":"8","length":2500,"width":45,"altitude":264.5664},
+            {"airport":"ZHLY","runway":"26","length":2500,"width":45,"altitude":264.5664},
+            {"airport":"ZHNY","runway":"5","length":2800,"width":45,"altitude":126.1872},
+            {"airport":"ZHNY","runway":"23","length":2800,"width":45,"altitude":126.1872},
+            {"airport":"ZHSN","runway":"17","length":2800,"width":45,"altitude":2584.704},
+            {"airport":"ZHSN","runway":"35","length":2800,"width":45,"altitude":2584.704},
+            {"airport":"ZHXF","runway":"1","length":2400,"width":45,"altitude":71.3232},
+            {"airport":"ZHXF","runway":"19","length":2400,"width":45,"altitude":71.3232},
+            {"airport":"ZHYC","runway":"14","length":1527,"width":15,"altitude":204.5208},
+            {"airport":"ZHYC","runway":"19","length":1527,"width":15,"altitude":204.5208},
+            {"airport":"ZJHK","runway":"9","length":3600,"width":45,"altitude":22.86},
+            {"airport":"ZJHK","runway":"27","length":3600,"width":45,"altitude":22.86},
+            {"airport":"ZJSY","runway":"8","length":3400,"width":45,"altitude":28.956},
+            {"airport":"ZJSY","runway":"26","length":3400,"width":45,"altitude":28.956},
+            {"airport":"ZLDH","runway":"8","length":2800,"width":45,"altitude":1125.6264},
+            {"airport":"ZLDH","runway":"26","length":2800,"width":45,"altitude":1125.6264},
+            {"airport":"ZLDL","runway":"7","length":3000,"width":45,"altitude":2862.072},
+            {"airport":"ZLDL","runway":"25","length":3000,"width":45,"altitude":2862.072},
+            {"airport":"ZLGM","runway":"9","length":4800,"width":50,"altitude":2841.3456},
+            {"airport":"ZLGM","runway":"27","length":4800,"width":50,"altitude":2841.3456},
+            {"airport":"ZLGY","runway":"18","length":2800,"width":45,"altitude":1745.5896},
+            {"airport":"ZLGY","runway":"36","length":2800,"width":45,"altitude":1745.5896},
+            {"airport":"ZLHZ","runway":"7","length":2500,"width":45,"altitude":494.6904},
+            {"airport":"ZLHZ","runway":"25","length":2500,"width":45,"altitude":494.6904},
+            {"airport":"ZLIC","runway":"3","length":3200,"width":45,"altitude":1140.8664},
+            {"airport":"ZLIC","runway":"21","length":3200,"width":45,"altitude":1140.8664},
+            {"airport":"ZLJC","runway":"13","length":3000,"width":45,"altitude":1442.3136},
+            {"airport":"ZLJC","runway":"31","length":3000,"width":45,"altitude":1442.3136},
+            {"airport":"ZLJQ","runway":"14","length":3000,"width":45,"altitude":1559.052},
+            {"airport":"ZLJQ","runway":"32","length":3000,"width":45,"altitude":1559.052},
+            {"airport":"ZLLL","runway":"18","length":3600,"width":45,"altitude":1947.0624},
+            {"airport":"ZLLL","runway":"36","length":3600,"width":45,"altitude":1947.0624},
+            {"airport":"ZLQY","runway":"14","length":2000,"width":30,"altitude":1407.5664},
+            {"airport":"ZLQY","runway":"32","length":2000,"width":30,"altitude":1407.5664},
+            {"airport":"ZLXN","runway":"11","length":3800,"width":45,"altitude":2183.892},
+            {"airport":"ZLXN","runway":"29","length":3800,"width":45,"altitude":2183.892},
+            {"airport":"ZLXY","runway":"5","length":3000,"width":45,"altitude":479.1456},
+            {"airport":"ZLXY","runway":"05L","length":3000,"width":45,"altitude":479.1456},
+            {"airport":"ZLXY","runway":"05R","length":3800,"width":60,"altitude":479.1456},
+            {"airport":"ZLXY","runway":"23","length":3000,"width":45,"altitude":479.1456},
+            {"airport":"ZLXY","runway":"23L","length":3800,"width":60,"altitude":479.1456},
+            {"airport":"ZLXY","runway":"23R","length":3000,"width":45,"altitude":479.1456},
+            {"airport":"ZLYA","runway":"6","length":2800,"width":45,"altitude":944.88},
+            {"airport":"ZLYA","runway":"24","length":2800,"width":45,"altitude":944.88},
+            {"airport":"ZLYL","runway":"16","length":2800,"width":45,"altitude":1185.3672},
+            {"airport":"ZLYL","runway":"34","length":2800,"width":45,"altitude":1185.3672},
+            {"airport":"ZLYS","runway":"10","length":3800,"width":45,"altitude":3904.7928},
+            {"airport":"ZLYS","runway":"28","length":3800,"width":45,"altitude":3904.7928},
+            {"airport":"ZLZW","runway":"9","length":2800,"width":45,"altitude":1245.4128},
+            {"airport":"ZLZW","runway":"27","length":2800,"width":45,"altitude":1245.4128},
+            {"airport":"ZLZY","runway":"11L","length":3000,"width":50,"altitude":1588.6176},
+            {"airport":"ZLZY","runway":"29R","length":3000,"width":50,"altitude":1588.6176},
+            {"airport":"ZPBS","runway":"1","length":2400,"width":45,"altitude":1664.208},
+            {"airport":"ZPBS","runway":"19","length":2400,"width":45,"altitude":1664.208},
+            {"airport":"ZPDL","runway":"17","length":2600,"width":45,"altitude":2155.2408},
+            {"airport":"ZPDL","runway":"35","length":2600,"width":45,"altitude":2155.2408},
+            {"airport":"ZPDQ","runway":"16","length":3600,"width":45,"altitude":3287.8776},
+            {"airport":"ZPDQ","runway":"34","length":3600,"width":45,"altitude":3287.8776},
+            {"airport":"ZPJH","runway":"16","length":2400,"width":45,"altitude":552.9072},
+            {"airport":"ZPJH","runway":"34","length":2400,"width":45,"altitude":552.9072},
+            {"airport":"ZPLC","runway":"16","length":2400,"width":45,"altitude":1896.4656},
+            {"airport":"ZPLC","runway":"34","length":2400,"width":45,"altitude":1896.4656},
+            {"airport":"ZPLJ","runway":"2","length":3000,"width":45,"altitude":2242.7184},
+            {"airport":"ZPLJ","runway":"20","length":3000,"width":45,"altitude":2242.7184},
+            {"airport":"ZPMS","runway":"5","length":2200,"width":45,"altitude":876.9096},
+            {"airport":"ZPMS","runway":"23","length":2200,"width":45,"altitude":876.9096},
+            {"airport":"ZPOD","runway":"3","length":3400,"width":45,"altitude":1894.9416},
+            {"airport":"ZPOD","runway":"21","length":3400,"width":45,"altitude":1894.9416},
+            {"airport":"ZPPP","runway":"3","length":4000,"width":45,"altitude":2103.4248},
+            {"airport":"ZPPP","runway":"4","length":4500,"width":61,"altitude":2103.4248},
+            {"airport":"ZPPP","runway":"21","length":4000,"width":45,"altitude":2103.4248},
+            {"airport":"ZPPP","runway":"22","length":4500,"width":61,"altitude":2103.4248},
+            {"airport":"ZPSM","runway":"18","length":2500,"width":45,"altitude":1299.972},
+            {"airport":"ZPSM","runway":"36","length":2500,"width":45,"altitude":1299.972},
+            {"airport":"ZPTC","runway":"18","length":2350,"width":45,"altitude":1887.6264},
+            {"airport":"ZPTC","runway":"36","length":2350,"width":45,"altitude":1887.6264},
+            {"airport":"ZPWS","runway":"2","length":2400,"width":45,"altitude":1590.4464},
+            {"airport":"ZPWS","runway":"20","length":2400,"width":45,"altitude":1590.4464},
+            {"airport":"ZPZT","runway":"4","length":2600,"width":45,"altitude":1935.7848},
+            {"airport":"ZPZT","runway":"22","length":2600,"width":45,"altitude":1935.7848},
+            {"airport":"ZSAM","runway":"5","length":3400,"width":45,"altitude":17.9832},
+            {"airport":"ZSAM","runway":"23","length":3400,"width":45,"altitude":17.9832},
+            {"airport":"ZSAQ","runway":"6","length":2800,"width":50,"altitude":17.0688},
+            {"airport":"ZSAQ","runway":"24","length":2800,"width":50,"altitude":17.0688},
+            {"airport":"ZSCG","runway":"11","length":3400,"width":50,"altitude":7.0104},
+            {"airport":"ZSCG","runway":"29","length":3400,"width":50,"altitude":7.0104},
+            {"airport":"ZSCN","runway":"3","length":2800,"width":45,"altitude":43.5864},
+            {"airport":"ZSCN","runway":"21","length":2800,"width":45,"altitude":43.5864},
+            {"airport":"ZSDY","runway":"18","length":2800,"width":45,"altitude":5.4864},
+            {"airport":"ZSDY","runway":"36","length":2800,"width":45,"altitude":5.4864},
+            {"airport":"ZSFZ","runway":"3","length":3600,"width":45,"altitude":14.0208},
+            {"airport":"ZSFZ","runway":"21","length":3600,"width":45,"altitude":14.0208},
+            {"airport":"ZSGS","runway":"8","length":2600,"width":45,"altitude":85.6488},
+            {"airport":"ZSGS","runway":"26","length":2600,"width":45,"altitude":85.6488},
+            {"airport":"ZSGZ","runway":"7","length":2600,"width":45,"altitude":134.4168},
+            {"airport":"ZSGZ","runway":"25","length":2600,"width":45,"altitude":134.4168},
+            {"airport":"ZSHC","runway":"6","length":3400,"width":60,"altitude":6.7056},
+            {"airport":"ZSHC","runway":"7","length":3600,"width":45,"altitude":6.7056},
+            {"airport":"ZSHC","runway":"24","length":3400,"width":60,"altitude":6.7056},
+            {"airport":"ZSHC","runway":"25","length":3600,"width":45,"altitude":6.7056},
+            {"airport":"ZSJG","runway":"9","length":2816,"width":50,"altitude":38.4048},
+            {"airport":"ZSJG","runway":"27","length":2816,"width":50,"altitude":38.4048},
+            {"airport":"ZSJH","runway":"13","length":2400,"width":45,"altitude":20.1168},
+            {"airport":"ZSJH","runway":"31","length":2400,"width":45,"altitude":20.1168},
+            {"airport":"ZSJJ","runway":"4","length":2800,"width":50,"altitude":46.3296},
+            {"airport":"ZSJJ","runway":"22","length":2800,"width":50,"altitude":46.3296},
+            {"airport":"ZSJN","runway":"1","length":3600,"width":45,"altitude":22.86},
+            {"airport":"ZSJN","runway":"19","length":3600,"width":45,"altitude":22.86},
+            {"airport":"ZSJU","runway":"6","length":2905,"width":45,"altitude":64.008},
+            {"airport":"ZSJU","runway":"24","length":2905,"width":45,"altitude":64.008},
+            {"airport":"ZSLG","runway":"3","length":2500,"width":50,"altitude":20.7264},
+            {"airport":"ZSLG","runway":"21","length":2500,"width":50,"altitude":20.7264},
+            {"airport":"ZSLQ","runway":"3","length":2500,"width":60,"altitude":6.096},
+            {"airport":"ZSLQ","runway":"21","length":2500,"width":60,"altitude":6.096},
+            {"airport":"ZSLY","runway":"1","length":2400,"width":45,"altitude":66.4464},
+            {"airport":"ZSLY","runway":"19","length":2400,"width":45,"altitude":66.4464},
+            {"airport":"ZSNB","runway":"13","length":3200,"width":45,"altitude":3.9624},
+            {"airport":"ZSNB","runway":"31","length":3200,"width":45,"altitude":3.9624},
+            {"airport":"ZSNJ","runway":"6","length":3600,"width":45,"altitude":14.9352},
+            {"airport":"ZSNJ","runway":"7","length":3600,"width":60,"altitude":14.9352},
+            {"airport":"ZSNJ","runway":"24","length":3600,"width":45,"altitude":14.9352},
+            {"airport":"ZSNJ","runway":"25","length":3600,"width":60,"altitude":14.9352},
+            {"airport":"ZSNT","runway":"18","length":2400,"width":45,"altitude":4.572},
+            {"airport":"ZSNT","runway":"36","length":2400,"width":45,"altitude":4.572},
+            {"airport":"ZSOF","runway":"14","length":3000,"width":50,"altitude":63.3984},
+            {"airport":"ZSOF","runway":"15","length":3400,"width":45,"altitude":63.3984},
+            {"airport":"ZSOF","runway":"32","length":3000,"width":50,"altitude":63.3984},
+            {"airport":"ZSOF","runway":"33","length":3400,"width":45,"altitude":63.3984},
+            {"airport":"ZSPD","runway":"16","length":3800,"width":60,"altitude":3.9624},
+            {"airport":"ZSPD","runway":"17","length":4000,"width":60,"altitude":3.9624},
+            {"airport":"ZSPD","runway":"17L","length":4000,"width":60,"altitude":3.9624},
+            {"airport":"ZSPD","runway":"17R","length":3400,"width":60,"altitude":3.9624},
+            {"airport":"ZSPD","runway":"34","length":3800,"width":60,"altitude":3.9624},
+            {"airport":"ZSPD","runway":"35","length":4000,"width":60,"altitude":3.9624},
+            {"airport":"ZSPD","runway":"35L","length":3400,"width":60,"altitude":3.9624},
+            {"airport":"ZSPD","runway":"35R","length":4000,"width":60,"altitude":3.9624},
+            {"airport":"ZSQD","runway":"17","length":3400,"width":60,"altitude":10.0584},
+            {"airport":"ZSQD","runway":"35","length":3400,"width":60,"altitude":10.0584},
+            {"airport":"ZSSH","runway":"4","length":2400,"width":45,"altitude":10.3632},
+            {"airport":"ZSSH","runway":"22","length":2400,"width":45,"altitude":10.3632},
+            {"airport":"ZSSS","runway":"18","length":3400,"width":58,"altitude":3.048},
+            {"airport":"ZSSS","runway":"18L","length":3400,"width":58,"altitude":3.048},
+            {"airport":"ZSSS","runway":"18R","length":3300,"width":60,"altitude":3.048},
+            {"airport":"ZSSS","runway":"36","length":3400,"width":58,"altitude":3.048},
+            {"airport":"ZSSS","runway":"36L","length":3300,"width":60,"altitude":3.048},
+            {"airport":"ZSSS","runway":"36R","length":3400,"width":58,"altitude":3.048},
+            {"airport":"ZSTX","runway":"13","length":2600,"width":45,"altitude":134.112},
+            {"airport":"ZSTX","runway":"31","length":2600,"width":45,"altitude":134.112},
+            {"airport":"ZSWH","runway":"2","length":2600,"width":45,"altitude":44.5008},
+            {"airport":"ZSWH","runway":"3","length":2600,"width":45,"altitude":44.5008},
+            {"airport":"ZSWH","runway":"20","length":2600,"width":45,"altitude":44.5008},
+            {"airport":"ZSWH","runway":"21","length":2600,"width":45,"altitude":44.5008},
+            {"airport":"ZSWX","runway":"3","length":3200,"width":50,"altitude":5.1816},
+            {"airport":"ZSWX","runway":"21","length":3200,"width":50,"altitude":5.1816},
+            {"airport":"ZSWY","runway":"3","length":2400,"width":45,"altitude":195.3768},
+            {"airport":"ZSWY","runway":"03C","length":2400,"width":45,"altitude":195.3768},
+            {"airport":"ZSWY","runway":"21","length":2400,"width":45,"altitude":195.3768},
+            {"airport":"ZSWZ","runway":"3","length":3200,"width":45,"altitude":5.1816},
+            {"airport":"ZSWZ","runway":"21","length":3200,"width":45,"altitude":5.1816},
+            {"airport":"ZSXZ","runway":"9","length":3400,"width":45,"altitude":35.052},
+            {"airport":"ZSXZ","runway":"27","length":3400,"width":45,"altitude":35.052},
+            {"airport":"ZSYA","runway":"17","length":2400,"width":45,"altitude":4.8768},
+            {"airport":"ZSYA","runway":"35","length":2400,"width":45,"altitude":4.8768},
+            {"airport":"ZSYN","runway":"4","length":2200,"width":50,"altitude":3.048},
+            {"airport":"ZSYN","runway":"22","length":2200,"width":50,"altitude":3.048},
+            {"airport":"ZSYT","runway":"4","length":3200,"width":50,"altitude":20.1168},
+            {"airport":"ZSYT","runway":"22","length":3200,"width":50,"altitude":20.1168},
+            {"airport":"ZSYW","runway":"2","length":2500,"width":45,"altitude":79.248},
+            {"airport":"ZSYW","runway":"20","length":2500,"width":45,"altitude":79.248},
+            {"airport":"ZSZS","runway":"18","length":2500,"width":45,"altitude":1.8288},
+            {"airport":"ZSZS","runway":"36","length":2500,"width":45,"altitude":1.8288},
+            {"airport":"ZUAL","runway":"15","length":4500,"width":45,"altitude":4273.9056},
+            {"airport":"ZUAL","runway":"15C","length":4500,"width":45,"altitude":4273.9056},
+            {"airport":"ZUAL","runway":"33","length":4500,"width":45,"altitude":4273.9056},
+            {"airport":"ZUAL","runway":"33C","length":4500,"width":45,"altitude":4273.9056},
+            {"airport":"ZUAS","runway":"7","length":2800,"width":50,"altitude":1464.8688},
+            {"airport":"ZUAS","runway":"25","length":2800,"width":50,"altitude":1464.8688},
+            {"airport":"ZUBJ","runway":"8","length":2600,"width":45,"altitude":1467.9168},
+            {"airport":"ZUBJ","runway":"26","length":2600,"width":45,"altitude":1467.9168},
+            {"airport":"ZUCK","runway":"2","length":3200,"width":45,"altitude":415.4424},
+            {"airport":"ZUCK","runway":"02L","length":3200,"width":45,"altitude":415.4424},
+            {"airport":"ZUCK","runway":"02R","length":3600,"width":45,"altitude":415.4424},
+            {"airport":"ZUCK","runway":"20","length":3200,"width":45,"altitude":415.4424},
+            {"airport":"ZUCK","runway":"20L","length":3600,"width":45,"altitude":415.4424},
+            {"airport":"ZUCK","runway":"20R","length":3200,"width":45,"altitude":415.4424},
+            {"airport":"ZUDC","runway":"16","length":4200,"width":45,"altitude":4411.0656},
+            {"airport":"ZUDC","runway":"34","length":4200,"width":45,"altitude":4411.0656},
+            {"airport":"ZUDX","runway":"2","length":2000,"width":45,"altitude":280.7208},
+            {"airport":"ZUDX","runway":"20","length":2000,"width":45,"altitude":280.7208},
+            {"airport":"ZUGY","runway":"1","length":3200,"width":45,"altitude":1139.0376},
+            {"airport":"ZUGY","runway":"19","length":3200,"width":45,"altitude":1139.0376},
+            {"airport":"ZUJZ","runway":"2","length":3370,"width":45,"altitude":3447.5928},
+            {"airport":"ZUJZ","runway":"20","length":3370,"width":45,"altitude":3447.5928},
+            {"airport":"ZUKD","runway":"15","length":4000,"width":45,"altitude":4238.244},
+            {"airport":"ZUKD","runway":"15C","length":4000,"width":45,"altitude":4238.244},
+            {"airport":"ZUKD","runway":"33","length":4000,"width":45,"altitude":4238.244},
+            {"airport":"ZUKD","runway":"33C","length":4000,"width":45,"altitude":4238.244},
+            {"airport":"ZULS","runway":"9","length":4000,"width":45,"altitude":3569.5128},
+            {"airport":"ZULS","runway":"09L","length":4000,"width":45,"altitude":3569.5128},
+            {"airport":"ZULS","runway":"27","length":4000,"width":45,"altitude":3569.5128},
+            {"airport":"ZULS","runway":"27R","length":4000,"width":45,"altitude":3569.5128},
+            {"airport":"ZULZ","runway":"7","length":2400,"width":45,"altitude":251.1552},
+            {"airport":"ZULZ","runway":"25","length":2400,"width":45,"altitude":251.1552},
+            {"airport":"ZUMY","runway":"14","length":2400,"width":45,"altitude":519.0744},
+            {"airport":"ZUMY","runway":"32","length":2400,"width":45,"altitude":519.0744},
+            {"airport":"ZUNC","runway":"6","length":2400,"width":45,"altitude":356.0064},
+            {"airport":"ZUNC","runway":"24","length":2400,"width":45,"altitude":356.0064},
+            {"airport":"ZUNP","runway":"6","length":2200,"width":45,"altitude":484.632},
+            {"airport":"ZUNP","runway":"24","length":2200,"width":45,"altitude":484.632},
+            {"airport":"ZUNZ","runway":"5","length":3000,"width":45,"altitude":2947.7208},
+            {"airport":"ZUNZ","runway":"23","length":3000,"width":45,"altitude":2947.7208},
+            {"airport":"ZUQJ","runway":"3","length":2414,"width":45,"altitude":631.8504},
+            {"airport":"ZUQJ","runway":"21","length":2414,"width":45,"altitude":631.8504},
+            {"airport":"ZUTC","runway":"18","length":2350,"width":45,"altitude":1887.6264},
+            {"airport":"ZUTC","runway":"36","length":2350,"width":45,"altitude":1887.6264},
+            {"airport":"ZUTR","runway":"4","length":2000,"width":45,"altitude":704.3928},
+            {"airport":"ZUTR","runway":"22","length":2000,"width":45,"altitude":704.3928},
+            {"airport":"ZUUU","runway":"2","length":3600,"width":60,"altitude":494.9952},
+            {"airport":"ZUUU","runway":"02L","length":3600,"width":45,"altitude":494.9952},
+            {"airport":"ZUUU","runway":"02R","length":3600,"width":60,"altitude":494.9952},
+            {"airport":"ZUUU","runway":"20","length":3600,"width":60,"altitude":494.9952},
+            {"airport":"ZUUU","runway":"20L","length":3600,"width":60,"altitude":494.9952},
+            {"airport":"ZUUU","runway":"20R","length":3600,"width":45,"altitude":494.9952},
+            {"airport":"ZUWX","runway":"11","length":2400,"width":45,"altitude":569.0616},
+            {"airport":"ZUWX","runway":"29","length":2400,"width":45,"altitude":569.0616},
+            {"airport":"ZUXC","runway":"18","length":3600,"width":45,"altitude":1558.1376},
+            {"airport":"ZUXC","runway":"36","length":3600,"width":45,"altitude":1558.1376},
+            {"airport":"ZUYB","runway":"8","length":2200,"width":45,"altitude":283.464},
+            {"airport":"ZUYB","runway":"26","length":2200,"width":45,"altitude":283.464},
+            {"airport":"ZUYI","runway":"16","length":2300,"width":45,"altitude":1254.5568},
+            {"airport":"ZUYI","runway":"34","length":2300,"width":45,"altitude":1254.5568},
+            {"airport":"ZUZH","runway":"2","length":2800,"width":45,"altitude":1980.2856},
+            {"airport":"ZUZH","runway":"20","length":2800,"width":45,"altitude":1980.2856},
+            {"airport":"ZUZY","runway":"18","length":2800,"width":45,"altitude":830.2752},
+            {"airport":"ZUZY","runway":"36","length":2800,"width":45,"altitude":830.2752},
+            {"airport":"ZWAK","runway":"9","length":2800,"width":45,"altitude":1169.5176},
+            {"airport":"ZWAK","runway":"27","length":2800,"width":45,"altitude":1169.5176},
+            {"airport":"ZWAT","runway":"12","length":2200,"width":45,"altitude":759.2568},
+            {"airport":"ZWAT","runway":"30","length":2200,"width":45,"altitude":759.2568},
+            {"airport":"ZWBL","runway":"10","length":2600,"width":45,"altitude":398.0688},
+            {"airport":"ZWBL","runway":"28","length":2600,"width":45,"altitude":398.0688},
+            {"airport":"ZWCM","runway":"1","length":1700,"width":30,"altitude":1244.1936},
+            {"airport":"ZWCM","runway":"19","length":1700,"width":30,"altitude":1244.1936},
+            {"airport":"ZWHM","runway":"11","length":2400,"width":50,"altitude":833.0184},
+            {"airport":"ZWHM","runway":"29","length":2400,"width":50,"altitude":833.0184},
+            {"airport":"ZWKC","runway":"8","length":1700,"width":30,"altitude":1077.7728},
+            {"airport":"ZWKC","runway":"26","length":1700,"width":30,"altitude":1077.7728},
+            {"airport":"ZWKL","runway":"4","length":2800,"width":50,"altitude":926.2872},
+            {"airport":"ZWKL","runway":"22","length":2800,"width":50,"altitude":926.2872},
+            {"airport":"ZWKM","runway":"13","length":2600,"width":45,"altitude":274.9296},
+            {"airport":"ZWKM","runway":"31","length":2600,"width":45,"altitude":274.9296},
+            {"airport":"ZWKN","runway":"12","length":2500,"width":45,"altitude":1196.34},
+            {"airport":"ZWKN","runway":"30","length":2500,"width":45,"altitude":1196.34},
+            {"airport":"ZWNL","runway":"8","length":2300,"width":45,"altitude":936.3456},
+            {"airport":"ZWNL","runway":"26","length":2300,"width":45,"altitude":936.3456},
+            {"airport":"ZWSH","runway":"8","length":3200,"width":45,"altitude":1380.1344},
+            {"airport":"ZWSH","runway":"26","length":3200,"width":45,"altitude":1380.1344},
+            {"airport":"ZWTC","runway":"12","length":2400,"width":45,"altitude":611.124},
+            {"airport":"ZWTC","runway":"30","length":2400,"width":45,"altitude":611.124},
+            {"airport":"ZWTL","runway":"9","length":2800,"width":45,"altitude":281.94},
+            {"airport":"ZWTL","runway":"27","length":2800,"width":45,"altitude":281.94},
+            {"airport":"ZWTN","runway":"11","length":3200,"width":50,"altitude":1424.0256},
+            {"airport":"ZWTN","runway":"29","length":3200,"width":50,"altitude":1424.0256},
+            {"airport":"ZWWW","runway":"7","length":3600,"width":45,"altitude":648.0048},
+            {"airport":"ZWWW","runway":"25","length":3600,"width":45,"altitude":648.0048},
+            {"airport":"ZWYN","runway":"6","length":2400,"width":45,"altitude":683.6664},
+            {"airport":"ZWYN","runway":"24","length":2400,"width":45,"altitude":683.6664},
+            {"airport":"ZYBS","runway":"1","length":2600,"width":45,"altitude":882.0912},
+            {"airport":"ZYBS","runway":"19","length":2600,"width":45,"altitude":882.0912},
+            {"airport":"ZYCC","runway":"6","length":3200,"width":45,"altitude":214.884},
+            {"airport":"ZYCC","runway":"24","length":3200,"width":45,"altitude":214.884},
+            {"airport":"ZYCY","runway":"18","length":2150,"width":45,"altitude":173.1264},
+            {"airport":"ZYCY","runway":"36","length":2150,"width":45,"altitude":173.1264},
+            {"airport":"ZYDQ","runway":"17","length":2600,"width":45,"altitude":153.0096},
+            {"airport":"ZYDQ","runway":"35","length":2600,"width":45,"altitude":153.0096},
+            {"airport":"ZYHB","runway":"5","length":3200,"width":45,"altitude":138.9888},
+            {"airport":"ZYHB","runway":"23","length":3200,"width":45,"altitude":138.9888},
+            {"airport":"ZYHE","runway":"17","length":2500,"width":45,"altitude":320.3448},
+            {"airport":"ZYHE","runway":"35","length":2500,"width":45,"altitude":320.3448},
+            {"airport":"ZYJD","runway":"18","length":2300,"width":45,"altitude":370.6368},
+            {"airport":"ZYJD","runway":"36","length":2300,"width":45,"altitude":370.6368},
+            {"airport":"ZYJM","runway":"6","length":2200,"width":45,"altitude":79.8576},
+            {"airport":"ZYJM","runway":"24","length":2200,"width":45,"altitude":79.8576},
+            {"airport":"ZYJX","runway":"12","length":2300,"width":45,"altitude":226.7712},
+            {"airport":"ZYJX","runway":"30","length":2300,"width":45,"altitude":226.7712},
+            {"airport":"ZYLD","runway":"12","length":2300,"width":45,"altitude":256.6416},
+            {"airport":"ZYLD","runway":"30","length":2300,"width":45,"altitude":256.6416},
+            {"airport":"ZYMD","runway":"4","length":2600,"width":45,"altitude":269.1384},
+            {"airport":"ZYMD","runway":"22","length":2600,"width":45,"altitude":269.1384},
+            {"airport":"ZYMH","runway":"15","length":2200,"width":45,"altitude":565.0992},
+            {"airport":"ZYMH","runway":"33","length":2200,"width":45,"altitude":565.0992},
+            {"airport":"ZYQQ","runway":"17","length":2600,"width":45,"altitude":145.0848},
+            {"airport":"ZYQQ","runway":"35","length":2600,"width":45,"altitude":145.0848},
+            {"airport":"ZYTL","runway":"10","length":3300,"width":45,"altitude":32.9184},
+            {"airport":"ZYTL","runway":"28","length":3300,"width":45,"altitude":32.9184},
+            {"airport":"ZYTN","runway":"5","length":2300,"width":45,"altitude":413.6136},
+            {"airport":"ZYTN","runway":"23","length":2300,"width":45,"altitude":413.6136},
+            {"airport":"ZYTX","runway":"6","length":3200,"width":45,"altitude":60.0456},
+            {"airport":"ZYTX","runway":"24","length":3200,"width":45,"altitude":60.0456},
+            {"airport":"ZYYJ","runway":"9","length":2600,"width":45,"altitude":189.8904},
+            {"airport":"ZYYJ","runway":"27","length":2600,"width":45,"altitude":189.8904}];
+
+          var geoCoordMap={
+            'ZBAA_1':[40.058942,116.617607],
+            'ZBAA_18L':[40.089384,116.594832],
+            'ZBAA_18R':[40.102024,116.569694],
+            'ZBAA_19':[40.092832,116.612302],
+            'ZBAA_36L':[40.073526,116.574168],
+            'ZBAA_36R':[40.055507,116.600145],
+            'ZBCF_3':[42.149402,118.835197],
+            'ZBCF_21':[42.170158,118.846759],
+            'ZBCZ_1':[36.239206,113.124682],
+            'ZBCZ_19':[36.258778,113.127874],
+            'ZBDS_13':[39.497732,109.851501],
+            'ZBDS_31':[39.485733,109.875519],
+            'ZBDT_14':[40.067482,113.471791],
+            'ZBDT_32':[40.053183,113.492693],
+            'ZBHD_5':[36.519134,114.416651],
+            'ZBHD_23':[36.532764,114.434299],
+            'ZBHH_8':[40.844927,111.804164],
+            'ZBHH_26':[40.854503,111.844933],
+            'ZBLA_9':[49.20474,119.809104],
+            'ZBLA_27':[49.207359,119.847198],
+            'ZBLL_18':[37.693315,111.14099],
+            'ZBLL_36':[37.670307,111.144897],
+            'ZBMZ_12':[49.570454,117.311236],
+            'ZBMZ_30':[49.563027,117.348051],
+            'ZBNY_18':[39.795329,116.385405],
+            'ZBNY_36':[39.766565,116.387487],
+            'ZBOW_13':[40.567248,109.985562],
+            'ZBOW_31':[40.551484,110.011314],
+            'ZBSH_6':[39.961996,119.718667],
+            'ZBSH_24':[39.974959,119.742504],
+            'ZBSJ_15':[38.293606,114.686771],
+            'ZBSJ_33':[38.267914,114.707658],
+            'ZBSN_10':[39.718803,117.986155],
+            'ZBSN_28':[39.717265,118.01855],
+            'ZBTJ_16L':[39.141552,117.362603],
+            'ZBTJ_16R':[39.137325,117.338238],
+            'ZBTJ_34L':[39.111427,117.354127],
+            'ZBTJ_34R':[39.115456,117.378605],
+            'ZBTL_2':[43.547006,122.195574],
+            'ZBTL_20':[43.566802,122.203699],
+            'ZBUH_1':[39.784573,106.797627],
+            'ZBUH_19':[39.804957,106.801532],
+            'ZBUL_14':[46.203417,121.991306],
+            'ZBUL_32':[46.189876,122.01832],
+            'ZBXH_4':[43.900848,115.952057],
+            'ZBXH_22':[43.923089,115.968575],
+            'ZBYC_8':[35.113705,111.015423],
+            'ZBYC_26':[35.119296,111.047461],
+            'ZBYN_13':[37.755444,112.614428],
+            'ZBYN_31':[37.735941,112.646785],
+            'ZBZJ_12':[40.743578,114.917964],
+            'ZBZJ_30':[40.735435,114.944917],
+            'ZGBH_1':[21.525452,109.290841],
+            'ZGBH_19':[21.553708,109.296819],
+            'ZGBS_12':[23.725299,106.951851],
+            'ZGBS_30':[23.714188,106.969604],
+            'ZGCD_2':[28.908224,111.636487],
+            'ZGCD_20':[28.93028,111.642655],
+            'ZGCJ_4':[27.43672214,109.6991449],
+            'ZGCJ_22':[27.45105537,109.7114114],
+            'ZGDY_8':[29.100069,110.430778],
+            'ZGDY_26':[29.105858,110.456592],
+            'ZGGG_02L':[23.377004,113.283506],
+            'ZGGG_02R':[23.375704,113.305331],
+            'ZGGG_20L':[23.40706,113.313863],
+            'ZGGG_20R':[23.408425,113.291999],
+            'ZGHA_18':[28.206149,113.218712],
+            'ZGHA_36':[28.177432,113.220485],
+            'ZGKL_1':[25.205546,110.038061],
+            'ZGKL_19':[25.234303,110.040815],
+            'ZGLG_18':[26.350287,111.608716],
+            'ZGLG_36':[26.327346,111.611419],
+            'ZGMX_4':[24.25953645,116.0937778],
+            'ZGMX_22':[24.27157443,116.1056672],
+            'ZGNN_5':[22.598731,108.163771],
+            'ZGNN_23':[22.618224,108.186819],
+            'ZGOW_4':[23.54234958,116.4944263],
+            'ZGOW_22':[23.56153881,116.5122417],
+            'ZGSD_5':[21.993867,113.362684],
+            'ZGSD_23':[22.019464,113.390116],
+            'ZGSZ_15':[22.652943,113.803231],
+            'ZGSZ_16':[22.654476,113.784899],
+            'ZGSZ_33':[22.625655,113.818165],
+            'ZGSZ_34':[22.623896,113.801684],
+            'ZGZH_16':[24.218109,109.3861],
+            'ZGZH_34':[24.19741,109.396592],
+            'ZGZJ_16':[21.22727168,110.3543906],
+            'ZGZJ_34':[21.20661715,110.3611645],
+            'ZHCC_12':[34.525144,113.824069],
+            'ZHCC_30':[34.513528,113.858217],
+            'ZHES_1':[30.311499,109.483637],
+            'ZHES_19':[30.329485,109.486866],
+            'ZHHH_4':[30.772231,114.196577],
+            'ZHHH_22':[30.795143,114.220003],
+            'ZHLY_8':[34.738544,112.374602],
+            'ZHLY_26':[34.744001,112.401113],
+            'ZHNY_5':[32.97015508,112.6037432],
+            'ZHNY_23':[32.98873299,112.6240367],
+            'ZHSN_17':[31.638366,110.336406],
+            'ZHSN_35':[31.638366,110.342723],
+            'ZHXF_1':[32.140013,112.288653],
+            'ZHXF_19':[32.161032,112.292964],
+            'ZHYC_14':[-107.8722528],
+            'ZHYC_19':[-107.8661389],
+            'ZJHK_9':[19.934721,110.441726],
+            'ZJHK_27':[19.934825,110.475997],
+            'ZJSY_8':[18.300857,109.396419],
+            'ZJSY_26':[18.304988,109.428155],
+            'ZLDH_8':[40.160357,94.792854],
+            'ZLDH_26':[40.162905,94.825358],
+            'ZLDL_7':[37.12105,97.25265],
+            'ZLDL_25':[37.129385,97.284785],
+            'ZLGM_9':[36.399798,94.759584],
+            'ZLGM_27':[36.400288,94.81294],
+            'ZLGY_18':[36.09166,106.215673],
+            'ZLGY_36':[36.066597,106.217911],
+            'ZLHZ_7':[33.130036,107.192053],
+            'ZLHZ_25':[33.137587,107.217346],
+            'ZLIC_3':[38.30905833,106.3827972],
+            'ZLIC_21':[38.33427222,106.4005361],
+            'ZLJC_13':[38.55047,102.334826],
+            'ZLJC_31':[38.533798,102.362049],
+            'ZLJQ_14':[39.869432,98.326407],
+            'ZLJQ_32':[39.849874,98.350387],
+            'ZLLL_18':[36.531331,103.619779],
+            'ZLLL_36':[36.499149,103.621639],
+            'ZLQY_14':[35.807117,107.594462],
+            'ZLQY_32':[35.793433,107.60887],
+            'ZLXN_11':[36.535721,102.019211],
+            'ZLXN_29':[36.524563,102.059555],
+            'ZLXY_5':[34.43595,108.7378694],
+            'ZLXY_05L':[34.438109,108.739989],
+            'ZLXY_05R':[34.420961,108.751105],
+            'ZLXY_23':[34.45404722,108.7621306],
+            'ZLXY_23L':[34.443594,108.782211],
+            'ZLXY_23R':[34.455852,108.76448],
+            'ZLYA_6':[36.629172,109.540523],
+            'ZLYA_24':[36.644117,109.565612],
+            'ZLYL_16':[38.368561,109.586267],
+            'ZLYL_34':[38.345386,109.599088],
+            'ZLYS_10':[32.840294,97.016688],
+            'ZLYS_28':[32.832604,97.056038],
+            'ZLZW_9':[37.572651,105.139024],
+            'ZLZW_27':[37.573601,105.170603],
+            'ZLZY_11L':[38.813276,100.645031],
+            'ZLZY_29R':[38.802678,100.676945],
+            'ZPBS_1':[25.041461,99.165102],
+            'ZPBS_19':[25.062586,99.170075],
+            'ZPDL_17':[25.661499,100.316249],
+            'ZPDL_35':[25.638591,100.32138],
+            'ZPDQ_16':[27.807614,99.671479],
+            'ZPDQ_34':[27.777121,99.683977],
+            'ZPJH_16':[21.984755,100.758497],
+            'ZPJH_34':[21.964397,100.766192],
+            'ZPLC_16':[23.748691,100.019519],
+            'ZPLC_34':[23.729147,100.029669],
+            'ZPLJ_2':[26.668503,100.241616],
+            'ZPLJ_20':[26.690065,100.248939],
+            'ZPMS_5':[24.394313,98.524415],
+            'ZPMS_23':[24.408328,98.53963],
+            'ZPOD_3':[24.979379,102.734574],
+            'ZPOD_21':[25.005361,102.75256],
+            'ZPPP_3':[25.102192,102.916936],
+            'ZPPP_4':[25.089672,102.9307],
+            'ZPPP_21':[25.130553,102.941631],
+            'ZPPP_22':[25.117961,102.955325],
+            'ZPSM_18':[22.804842,100.958176],
+            'ZPSM_36':[22.782461,100.960361],
+            'ZPTC_18':[24.948647,98.485744],
+            'ZPTC_36':[24.927539,98.485751],
+            'ZPWS_2':[23.548074,104.321636],
+            'ZPWS_20':[23.568543,104.329327],
+            'ZPZT_4':[27.318984,103.747851],
+            'ZPZT_22':[27.336517,103.765117],
+            'ZSAM_5':[24.535662,118.115534],
+            'ZSAM_23':[24.552368,118.139461],
+            'ZSAQ_6':[30.57619989,117.0378823],
+            'ZSAQ_24':[30.58879888,117.0632304],
+            'ZSCG_11':[31.925819,119.758183],
+            'ZSCG_29':[31.915242,119.792059],
+            'ZSCN_3':[28.850775,115.895783],
+            'ZSCN_21':[28.879093,115.90957],
+            'ZSDY_18':[37.518956,118.788784],
+            'ZSDY_36':[37.493679,118.790258],
+            'ZSFZ_3':[25.920384,119.655307],
+            'ZSFZ_21':[25.949323,119.671599],
+            'ZSGS_8':[26.855455,114.722621],
+            'ZSGS_26':[26.859189,114.748391],
+            'ZSGZ_7':[25.848038,114.767571],
+            'ZSGZ_25':[25.858667,114.790673],
+            'ZSHC_6':[30.238089,120.408115],
+            'ZSHC_7':[30.222118,120.417819],
+            'ZSHC_24':[30.252141,120.439881],
+            'ZSHC_25':[30.236883,120.451052],
+            'ZSJG_9':[35.290603,116.331482],
+            'ZSJG_27':[35.295159,116.361655],
+            'ZSJH_13':[30.746762,117.677763],
+            'ZSJH_31':[30.733362,117.696858],
+            'ZSJJ_4':[29.4675,115.7928],
+            'ZSJJ_22':[25.949323,119.671599],
+            'ZSJN_1':[36.841087,117.215982],
+            'ZSJN_19':[36.873451,117.215979],
+            'ZSJU_6':[28.959725,118.888443],
+            'ZSJU_24':[28.973329,118.910141],
+            'ZSLG_3':[34.5625,118.867],
+            'ZSLG_21':[34.5819,118.8789],
+            'ZSLQ_3':[28.552333,121.423387],
+            'ZSLQ_21':[28.572717,121.434256],
+            'ZSLY_1':[35.038184,118.411935],
+            'ZSLY_19':[35.059787,118.411932],
+            'ZSNB_13':[29.833945,121.449423],
+            'ZSNB_31':[29.818886,121.475741],
+            'ZSNJ_6':[31.733622,118.845925],
+            'ZSNJ_7':[31.713668,118.848269],
+            'ZSNJ_24':[31.750778,118.878058],
+            'ZSNJ_25':[31.730673,118.88009],
+            'ZSNT_18':[32.080381,120.979845],
+            'ZSNT_36':[32.058833,120.980575],
+            'ZSOF_14':[31.79289722,117.2888],
+            'ZSOF_15':[32.0015,116.9657],
+            'ZSOF_32':[31.77376667,117.3111972],
+            'ZSOF_33':[31.9744,116.9858],
+            'ZSPD_16':[31.158922,121.811761],
+            'ZSPD_17':[31.1588,121.7835],
+            'ZSPD_17L':[31.161197,121.785981],
+            'ZSPD_17R':[31.154771,121.783338],
+            'ZSPD_34':[31.126389,121.824038],
+            'ZSPD_35':[31.1245,121.7965],
+            'ZSPD_35L':[31.125669,121.794322],
+            'ZSPD_35R':[31.126957,121.798912],
+            'ZSQD_17':[36.280806,120.369767],
+            'ZSQD_35':[36.251233,120.37917],
+            'ZSSH_4':[33.7821,119.1175],
+            'ZSSH_22':[33.799694,119.132728],
+            'ZSSS_18':[31.21217222,121.3343833],
+            'ZSSS_18L':[31.212249,121.335509],
+            'ZSSS_18R':[31.210304,121.33178],
+            'ZSSS_36':[31.18338333,121.3367278],
+            'ZSSS_36L':[31.186079,121.333088],
+            'ZSSS_36R':[31.183525,121.337065],
+            'ZSTX_13':[29.740787,118.245699],
+            'ZSTX_31':[29.726402,118.266794],
+            'ZSWH_2':[37.17719167,122.225475],
+            'ZSWH_3':[37.175984,122.224336],
+            'ZSWH_20':[37.19947222,122.234525],
+            'ZSWH_21':[37.197904,122.233471],
+            'ZSWX_3':[31.483881,120.424781],
+            'ZSWX_21':[31.510872,120.436384],
+            'ZSWY_3':[27.690983,117.995429],
+            'ZSWY_03C':[27.690983,117.995429],
+            'ZSWY_21':[27.710724,118.005151],
+            'ZSWZ_3':[27.895621,120.844418],
+            'ZSWZ_21':[27.921367,120.859954],
+            'ZSXZ_9':[34.058188,117.537904],
+            'ZSXZ_27':[34.060574,117.574582],
+            'ZSYA_17':[32.57388,119.716834],
+            'ZSYA_35':[32.552794,119.722613],
+            'ZSYN_4':[33.418529,120.19605],
+            'ZSYN_22':[33.433948,120.210698],
+            'ZSYT_4':[37.386025,121.359167],
+            'ZSYT_22':[37.408306,121.380671],
+            'ZSYW_2':[29.355426,120.036367],
+            'ZSYW_20':[29.334109,120.028322],
+            'ZSZS_18':[29.945476,122.361119],
+            'ZSZS_36':[29.924018,122.363357],
+            'ZUAL_15':[32.117802,80.041945],
+            'ZUAL_15C':[32.117802,80.041945],
+            'ZUAL_33':[32.082036,80.064148],
+            'ZUAL_33C':[32.082036,80.064148],
+            'ZUAS_7':[25.257541,105.860913],
+            'ZUAS_25':[26.264008,105.887111],
+            'ZUBJ_8':[27.265447,105.459033],
+            'ZUBJ_26':[27.269466,105.484054],
+            'ZUCK_2':[29.70286111,106.6351639],
+            'ZUCK_02L':[29.705222,106.636763],
+            'ZUCK_02R':[29.706335,106.641227],
+            'ZUCK_20':[29.73046944,106.6448333],
+            'ZUCK_20L':[29.734103,106.650844],
+            'ZUCK_20R':[29.732766,106.646256],
+            'ZUDC_16':[29.333619,100.054709],
+            'ZUDC_34':[29.296871,100.067477],
+            'ZUDX_2':[31.121732,107.426269],
+            'ZUDX_20':[31.138836,107.432773],
+            'ZUGY_1':[26.524067,106.798397],
+            'ZUGY_19':[26.552386,106.803922],
+            'ZUJZ_2':[32.839156,103.677424],
+            'ZUJZ_20':[32.866111,103.686498],
+            'ZUKD_15':[30.1585,101.7278],
+            'ZUKD_15C':[30.1585,101.7278],
+            'ZUKD_33':[30.1275,101.7489],
+            'ZUKD_33C':[30.1275,101.7489],
+            'ZULS_9':[29.297735,90.891689],
+            'ZULS_09L':[29.297735,90.891689],
+            'ZULS_27':[29.298358,90.932742],
+            'ZULS_27R':[29.298358,90.932742],
+            'ZULZ_7':[28.848337,105.381326],
+            'ZULZ_25':[28.856885,105.403783],
+            'ZUMY_14':[31.438241,104.732112],
+            'ZUMY_32':[31.421193,104.747725],
+            'ZUNC_6':[30.789857,106.151942],
+            'ZUNC_24':[30.801069,106.173278],
+            'ZUNP_6':[26.3173473,109.1403879],
+            'ZUNP_24':[26.3270965,109.1596129],
+            'ZUNZ_5':[29.29588,94.322504],
+            'ZUNZ_23':[29.311469,94.347585],
+            'ZUQJ_3':[29.505189,108.826797],
+            'ZUQJ_21':[29.522613,108.836278],
+            'ZUTC_18':[24.94875,98.485556],
+            'ZUTC_36':[24.927507,98.485752],
+            'ZUTR_4':[27.877678,109.302578],
+            'ZUTR_22':[27.890865,109.316263],
+            'ZUUU_2':[30.56493056,103.9413889],
+            'ZUUU_02L':[30.563484,103.939986],
+            'ZUUU_02R':[30.519608,103.936684],
+            'ZUUU_20':[30.595,103.9555556],
+            'ZUUU_20L':[30.549513,103.950621],
+            'ZUUU_20R':[30.593552,103.953971],
+            'ZUWX_11':[30.805665,108.421374],
+            'ZUWX_29':[30.797879,108.444646],
+            'ZUXC_18':[28.005145,102.183677],
+            'ZUXC_36':[27.972755,102.184915],
+            'ZUYB_8':[28.798816,104.534173],
+            'ZUYB_26':[28.802318,104.556358],
+            'ZUYI_16':[25.096395,104.955186],
+            'ZUYI_34':[25.077245,104.963922],
+            'ZUZH_2':[26.528249,101.793426],
+            'ZUZH_20':[26.551606,101.803522],
+            'ZUZY_18':[27.823367,107.246717],
+            'ZUZY_36':[27.798861,107.245419],
+            'ZWAK_9':[41.264,80.2727],
+            'ZWAK_27':[41.2618,80.3066],
+            'ZWAT_12':[47.75452073,88.07184414],
+            'ZWAT_30':[47.74492227,88.09759793],
+            'ZWBL_10':[44.89713083,82.28431676],
+            'ZWBL_28':[44.89286686,82.31679315],
+            'ZWCM_1':[38.14169858,85.52956157],
+            'ZWCM_19':[38.15663471,85.5337722],
+            'ZWHM_11':[42.84498035,93.65486055],
+            'ZWHM_29':[42.83724022,93.68235995],
+            'ZWKC_8':[41.71644903,82.97713018],
+            'ZWKC_26':[41.71910564,82.99731468],
+            'ZWKL_4':[41.606136,86.129414],
+            'ZWKL_22':[41.624164,86.153905],
+            'ZWKM_13':[45.47489967,84.9420442],
+            'ZWKM_31':[45.4573215,84.96406348],
+            'ZWKN_12':[48.22866639,86.98257193],
+            'ZWKN_30':[48.2152209,87.00964674],
+            'ZWNL_8':[43.43031625,83.36356886],
+            'ZWNL_26':[43.43190421,83.39198707],
+            'ZWSH_8':[39.542075,76.003125],
+            'ZWSH_26':[39.54458889,76.04020833],
+            'ZWTC_12':[46.67667152,83.33258418],
+            'ZWTC_30':[46.66443812,83.358524],
+            'ZWTL_9':[43.03055426,89.08026448],
+            'ZWTL_27':[43.03055426,89.11473552],
+            'ZWTN_11':[37.04492778,79.84643056],
+            'ZWTN_29':[37.03506667,79.88023056],
+            'ZWWW_7':[43.9003,87.4552],
+            'ZWWW_25':[43.9097,87.4981],
+            'ZWYN_6':[43.9504849,81.31647796],
+            'ZWYN_24':[43.96062468,81.34296874],
+            'ZYBS_1':[42.055628,127.601091],
+            'ZYBS_19':[42.078131,127.603809],
+            'ZYCC_6':[43.986969,125.670111],
+            'ZYCC_24':[44.005691,125.700248],
+            'ZYCY_18':[41.548114,120.431417],
+            'ZYCY_36':[41.529552,120.437014],
+            'ZYDQ_17':[46.761533,125.132116],
+            'ZYDQ_35':[46.740555,125.14462],
+            'ZYHB_5':[45.612439,126.237268],
+            'ZYHB_23':[45.634564,126.263194],
+            'ZYHE_17':[50.182392,127.302193],
+            'ZYHE_35':[50.161709,127.315934],
+            'ZYJD_18':[50.381,124.1148],
+            'ZYJD_36':[50.3613,124.1203],
+            'ZYJM_6':[46.836012,130.453248],
+            'ZYJM_24':[46.851083,130.477589],
+            'ZYJX_12':[45.296101,131.181013],
+            'ZYJX_30':[45.289508,131.206759],
+            'ZYLD_12':[47.754816,129.003847],
+            'ZYLD_30':[47.749401,129.033857],
+            'ZYMD_4':[44.514306,129.561877],
+            'ZYMD_22':[44.535246,129.576148],
+            'ZYMH_15':[52.924,122.411649],
+            'ZYMH_33':[52.909975,122.434598],
+            'ZYQQ_17':[47.250612,123.911646],
+            'ZYQQ_35':[47.229039,123.924825],
+            'ZYTL_10':[38.966961,121.522001],
+            'ZYTL_28':[38.964341,121.556332],
+            'ZYTN_5':[42.039588,125.725198],
+            'ZYTN_23':[42.0556,125.741493],
+            'ZYTX_6':[41.630484,123.469099],
+            'ZYTX_24':[41.649484,123.497804],
+            'ZYYJ_9':[42.881149,129.435553],
+            'ZYYJ_27':[42.884429,129.467021]};
+
+          function zuobiao(arr, ap_rw){
+            var zuobiao = coordtransform.wgs84togcj02(arr[0],arr[1]);
+            zuobiao = coordtransform.gcj02tobd09(zuobiao[0],zuobiao[1]);
+            //arr[3] = arr[3]*0.5144444;
+            zuobiao = zuobiao.concat(getLeftDistance(zuobiao[1],zuobiao[0],ap_rw));
+            return zuobiao;
+          }
+          function getData(data, name){
+            var res = [];
+            for (var i = 0; i<data.length; i++){
+              var key = Object.keys(data[i])[0];
+              var ap_rw = (data[i][key]).airp_rw;
+              res.push({
+                name: key+'_'+name,
+                value: zuobiao(data[i][key][name], ap_rw)
+              });
+            }
+            return res;
+          }
+
+          function zuobiao1(arr){
+            var zuobiao = coordtransform.wgs84togcj02(arr[0],arr[1]);
+            zuobiao = coordtransform.gcj02tobd09(zuobiao[0],zuobiao[1]);
+            return zuobiao;
+          }
+
+          function convertData1(data) {
+            var res = [];
+            for (var i = 0; i < data.length; i++) {
+              var geoCoord = geoCoordMap[data[i].airport+'_'+data[i].runway];
+              if (geoCoord) {
+                res.push({
+                  name: data[i].airport+'_'+data[i].runway,
+                  value: zuobiao1(geoCoord.reverse()).concat([data[i].length,data[i].altitude])
+                });
+              }
+            }
+            return res;
+          }
+
+
+          var option = {
+            title: {
+              text: '降落数据',
+              subtext: 'landing and airports',
+              left: 'center'
+            },
+            tooltip : {
+              trigger: 'item',
+              formatter:function(params, ticket, callback){
+                if(params.seriesName == 'airports'){
+                  return params.data.name+'<br/>'+params.data.value[0].toFixed(2)+','+params.data.value[1].toFixed(2)
+                          +'<br/>length: '+(params.data.value[2]).toFixed(0)+'m'
+                          +'<br/>altitude: '+(params.data.value[3])+'m';
+                }else{
+                  return params.data.name+'<br/>'+params.data.value[0].toFixed(2)+','+params.data.value[1].toFixed(2)
+                          +'<br/>Left distance: '+params.data.value[2].toFixed(0)+'m'
+                          +'<br/>Runway Used: '+(100.0*params.data.value[3]).toFixed(2)+'%';
+                }
+              }
+            },
+            legend: {
+              orient: 'vertical',
+              y: 'bottom',
+              x:'right',
+              data:['airports']
+            },
+            visualMap:[
+              {
+                left: 'right',
+                top: '40%',
+                dimension: 3,
+                min: 0,
+                max: 5000,
+                itemWidth: 30,
+                itemHeight: 120,
+                calculable: true,
+                realtime: false,
+                precision: 0,
+                text: ['机场海拔'],
+                textGap: 15,
+                seriesIndex:0,
+                inRange: {
+                  color: ['#99CC99', '#FF9966', '#FF6600', '#CC3300']
+                },
+                outOfRange: {
+                  symbolSize: [7, 15],
+                  color: ['rgba(150,150,150,.5)']
+                },
+                controller: {
+                  inRange: {
+                    color: ['#99CC99', '#FF9966', '#FF6600', '#CC3300']
+                  },
+                  outOfRange: {
+                    color: ['#444']
+                  }
+                }
+              }
+              ,{
+                left: 'right',
+                top: '5%',
+                dimension: 2,
+                min: 2000,
+                max: 5000,
+                itemWidth: 30,
+                itemHeight: 120,
+                calculable: true,
+                realtime: false,
+                precision: 0,
+                text: ['跑道长度'],
+                textGap: 15,
+                seriesIndex:0,
+                inRange: {
+                  symbolSize: [7, 15]
+                },
+                outOfRange: {
+                  symbolSize: [7, 15],
+                  color: ['rgba(150,150,150,.5)']
+                },
+                controller: {
+                  inRange: {
+                    color: ['#c23531']
+                  },
+                  outOfRange: {
+                    color: ['#444']
+                  }
+                }
+              }
+            ],
+            bmap: {
+              center: [104.114129, 37.550339],
+              zoom: 4,
+              roam: true,
+              mapStyle: {
+                styleJson: [{
+                  'featureType': 'water',
+                  'elementType': 'all',
+                  'stylers': {
+                    'color': '#d1d1d1'
+                  }
+                }, {
+                  'featureType': 'land',
+                  'elementType': 'all',
+                  'stylers': {
+                    'color': '#f3f3f3'
+                  }
+                }]
+              }
+            },
+            series : [
+              {
+                name: 'airports',
+                type: 'scatter',
+                coordinateSystem: 'bmap',
+                data: convertData1(data1),
+                symbol: 'diamond',
+                symbolSize: function (val) {
+                  return 8;
+                },
+                label: {
+                  normal: {
+                    formatter: '{b}',
+                    position: 'right',
+                    show: false
+                  },
+                  emphasis: {
+                    show: true
+                  }
+                },
+                itemStyle: {
+                  normal: {
+                    color:'black'
+                  }
+                }
+              }
+            ]
+          };
+
+          function set_data(json){
+            option.series.forEach(function(element){
+              if(element.name == 'airports'){
+                return;
+              }else if(element.name == 'kt35'){
+                element.data = getData(json, 'kt35');
+              }else if(element.name == 'touchdown'){
+                element.data = getData(json, 'touchdown');
+              }else if(element.name == 'ft50'){
+                element.data = getData(json, 'ft50');
+              }else if(element.name == 'reverse'){
+                element.data = getData(json, 'fantui');
+              }else if(element.name == 'brake_end'){
+                element.data = getData(json, 'brake_end');
+              }
+            });
+          }
+
+
+          myChart.setOption(option);
+          var bmap = myChart.getModel().getComponent('bmap').getBMap();
+          bmap.addControl(new BMap.ScaleControl());
+
+          myChart.on('click',function(params){
+            if(params.componentType == 'series' && params.seriesName == 'airports'){
+              var data = params.data;
+              ap_rw = data.name.split('_');
+              var selected = $("#select_id").val();
+              if(selected === "1"){
+                ap_rw[1] = 'all';
+              }
+              on_airport_click(ap_rw[0], ap_rw[1]);
+            }
+          });
+          function getLeftDistance(lat, lng, ap_rw){
+            var len = 0;
+            data1.forEach(function(element){
+              if(element.name != ap_rw){
+                return;
+              }else{
+                len = element.value*0.3048;
+              }
+            });
+            var lat2 = geoCoordMap[ap_rw][1];
+            var lng2 = geoCoordMap[ap_rw][0];
+            var zuobiao = coordtransform.wgs84togcj02(lng2,lat2);
+            zuobiao = coordtransform.gcj02tobd09(zuobiao[0],zuobiao[1]);
+            return new Array(len - getDistance(lat, lng, zuobiao[1], zuobiao[0])
+            ,getDistance(lat, lng, zuobiao[1], zuobiao[0])/len);
+
+          }
+          function getDistance(lat1, lng1, lat2, lng2) {
+            var dis = 0;
+            var radLat1 = toRadians(lat1);
+            var radLat2 = toRadians(lat2);
+            var deltaLat = radLat1 - radLat2;
+            var deltaLng = toRadians(lng1) - toRadians(lng2);
+            var dis = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(deltaLat / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(deltaLng / 2), 2)));
+            return dis * 6378137;
+
+            function toRadians(d) {  return d * Math.PI / 180.0;}
+          }
+
+
+          function on_airport_click(airport, runway) {
+            $.get({
+              url: "/Servlet",
+              data: {
+                airport: airport,
+                runway: runway
+              },
+              complete: function (data) {
+                var json = JSON.parse(data.responseText);
+                set_data(json);
+                option.bmap.center = geoCoordMap[airport + '_' + runway];
+                option.bmap.zoom = 15;
+                myChart.setOption(option);
+
+              }
+            });
+          }
+
+
+        </script>
+
+
+
+        <script>
+          var rw_min=2000, rw_max=5000, al_min=0, al_max=5000;
+          myChart.on('datarangeselected',function(params){
+            var option = myChart.getOption();
+
+            rw_min = option.visualMap[1].range[0];
+            rw_max = option.visualMap[1].range[1];
+
+            al_min = option.visualMap[0].range[0];
+            al_max = option.visualMap[0].range[1];
+
+          });
+
+
+
+          var data = [];
+          var target = [];
+
+          function test() {
+            target = new Array();
+            var rws = new Set();
+            $("#target1").html("target1 参数: "+rw_min+' m <= 跑道长度 <= '+rw_max+' m'
+        +"</br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+al_min+' m <= 机场海拔 <= '+al_max+' m');
+            data1.forEach(function(obj){
+              if(obj.altitude>=al_min && obj.altitude <=al_max){
+                if(obj.length>=rw_min && obj.length <=rw_max){
+                  rws.add(obj.airport+'_'+obj.runway);
+                }
+              }
+            });
+            data.forEach(function(obj){
+              var key = Object.keys(obj)[0];
+              var val = obj[key];
+              if(rws.has(val.airp_rw)){
+                target.push(obj);
+              }
+            });
+
+            option.series[0].data = get_mean_data(target, 0);
+            option.series[1].data = get_mean_data_ma(target, 0, 7);
+            kline.setOption(option);
+          }
+
+          function test2() {
+            target = new Array();
+            var rws = new Set();
+            $("#target2").html("target2 参数: "+rw_min+' m <= 跑道长度 <= '+rw_max+' m'
+        +"</br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+al_min+' m <= 机场海拔 <= '+al_max+' m');
+            data1.forEach(function(obj){
+              if(obj.altitude>=al_min && obj.altitude <=al_max){
+                if(obj.length>=rw_min && obj.length <=rw_max){
+                  rws.add(obj.airport+'_'+obj.runway);
+                }
+              }
+            });
+            data.forEach(function(obj){
+              var key = Object.keys(obj)[0];
+              var val = obj[key];
+              if(rws.has(val.airp_rw)){
+                target.push(obj);
+              }
+            });
+
+            option.series[2].data = get_mean_data(target, 0);
+            option.series[3].data = get_mean_data_ma(target, 0, 7);
+            kline.setOption(option);
+          }
+
+          function get_set(data){
+            var s = new Set();
+            data.forEach(function(obj){
+              var key = Object.keys(obj)[0];
+              s.add(key.toString().slice(0,2)+'/'+key.toString().slice(2,4)+'/'+key.toString().slice(4,6));
+            });
+            var ret = Array.from(s);
+            ret.sort();
+            return ret;
+          }
+          var time_set = get_set(data);
+          function get_mean_data(data, type){
+            var ret = [];
+            var mp = {};
+            data.forEach(function(obj){
+              var key = Object.keys(obj)[0];
+              var date = key.toString().slice(0,2)+'/'+key.toString().slice(2,4)+'/'+key.toString().slice(4,6);
+              var num = 0.0;
+              if(type == 0){
+                num = obj[key].rw_used[3]-obj[key].rw_used[1];
+              }else{
+                num = obj[key].rw_used[3];
+              }
+
+              if(mp.hasOwnProperty(date)){
+                ;
+              }else{
+                mp[date] = {'n':0, 's':0.0}
+              }
+              mp[date].s += num;
+              mp[date].n++;
+            });
+            time_set.forEach(function(date){
+              if(mp.hasOwnProperty(date)){
+                ret.push(mp[date].s/mp[date].n);
+              }else{
+                if(ret.length == 0){
+                  ret.push(0);
+                }else{
+                  ret.push(ret[ret.length-1]);
+
+                }
+              }
+
+            });
+            return ret;
+          }
+          function get_mean_data_ma(data, type, delay){
+            var ret = [];
+            var mp = {};
+            data.forEach(function(obj){
+              var key = Object.keys(obj)[0];
+              var date = key.toString().slice(0,2)+'/'+key.toString().slice(2,4)+'/'+key.toString().slice(4,6);
+              var num = 0.0;
+              if(type == 0){
+                num = obj[key].rw_used[3]-obj[key].rw_used[1];
+              }else{
+                num = obj[key].rw_used[3];
+              }
+
+              if(mp.hasOwnProperty(date)){
+                ;
+              }else{
+                mp[date] = {'n':0, 's':0.0}
+              }
+              mp[date].s += num;
+              mp[date].n++;
+            });
+            var tmp = [];
+            for(var i=0;i<time_set.length;i++){
+              if(mp.hasOwnProperty(time_set[i])){
+                tmp.push(mp[time_set[i]].s/mp[time_set[i]].n);
+              }else{
+                if(tmp.length == 0){
+                  tmp.push(0);
+                }else{
+                  tmp.push(tmp[tmp.length-1])
+
+                }
+              }
+
+              //tmp.push(mp[time_set[i]].s/mp[time_set[i]].n)
+
+              if(i<delay){
+                ret.push(0);
+              }else{
+                s = tmp.reduce(function(l,r){return l+r;},0);
+                ret.push(s/tmp.length);
+                tmp.shift();
+              }
+            }
+            return ret;
+          }
+          var option = {
+            title: {
+              text: '',
+              x: 'center'
+            },
+            tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                animation: false
+              }
+            },
+            legend: {
+              data:['target1','target1_MA','target2','target2_MA'],
+              x: 'left'
+            },
+            toolbox: {
+              feature: {
+                dataZoom: {
+                  yAxisIndex: 'none',
+                  xAxisIndex: 0
+                },
+                restore: {},
+                saveAsImage: {}
+              }
+            },
+            grid: [{
+              left: 50,
+              right: 50,
+              height: '80%'
+            }],
+            xAxis : [
+              {
+                type : 'category',
+                boundaryGap : false,
+                axisLine: {onZero: true},
+                data: time_set
+              }
+            ],
+            dataZoom: [
+            {
+              type: 'slider',
+              realtime: true,
+              start: 30,
+              end: 70,
+              xAxisIndex: [0]
+            }
+          ],
+            yAxis : [
+              {
+                name : '平均刹车距离',
+                type : 'value'
+              }
+            ],
+            series : [
+              {
+                name:'target1',
+                type:'line',
+                symbolSize: 8,
+                hoverAnimation: false,
+                data:get_mean_data(data, 0)
+              },
+              {
+                name:'target1_MA',
+                type:'line',
+                symbolSize: 8,
+                hoverAnimation: false,
+                data:get_mean_data_ma(data, 0, 7)
+              },
+              {
+                name:'target2',
+                type:'line',
+                symbolSize: 8,
+                hoverAnimation: false,
+                data:get_mean_data(target, 0)
+              },
+              {
+                name:'target2_MA',
+                type:'line',
+                symbolSize: 8,
+                hoverAnimation: false,
+                data:get_mean_data_ma(target, 0, 7)
+              }
+            ]
+          };
+          var kline = echarts.init(document.getElementById('kline'),'macarons');
+          kline.setOption(option);
+
+          function handleFileSelect(evt) {
+            var files = evt.target.files; // FileList object
+            if (!files.length) {
+              alert('Please select a file!');
+              return;
+            }
+            var file = files[0];
+            var reader = new FileReader();
+
+            reader.onload = function(e){
+              data = JSON.parse(e.target.result);
+              time_set = get_set(data);
+              option.series[0].data = get_mean_data(data, 0);
+              option.series[1].data = get_mean_data_ma(data, 0, 7);
+
+              option.xAxis[0].data = time_set;
+              kline.setOption(option);
+            };
+            reader.readAsText(file);
+          }
+
+          document.getElementById('files').addEventListener('change', handleFileSelect, false);
+        </script>
+
+    {% endblock %}

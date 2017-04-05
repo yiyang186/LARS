@@ -1,5 +1,6 @@
 *.pyc
 *.csv
+*.txt
 *.xml
 LARS/__pycache__
 *.sqlite3

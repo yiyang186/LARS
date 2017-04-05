@@ -69,4 +69,10 @@ def show_kline(request):
         context = {'title': '重着陆趋势图', 'alldata': json.dumps(alldata)}
         return render(request, 'hardlanding/kline.html', context)
         
+def show_overrun_bar(request):
+    context = {'title': '冲出跑道分布'}
+    return render(request, 'hardlanding/overrun_bar.html', context)
 
+def show_overrun_kline(request):
+    context = {'title': '冲出跑道趋势'}
+    return render(request, 'hardlanding/overrun_kline.html', context)
