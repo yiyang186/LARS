@@ -23,7 +23,7 @@ def show_map(request):
         return JsonResponse({'title': title, 'data': data})
     else:
         result = helpers.get_maxvrtg_in_airports()
-        context = {'title': '重着陆地图', \
+        context = {'title': '重着陆分布图', \
                    'alldata': json.dumps(result)}
         return render(request, 'hardlanding/map.html', context)
 
@@ -66,7 +66,7 @@ def show_kline(request):
             alldata['crossrate'+span] = data_temp['crossrate']
         # for window in [500]:
         #     alldata['data'+str(window)] = helpers.get_kline_ma(vrtg=1.4, window=window, airport=None)
-        context = {'title': '重着陆K线图', 'alldata': json.dumps(alldata)}
+        context = {'title': '重着陆趋势图', 'alldata': json.dumps(alldata)}
         return render(request, 'hardlanding/kline.html', context)
         
 
