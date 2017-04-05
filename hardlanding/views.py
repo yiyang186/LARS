@@ -70,9 +70,19 @@ def show_kline(request):
         return render(request, 'hardlanding/kline.html', context)
         
 def show_overrun_bar(request):
-    context = {'title': '冲出跑道分布'}
+    path = "I:/Workspaces/python/django/LRAS/static/csv/data.txt"
+    data = ""
+    with open(path) as f:
+        for line in f.readlines():
+            data += line
+    context = {'title': '冲出跑道分布', 'data': data}
     return render(request, 'hardlanding/overrun_bar.html', context)
 
 def show_overrun_kline(request):
-    context = {'title': '冲出跑道趋势'}
+    path = "I:/Workspaces/python/django/LRAS/static/csv/data.txt"
+    data = ""
+    with open(path) as f:
+        for line in f.readlines():
+            data += line
+    context = {'title': '冲出跑道趋势', 'data': data}
     return render(request, 'hardlanding/overrun_kline.html', context)

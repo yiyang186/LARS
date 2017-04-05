@@ -5,11 +5,10 @@
       </div>
       <div class="col-md-6">
         <div id="kline" style="height:600px;width:100%"></div>
-
-        <input type="file" id="files" name="files[]" />
         <button type="button" id="test" onclick="test()">绘图</button>
 
         <output id="list"></output>
+        <p id='data' hidden='hidden'>{{ data|safe }}</p>
       </div>
 
             {% load staticfiles %}
@@ -971,7 +970,7 @@
                     type: 'scatter',
                     coordinateSystem: 'bmap',
                     data: convertData1(data1),
-                    symbol: 'diamond',
+                    symbol: 'circle',
                     symbolSize: function (val) {
                       return 8;
                     },
@@ -1216,8 +1215,8 @@
               });
 
 
+              var data = JSON.parse($("#data").text());
 
-              var data = [];
               var target = [];
               var rws = new Set();
 
@@ -1246,10 +1245,12 @@
                     }
                   }
                 });
-
+                kline = echarts.init(document.getElementById('kline'),'macarons');
                 option.series = [];
                 option.legend.data = [];
                 option.xAxis[0].data = ['平均刹车距离','使用跑道长度']
+                //kline.setOption(option);
+                
                 rws.forEach(function(rw){
                   var tmp = [];
                   data.forEach(function(obj){
@@ -1436,6 +1437,7 @@
                 series : []
               };
               var kline = echarts.init(document.getElementById('kline'),'macarons');
+
               kline.setOption(option);
 
               function handleFileSelect(evt) {
@@ -1450,9 +1452,11 @@
                 reader.onload = function(e){
                   data = JSON.parse(e.target.result);
                   time_set = get_set(data);
+                  kline.setOption(option);
                 };
                 reader.readAsText(file);
               }
+
 
               document.getElementById('files').addEventListener('change', handleFileSelect, false);
             </script>

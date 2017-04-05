@@ -1,16 +1,17 @@
 {% extends 'base.html' %}
     {% block content %}
+        <p id='data' hidden='hidden'>{{ data|safe }}</p>
         <div class="col-md-6">
             <div id="main" style="height:600px;width:100%"></div>
             <ul>
               <li id="target1"></li>
               <li id="target2"></li>
             </ul>
+            <p id='data' hidden='hidden'>{{ data|safe }}</p>
         </div>
         <div class="col-md-6">
           <div id="kline" style="height:600px;width:100%"></div>
 
-          <input type="file" id="files" name="files[]" />
           <button type="button" id="test" onclick="test()">绘图1</button>
           <button type="button" id="test" onclick="test2()">绘图2</button>
 
@@ -976,7 +977,7 @@
                 type: 'scatter',
                 coordinateSystem: 'bmap',
                 data: convertData1(data1),
-                symbol: 'diamond',
+                symbol: 'circle',
                 symbolSize: function (val) {
                   return 8;
                 },
@@ -1101,7 +1102,7 @@
 
 
 
-          var data = [];
+          var data = JSON.parse($("#data").text());
           var target = [];
 
           function test() {
