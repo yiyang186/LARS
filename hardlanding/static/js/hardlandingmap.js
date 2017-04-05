@@ -36,7 +36,7 @@ option = {
                 top: '43%',
                 textStyle: {
                     color: '#fff',
-                    fontSize: 10
+                    fontSize: 12
                 }
             }
         ],

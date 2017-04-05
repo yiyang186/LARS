@@ -77,8 +77,8 @@ option = {
             // alldata.data500.name, alldata.data1000.name],
             data:['每天重着陆频率', '每天环境熵', '每天逆转率',
                 '每周重着陆频率', '每周环境熵', '每周逆转率'],
-            left: '35%',
-            top: '5%',
+            left: '32%',
+            top: '4%',
             // selected: {
             //     'seasonally': false, 
             //     'monthly': false,
@@ -124,15 +124,15 @@ option = {
             type: 'inside',
             xAxisIndex: [0, 1],
             realtime: true,
-            start: 65,
-            end: 85
+            start: 45,
+            end: 95
         },
         {
             show: true,
             xAxisIndex: [0, 1],
             realtime: true,
-            start: 65,
-            end: 85
+            start: 45,
+            end: 95
         }
     ],
     xAxis : [
@@ -156,14 +156,14 @@ option = {
             gridIndex: 0, 
             name: '重着陆频率',
             type: 'value',
-            max: 1.0
+            // max: 1.0
         },
         {
             gridIndex: 0, 
             name: '每天航段数',
             nameLocation: 'start',
             type: 'value',
-            max: 300,
+            max: 500,
             inverse: true
         },
         {
