@@ -7,7 +7,16 @@
             <div>
             <ul class="nav navbar-nav">
                 <li class="active"><a href="{% url 'hardlanding:index' %}">...</a></li>
-                <li><a href="{% url 'hardlanding:map' %}">重着陆分布</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        重着陆分布
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'hardlanding:map' %}">机场</a></li>
+                        <li><a href="{% url 'hardlanding:ent_opt' %}">环境熵与逆转率的分布</a></li>
+                    </ul>
+                </li>
                 <li><a href="{% url 'hardlanding:kline' %}">重着陆趋势</a></li>
                 <li><a href="{% url 'hardlanding:overrun_bar' %}">冲出跑道分布</a></li>
                 <li><a href="{% url 'hardlanding:overrun_kline' %}">冲出跑道趋势</a></li>

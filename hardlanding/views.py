@@ -86,3 +86,8 @@ def show_overrun_kline(request):
             data += line
     context = {'title': '冲出跑道趋势', 'data': data}
     return render(request, 'hardlanding/overrun_kline.html', context)
+
+def show_all_airports_ent_opt(request):
+    alldata = helpers.get_all_airports_ent_opt()
+    context = {'title': '所有机场的环境熵与逆转率', 'alldata': json.dumps(alldata)}
+    return render(request, 'hardlanding/ent_opt.html', context)

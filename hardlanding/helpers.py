@@ -260,3 +260,16 @@ def get_airports():
     airport_info = list(map(lambda i, r: {"name": r[0]+r[1]+i, "value": r[2:]}, \
                 temp.index, temp.values.tolist()))
     return {'altitude': altitude, 'length': length, 'info': airport_info}
+
+def get_all_airports_ent_opt():
+    df = Table().get_dataFrame()
+    ff = df.loc[:, ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX', 'ChineseCityName','ChineseName', 'DATETIME']].round(3)
+    data = []
+    means = []
+    splits = [0, 1.3, 1.4, 1.5, 1.6, 2]
+    for i in range(1, len(splits)):
+        dd = ff.loc[(ff['VRTG_MAX'] >= splits[i-1]) & (ff['VRTG_MAX'] < splits[i]), :]
+        data.append(dd.values.tolist())
+        mm = dd.loc[:, ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX']].mean().round(3)
+        means.append(mm.values.tolist())
+    return {'data': data, 'means': means, 'splits': splits}
