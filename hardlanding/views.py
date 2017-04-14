@@ -69,4 +69,30 @@ def show_kline(request):
         context = {'title': '重着陆趋势图', 'alldata': json.dumps(alldata)}
         return render(request, 'hardlanding/kline.html', context)
         
+def show_overrun_bar(request):
+    path = "I:/Workspaces/python/django/LRAS/static/csv/data.txt"
+    data = ""
+    with open(path) as f:
+        for line in f.readlines():
+            data += line
+    context = {'title': '冲出跑道分布', 'data': data}
+    return render(request, 'hardlanding/overrun_bar.html', context)
 
+def show_overrun_kline(request):
+    path = "I:/Workspaces/python/django/LRAS/static/csv/data.txt"
+    data = ""
+    with open(path) as f:
+        for line in f.readlines():
+            data += line
+    context = {'title': '冲出跑道趋势', 'data': data}
+    return render(request, 'hardlanding/overrun_kline.html', context)
+
+def show_all_airports_ent_opt(request):
+    alldata = helpers.get_all_airports_ent_opt()
+    context = {'title': '所有机场的环境熵与逆转率', 'alldata': json.dumps(alldata)}
+    return render(request, 'hardlanding/ent_opt.html', context)
+
+def show_ent_opt_track(request):
+    alldata = helpers.get_ent_opt_track()
+    context = {'title': '所有机场的环境熵与逆转率质心轨迹', 'alldata': json.dumps(alldata)}
+    return render(request, 'hardlanding/track.html', context)

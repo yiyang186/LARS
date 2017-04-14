@@ -1,5 +1,6 @@
 *.pyc
 *.csv
+*.txt
 *.xml
 *.txt
 LARS/__pycache__
