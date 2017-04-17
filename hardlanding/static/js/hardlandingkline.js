@@ -138,9 +138,8 @@ option_other = {
     ],
     legend: [
         {
-            data:['每天重着陆频率', '每天环境熵', '每天逆转率',
-                '每周重着陆频率', '每周环境熵', '每周逆转率'],
-            left: '32%',
+            data:['每天重着陆频率', '每天环境熵', '每天逆转率', '每周重着陆频率', '每周环境熵', '每周逆转率'],
+            left: 'center',
             top: '4%',
             selected: {
                 '每天重着陆频率': false, 
@@ -310,7 +309,7 @@ option_other = {
 
 option_pyramid = {
     title : [{
-        text: '机场海拔与跑道长',
+        text: '重着陆风险隐患金字塔',
         left: 'center',
         top: 'top'
     }],
@@ -339,7 +338,7 @@ option_pyramid = {
 
 option_pie = {
     title : [{
-            text: '重着陆风险隐患金字塔',
+            text: '机场海拔与跑道长',
             left: 'center',
             top: 'bottom'
         }],
@@ -349,7 +348,7 @@ option_pie = {
             name:'海拔',
             type:'pie',
             selectedMode: 'single',
-            radius: [0, '30%'],
+            radius: [0, '40%'],
             center: ['50%', '45%'],
             label: {
                 normal: {
@@ -368,8 +367,13 @@ option_pie = {
             name:'跑道长',
             type:'pie',
             selectedMode: 'single',
-            radius: ['40%', '70%'],
+            radius: ['50%', '80%'],
             center: ['50%', '45%'],
+            label: {
+                normal: {
+                    position: 'inner'
+                }
+            },
             tooltip: {trigger: 'item'},
             data:alldata.length.counts
         },

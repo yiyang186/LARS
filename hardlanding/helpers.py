@@ -235,16 +235,16 @@ def airports_divided_by_length(df, a, b, c):
     l3 = df.loc[(df['Length'] > b) & (df['Length'] <=c), :]
     l4 = df.loc[df['Length'] > c, :]
     counts = [
-        {'name': '<{0}kft'.format(a/1000), 'value': l1.shape[0]},
-        {'name': '{0}~{1}kft'.format(a/1000, b/1000), 'value': l2.shape[0]},
-        {'name': '{0}~{1}kft'.format(b/1000, c/1000), 'value': l3.shape[0]},
-        {'name': '>{0}kft'.format(c/1000), 'value': l4.shape[0]}
+        {'name': '<{0}kft'.format(int(a/1000)), 'value': l1.shape[0]},
+        {'name': '{0}~{1}kft'.format(int(a/1000), int(b/1000)), 'value': l2.shape[0]},
+        {'name': '{0}~{1}kft'.format(int(b/1000), int(c/1000)), 'value': l3.shape[0]},
+        {'name': '>{0}kft'.format(int(c/1000)), 'value': l4.shape[0]}
     ]
     codes = {
-        '<{0}kft'.format(a/1000): l1.index.values.tolist(),
-        '{0}~{1}kft'.format(a/1000, b/1000): l2.index.values.tolist(),
-        '{0}~{1}kft'.format(b/1000, c/1000): l3.index.values.tolist(),
-        '>{0}kft'.format(c/1000): l4.index.values.tolist()
+        '<{0}kft'.format(int(a/1000)): l1.index.values.tolist(),
+        '{0}~{1}kft'.format(int(a/1000), int(b/1000)): l2.index.values.tolist(),
+        '{0}~{1}kft'.format(int(b/1000), int(c/1000)): l3.index.values.tolist(),
+        '>{0}kft'.format(int(c/1000)): l4.index.values.tolist()
     }
     return {'counts': counts, 'codes': codes}
 
