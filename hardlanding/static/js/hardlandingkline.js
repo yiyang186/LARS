@@ -1,32 +1,17 @@
-var dom = document.getElementById("kline");
-var myChart = echarts.init(dom);
 var alldata = JSON.parse(document.getElementById("alldata").textContent);
 var urlkline = document.getElementById("klineurl").textContent;
 var vrtg = '1.40';
-option = {
-    title : [
-        {
-            text: '着陆重(>'+vrtg+')着陆发生频率',
-            x: 'center',
-            align: 'right'
-        },
-        {
-            text: '重着陆风险隐患',
-            left: 'right',
-            top: 'top'
-        },
-        {
-            text: '机场海拔与跑道长',
-            left: 'right',
-            top: 'bottom'
-        },
-    ],
-    color: ['#00a3ba', '#eac736', '#ff4e5d', '#c23531','#2f4554', '#61a0a8', '#d48265', '#91c7ae'],
-    tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-            type: 'cross'
-        },
+var kline_chart;
+var mycolor = ['#00a3ba', '#eac736', '#ff4e5d', '#c23531','#2f4554', '#61a0a8', '#d48265', '#91c7ae'];
+
+option_map = {
+    title : [{
+        text: '全国机场',
+        x: 'center',
+        align: 'top'
+    }],
+    color: mycolor,
+    tooltip: {  
         backgroundColor: 'rgba(245, 245, 245, 0.8)',
         borderWidth: 1,
         borderColor: '#ccc',
@@ -36,22 +21,6 @@ option = {
         },
         extraCssText: 'width: 170px',
     },
-    // backgroundColor: '#696969',
-    grid: [
-        {left: "33%", top: "10%", height: '50%', right: '25%',
-            tooltip: {
-                trigger: 'axis',
-                // formatter: '{b}:<br />{c}'
-            },
-        },
-        {left: "33%", top: "68%", height: '20%', right: '25%',
-            tooltip: {
-                trigger: 'axis',
-                // formatter: '{b}:<br />{c}'
-            },
-        }
-    ],
-        // {left: "33%", top: "65%", height: '25%', right: '25%'}
     visualMap: {
         type: "piecewise",
         pieces: [
@@ -70,39 +39,12 @@ option = {
             color: '#000'
         }
     },
-    legend: [
-        {
-            // data:['海拔', alldata.dataD.name, alldata.dataW.name, 
-            // alldata.dataM.name, alldata.dataQ.name, alldata.data100.name,
-            // alldata.data500.name, alldata.data1000.name],
-            data:['每天重着陆频率', '每天环境熵', '每天逆转率',
-                '每周重着陆频率', '每周环境熵', '每周逆转率'],
-            left: '32%',
-            top: '4%',
-            // selected: {
-            //     'seasonally': false, 
-            //     'monthly': false,
-            //     'MA_100': false,
-            //     'MA_1000': false
-            // }
-            selected: {
-                '每天重着陆频率': false, 
-                '每天环境熵': false,
-                '每天逆转率': false
-            }
-        },
-        {
-            orient: 'vertical',
-            right: '16%',
-            data: alldata.pyramid_vrtg.legend
-        }
-    ],
     geo: {
         map: 'china',
-        left: '1%',
-        width: '35%',
+        left: '0px',
+        width: '100%',
         center: [120, 35],
-        zoom: 1.5,
+        zoom: 2.0,
         roam: true,
         label: {
             emphasis: {
@@ -119,6 +61,94 @@ option = {
             }
         }
     },
+    series: [
+        {
+            type: 'scatter',
+            coordinateSystem: 'geo',
+            symbolSize: function(value) {
+                return (value[3] - 5000) / 400;
+            },
+            label: {
+                normal: {
+                    show: false
+                },
+                emphasis: {
+                    show: false
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: function (param) {
+                    // param = param[0];
+                    return [
+                        '机场: ' + param.name + '<hr size=1 style="margin: 3px 0">',
+                        '经度: ' + param.value[0] + '<br/>',
+                        '纬度: ' + param.value[1] + '<br/>',
+                        '海拔: ' + param.value[2] + 'ft<br/>',
+                        '跑道长度： ' + param.value[3]+'ft'
+                    ].join('');
+                }
+            },
+            itemStyle: {
+                emphasis: {
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }
+            },
+            data: alldata.airportinfo
+        },
+    ]
+};
+
+
+option_other = {
+    title : [
+        {
+            text: '着陆重(>'+vrtg+')着陆发生频率',
+            left: 'center',
+            top: 'top'
+        }
+    ],
+    color: mycolor,
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'cross'
+        },
+        backgroundColor: 'rgba(245, 245, 245, 0.8)',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        padding: 10,
+        textStyle: {
+            color: '#000'
+        },
+        extraCssText: 'width: 170px',
+    },
+    grid: [
+        {left: "30px", top: "10%", height: '50%', right: '30px',
+            tooltip: {
+                trigger: 'axis',
+            },
+        },
+        {left: "30px", top: "68%", height: '20%', right: '30px',
+            tooltip: {
+                trigger: 'axis',
+            },
+        }
+    ],
+    legend: [
+        {
+            data:['每天重着陆频率', '每天环境熵', '每天逆转率',
+                '每周重着陆频率', '每周环境熵', '每周逆转率'],
+            left: '32%',
+            top: '4%',
+            selected: {
+                '每天重着陆频率': false, 
+                '每天环境熵': false,
+                '每天逆转率': false
+            }
+        }
+    ],
     dataZoom: [
         {
             type: 'inside',
@@ -156,7 +186,6 @@ option = {
             gridIndex: 0, 
             name: '重着陆频率',
             type: 'value',
-            // max: 1.0
         },
         {
             gridIndex: 0, 
@@ -168,55 +197,16 @@ option = {
         },
         {
             gridIndex: 1, 
-            // min: 0.75,
-            // max: 2.8,
             name: '环境熵',
             type: 'value',
         },
         {
             gridIndex: 1, 
-            // min: 0.04,
-            // max: 0.16,
             name: '逆转率',
             type: 'value',
         },
     ],
     series: [
-        {
-            type: 'scatter',
-            coordinateSystem: 'geo',
-            symbolSize: function(value) {
-                return (value[3] - 5000) / 400;
-            },
-            label: {
-                normal: {
-                    show: false
-                },
-                emphasis: {
-                    show: false
-                }
-            },
-            tooltip: {
-                trigger: 'item',
-                formatter: function (param) {
-                    // param = param[0];
-                    return [
-                        '机场: ' + param.name + '<hr size=1 style="margin: 3px 0">',
-                        '经度: ' + param.value[0] + '<br/>',
-                        '纬度: ' + param.value[1] + '<br/>',
-                        '海拔: ' + param.value[2] + 'ft<br/>',
-                        '跑道长度： ' + param.value[3]+'ft'
-                    ].join('');
-                }
-            },
-            itemStyle: {
-                emphasis: {
-                    borderColor: '#fff',
-                    borderWidth: 1
-                }
-            },
-            data: alldata.airportinfo
-        },
         {
             id: 'daily',
             name:alldata.dataD.name,
@@ -245,34 +235,6 @@ option = {
             },
             data: alldata.dataW.means
         },
-        // {
-        //     id: 'monthly',
-        //     name: alldata.dataM.name,
-        //     type:'line',
-        //     xAxisIndex:0,
-        //     yAxisIndex:0,
-        //     animation: false,
-        //     lineStyle: {
-        //         normal: {
-        //             width: 1
-        //         }
-        //     },
-        //     data: alldata.dataM.means
-        // },
-        // {
-        //     id: 'seasonally',
-        //     name: alldata.dataQ.name,
-        //     type:'line',
-        //     xAxisIndex:0,
-        //     yAxisIndex:0,
-        //     animation: false,
-        //     lineStyle: {
-        //         normal: {
-        //             width: 1
-        //         }
-        //     },
-        //     data: alldata.dataQ.means
-        // },
         {
             id: 'counts',
             name:'每天航段数',
@@ -286,63 +248,6 @@ option = {
                 }
             },
             data: alldata.counts
-        },
-        // {
-        //     id: 'ma100',
-        //     name:alldata.data100.name,
-        //     type:'line',
-        //     xAxisIndex:0,
-        //     yAxisIndex:0,
-        //     animation: false,
-        //     lineStyle: {
-        //         normal: {
-        //             width: 1
-        //         }
-        //     },
-        //     data: alldata.data100.means
-        // },
-        // {
-        //     id: 'ma500',
-        //     name: alldata.data500.name,
-        //     type:'line',
-        //     xAxisIndex:0,
-        //     yAxisIndex:0,
-        //     animation: false,
-        //     lineStyle: {
-        //         normal: {
-        //             width: 1
-        //         }
-        //     },
-        //     data: alldata.data500.means
-        // },
-        // {
-        //     id: 'ma1000',
-        //     name: alldata.data1000.name,
-        //     type:'line',
-        //     xAxisIndex:0,
-        //     yAxisIndex:0,
-        //     animation: false,
-        //     lineStyle: {
-        //         normal: {
-        //             width: 1
-        //         }
-        //     },
-        //     data: alldata.data1000.means
-        // },
-        {
-            name: '转化率',
-            id: 'pyramid_vrtg',
-            type: 'funnel',
-            width: '14%',
-            height: '40%',
-            left: '80%',
-            top: '4%',
-            sort: 'ascending',
-            tooltip: {
-                trigger: 'item',
-                formatter: '{b}:<br />{c}'
-            },
-            data: alldata.pyramid_vrtg.data
         },
         {
             id: 'daily_entropy',
@@ -372,7 +277,7 @@ option = {
             },
             data: alldata.entropyW.means
         },
-                {
+        {
             id: 'daily_crossrate',
             name: alldata.crossrateD.name,
             type:'line',
@@ -399,13 +304,53 @@ option = {
                 }
             },
             data: alldata.crossrateW.means
+        }
+    ]
+};
+
+option_pyramid = {
+    title : [{
+        text: '机场海拔与跑道长',
+        left: 'center',
+        top: 'top'
+    }],
+    color: mycolor,
+    legend: [{
+        orient: 'vertical',
+        left: '0px',
+        data: alldata.pyramid_vrtg.legend
+    }],
+    series: [{
+        name: '转化率',
+        id: 'pyramid_vrtg',
+        type: 'funnel',
+        width: '90%',
+        height: '95%',
+        left: '0%',
+        top: '5%',
+        sort: 'ascending',
+        tooltip: {
+            trigger: 'item',
+            formatter: '{b}:<br />{c}'
         },
+        data: alldata.pyramid_vrtg.data
+    }]
+};
+
+option_pie = {
+    title : [{
+            text: '重着陆风险隐患金字塔',
+            left: 'center',
+            top: 'bottom'
+        }],
+    color: mycolor,
+    series: [
         {
             name:'海拔',
             type:'pie',
             selectedMode: 'single',
-            radius: [0, '20%'],
-            center: ['87%', '75%'],
+            radius: [0, '30%'],
+            center: ['50%', '45%'],
             label: {
                 normal: {
                     position: 'inner'
@@ -423,21 +368,17 @@ option = {
             name:'跑道长',
             type:'pie',
             selectedMode: 'single',
-            radius: ['25%', '35%'],
-            center: ['87%', '75%'],
+            radius: ['40%', '70%'],
+            center: ['50%', '45%'],
             tooltip: {trigger: 'item'},
             data:alldata.length.counts
         },
     ]
 };
 
-if (option && typeof option === "object") {
-    myChart.setOption(option, true);
-}
-
 function update_kline(requestJson) {
     $.getJSON(urlkline, requestJson, function (res) {
-        myChart.setOption({
+        kline_chart.setOption({
             title : {text: res.title},
             series: [
                 {id: 'counts', data: res.counts},
@@ -447,12 +388,6 @@ function update_kline(requestJson) {
                 {id: 'weekly', data: res.dataW.means},
                 {id: 'weekly_entropy', data: res.entropyW.means},
                 {id: 'weekly_crossrate', data: res.crossrateW.means},
-                                
-                // {id: 'monthly', data: res.dataM.means},
-                // {id: 'seasonally', data: res.dataQ.means},
-                // {id: 'ma100', data: res.data100.means},
-                // {id: 'ma500', data: res.data500.means},
-                // {id: 'ma1000', data: res.data1000.means},
             ]
         });
     });
@@ -478,9 +413,7 @@ function show_kline_by_pie(params) {
     update_kline(requestJson);
 }
 
-myChart.on('click', function (params) {
-    // alert(params.seriesName);
-    // alert(params.dataIndex);
+function click_hundler(params) {
     if(params.seriesType == 'scatter'){
         show_kline(params);
     }
@@ -491,13 +424,42 @@ myChart.on('click', function (params) {
     if(params.seriesType == 'pie'){
         show_kline_by_pie(params);
     }
-});
+}
 
-// myChart.on('legendselectchanged', function (params) {
-//     // 获取点击图例的选中状态
-//     var isSelected = params.selected[params.name];
-//     // 在控制台中打印
-//     console.log((isSelected ? '选中了' : '取消选中了') + '图例' + params.name);
-//     // 打印所有图例的状态
-//     // console.log(params.selected);
-// });
+function DrawKline(ec) {
+    var dom = document.getElementById("kline");
+    var myChart = ec.init(dom);
+    kline_chart = myChart; // 只有给kline_chart赋值了，click_hundler才能用，所以这个函数必须在其他Draw函数之前
+    myChart.setOption(option_other, true);
+    myChart.on('click', click_hundler);
+}
+
+function DrawMap(ec) {
+    var dom = document.getElementById("map");
+    var myChart = ec.init(dom);
+    myChart.setOption(option_map, true);
+    myChart.on('click', click_hundler);
+}
+
+function DrawPyramid(ec) {
+    var dom = document.getElementById("pyramid");
+    var myChart = ec.init(dom);
+    myChart.setOption(option_pyramid, true);
+    myChart.on('click', click_hundler);
+}
+
+function DrawPie(ec) {
+    var dom = document.getElementById("pie");
+    var myChart = ec.init(dom);
+    myChart.setOption(option_pie, true);
+    myChart.on('click', click_hundler);
+}
+
+function DrawCharts(ec) {
+    DrawMap(ec);
+    DrawKline(ec);
+    DrawPyramid(ec);
+    DrawPie(ec);
+}
+
+DrawCharts(echarts);
