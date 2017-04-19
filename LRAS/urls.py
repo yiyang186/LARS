@@ -19,4 +19,5 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^hardlanding/', include('hardlanding.urls', namespace='hardlanding')),
+    url(r'^airport/', include('airport.urls', namespace='airport')),
 ]

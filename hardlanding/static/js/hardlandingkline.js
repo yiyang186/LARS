@@ -43,7 +43,7 @@ option_map = {
         map: 'china',
         left: '0px',
         width: '100%',
-        center: [120, 35],
+        center: [117, 35],
         zoom: 2.0,
         roam: true,
         label: {
@@ -125,12 +125,12 @@ option_other = {
         extraCssText: 'width: 170px',
     },
     grid: [
-        {left: "30px", top: "10%", height: '50%', right: '30px',
+        {left: "30px", top: "10%", height: '50%', right: '50px',
             tooltip: {
                 trigger: 'axis',
             },
         },
-        {left: "30px", top: "68%", height: '20%', right: '30px',
+        {left: "30px", top: "68%", height: '20%', right: '50px',
             tooltip: {
                 trigger: 'axis',
             },

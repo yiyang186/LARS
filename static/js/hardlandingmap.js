@@ -1,7 +1,7 @@
 var dom = document.getElementById("map");
 var myChart = echarts.init(dom);
 var alldata = JSON.parse(document.getElementById("alldata").textContent);
-var mapurl = document.getElementById("mapurl").textContent;
+var urlmap = document.getElementById("mapurl").textContent;
 
 option = {
     baseOption: {
@@ -246,7 +246,7 @@ option = {
 function show_scatter(params) {
     var airport = params.name.match(/[A-Z]+/) + ''; //params.name.match(/[A-Z]+/)得到的不是字符串，需要转成字符串
     var requestJson = {'airport': airport, 'month': params.seriesName};
-    $.getJSON(mapurl, requestJson, function (res) {
+    $.getJSON(urlmap, requestJson, function (res) {
         myChart.setOption({
             title: {
                 id: 'oneAirport',
