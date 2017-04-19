@@ -15,18 +15,6 @@ def index(request):
         context = {'mycolumns': names, 'title': '概况'}
         return render(request, 'hardlanding/index.html', context)
 
-def show_map(request):
-    if request.GET:
-        month = request.GET.get('month')
-        airport = request.GET.get('airport')
-        title, data = helpers.get_data_in_month_and_airport(month, airport)
-        return JsonResponse({'title': title, 'data': data})
-    else:
-        result = helpers.get_maxvrtg_in_airports()
-        context = {'title': '重着陆分布图', \
-                   'alldata': json.dumps(result)}
-        return render(request, 'hardlanding/map.html', context)
-
 def show_kline(request):
     if request.GET:
         airport = request.GET.get('airport')
@@ -86,13 +74,3 @@ def show_overrun_kline(request):
             data += line
     context = {'title': '冲出跑道趋势', 'data': data}
     return render(request, 'hardlanding/overrun_kline.html', context)
-
-def show_all_airports_ent_opt(request):
-    alldata = helpers.get_all_airports_ent_opt()
-    context = {'title': '所有机场的环境熵与逆转率', 'alldata': json.dumps(alldata)}
-    return render(request, 'hardlanding/ent_opt.html', context)
-
-def show_ent_opt_track(request):
-    alldata = helpers.get_ent_opt_track()
-    context = {'title': '所有机场的环境熵与逆转率质心轨迹', 'alldata': json.dumps(alldata)}
-    return render(request, 'hardlanding/track.html', context)

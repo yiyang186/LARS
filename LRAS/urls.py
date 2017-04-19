@@ -20,4 +20,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^hardlanding/', include('hardlanding.urls', namespace='hardlanding')),
     url(r'^airport/', include('airport.urls', namespace='airport')),
+    url(r'^pae/', include('pae.urls', namespace='pae')),
 ]

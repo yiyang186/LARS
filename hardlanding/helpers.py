@@ -34,70 +34,6 @@ def get_pyramid_vrtg():
         legend.append(name)
     return {'data': data, 'legend': legend}
 
-
-def get_map_scatter_data(data, month):
-    optionItem = {}
-    if month > 0:
-        itemTitle = '2016年{0}月全国机场着陆情况'.format(month)
-        seriesData = data.ix[month, ['Longitude', 'Latitude', 'VRTG_MAX', 'ChineseCityName', 'ChineseName']]
-    else:
-        itemTitle = '2016年全国机场着陆情况'
-        seriesData = data[['Longitude', 'Latitude', 'VRTG_MAX', 'ChineseCityName', 'ChineseName']]
-    optionItem['title'] = {'text': itemTitle}
-    seriesData = list(map(lambda i, r: {'name': r[3]+r[4]+i, 'value': r[:3]}, seriesData.index, seriesData.values.tolist()))
-    top10Data = sorted(seriesData, key=lambda x:x['value'][2], reverse=True)[:10]
-    top10 = list(map(lambda x: {'name': x['name'], 'value': x['value'][2]}, top10Data))
-    optionItem['series'] = [{'name': month, 'data': seriesData}, {'name': month, 'data': top10}]
-    
-    yAxisLabels = list(map(lambda x: x['name'], top10))
-    optionItem['yAxis'] = [{'data': yAxisLabels}]
-    return optionItem
-    
-
-def get_map_data(df):
-    months = df.loc[:, 'MONTH'].sort_values().unique().tolist()
-    data0 = df[['AIRPORT','MONTH', 'ChineseCityName', 'ChineseName', 'Latitude', 'Longitude', 'VRTG_MAX']] \
-            .groupby('AIRPORT').max().round(3)
-    data = df[['AIRPORT','MONTH', 'ChineseCityName', 'ChineseName', 'Latitude', 'Longitude', 'VRTG_MAX']] \
-            .groupby(['MONTH','AIRPORT']).max().round(3)
-    
-    options = [get_map_scatter_data(data0, 0)]
-    for month in months:
-        optionItem = get_map_scatter_data(data, month)
-        options.append(optionItem)
-    months.insert(0, 0)
-    return months, options
-
-def get_maxvrtg_in_airports():
-    result = {}
-    table_world = Table().get_dataFrame()
-    months, options = get_map_data(table_world)
-    result['world'] = {'months': months, 'options': options}
-
-    table_china = table_world.loc[table_world['Country'] == 'CHN', :]
-    months, options = get_map_data(table_china)
-    result['china'] = {'months': months, 'options': options}
-
-    result["maptitle"] = '机场着陆情况'
-    return result
-
-def get_data_in_month_and_airport(month, airport):
-    df = Table().get_dataFrame()
-    month = int(month)
-    usedcols = ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX', 'AIRPORT', 
-        'ChineseCityName', 'ChineseName', 'ChineseCountryName']
-    if month > 0:
-        temp = df.loc[(df['MONTH'] == month) & (df['AIRPORT'] == airport), usedcols]
-    else:
-        temp = df.loc[df['AIRPORT'] == airport, usedcols]
-    print(airport)
-    airport, city, name, country = temp.iloc[0]\
-        [['AIRPORT', 'ChineseCityName', 'ChineseName', 'ChineseCountryName']].values.tolist()
-    title = '{0}{1}{2}机场\r代码:{3}\r航班量:{4}'.format(country, city, name, airport, temp.shape[0])
-    data = temp.loc[:, ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX']] \
-               .sort_values(by='VRTG_MAX').round(3).values.tolist()
-    return title, data
-
 def get_dict_of_date_and_means(ts, vrtg, span, col):
     if col == 'VRTG_MAX':
         means = (ts[col] > vrtg).resample(span, closed='left').mean().dropna()
@@ -222,30 +158,3 @@ def get_airports():
     airport_info = list(map(lambda i, r: {"name": r[0]+r[1]+i, "value": r[2:]}, \
                 temp.index, temp.values.tolist()))
     return {'altitude': altitude, 'length': length, 'info': airport_info}
-
-def get_all_airports_ent_opt():
-    df = Table().get_dataFrame()
-    ff = df.loc[:, ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX', 'ChineseCityName','ChineseName', 'DATETIME']].round(3)
-    ff['DATETIME'] = ff['DATETIME'].map(str)
-    data = []
-    means = []
-    splits = [0, 1.3, 1.4, 1.5, 1.6, 2]
-    for i in range(1, len(splits)):
-        dd = ff.loc[(ff['VRTG_MAX'] >= splits[i-1]) & (ff['VRTG_MAX'] < splits[i]), :]
-        data.append(dd.values.tolist())
-        mm = dd.loc[:, ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX']].mean().round(3)
-        means.append(mm.values.tolist())
-    return {'data': data, 'means': means, 'splits': splits}
-
-def get_ent_opt_track():
-    df = Table().get_dataFrame()
-    ff = df.loc[:, ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX']].sort_values('VRTG_MAX')
-    #splits = [1, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4, 1.45, 1.5, 1.55, 1.6, 2]
-    splits = [x/10.0 for x in range(10, 20)]
-    result = []
-    for i in range(1, len(splits)):
-        temp = ff.loc[(df['VRTG_MAX']>=splits[i-1]) & (df['VRTG_MAX']<splits[i]), :]
-        mean = temp.mean().dropna().round(4).values.tolist()
-        num = temp.shape[0]
-        result.append(mean + [num])
-    return result

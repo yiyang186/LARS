@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'hardlanding',
     'airport',
+    'pae',
 ]
 
 MIDDLEWARE = [
