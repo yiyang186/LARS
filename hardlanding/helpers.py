@@ -42,7 +42,8 @@ def get_dict_of_date_and_means(ts, vrtg, span, col):
     date = means.index.map(lambda x: x.strftime('%Y-%m-%d'))
     means = pd.DataFrame({'DATE': date, 'means': means.values}).round(3).values.tolist()
     span_dict = {'D': '每天', 'W': '每周', 'M': '每月', 'Q': '每季'}
-    col_dict = {'VRTG_MAX': '重着陆频率', 'ENTROPY': '环境熵', 'MIX_CROSS_RATE': '逆转率'}
+    col_dict = {'VRTG_MAX': '重着陆频率', 'ENTROPY': '环境熵', 'MIX_CROSS_RATE': '逆转率',
+                'ENT_LATI': '侧向环境熵', 'ROLL_CROSS_RATE': '滚转逆转率'}
     return {'means': means, 'name':span_dict[span]+col_dict[col]}
 
 def get_kline(vrtg=1.4, span='W', airport=None):
@@ -58,10 +59,12 @@ def get_kline(vrtg=1.4, span='W', airport=None):
             return {'means': [], 'name':''}
     else:
         ts = df.sort_values('DATETIME').set_index('DATETIME')
-    
+    print(ts.columns)
     vrtgs_prob_means = get_dict_of_date_and_means(ts, vrtg, span, 'VRTG_MAX')
     entropy_means = get_dict_of_date_and_means(ts, vrtg, span, 'ENTROPY')
+    #entropy_means = get_dict_of_date_and_means(ts, vrtg, span, 'ENT_LATI')
     crossRate_means = get_dict_of_date_and_means(ts, vrtg, span, 'MIX_CROSS_RATE')
+    #crossRate_means = get_dict_of_date_and_means(ts, vrtg, span, 'ROLL_CROSS_RATE')
     return {'vrtgp': vrtgs_prob_means, 'entropy':entropy_means, 'crossrate':crossRate_means}
 
 def get_kline_ma(vrtg=1.4, window=100, airport=None):

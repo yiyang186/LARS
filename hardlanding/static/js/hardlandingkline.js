@@ -125,12 +125,12 @@ option_other = {
         extraCssText: 'width: 170px',
     },
     grid: [
-        {left: "30px", top: "10%", height: '50%', right: '50px',
+        {left: "50px", top: "50%", height: '10%', right: '50px',
             tooltip: {
                 trigger: 'axis',
             },
         },
-        {left: "30px", top: "68%", height: '20%', right: '50px',
+        {left: "50px", top: "68%", height: '20%', right: '50px',
             tooltip: {
                 trigger: 'axis',
             },
@@ -191,13 +191,16 @@ option_other = {
             name: '每天航段数',
             nameLocation: 'start',
             type: 'value',
-            max: 500,
+            max: 60,
             inverse: true
         },
         {
             gridIndex: 1, 
             name: '环境熵',
             type: 'value',
+            splitLine:{
+                show: false
+            }
         },
         {
             gridIndex: 1, 
