@@ -56,21 +56,3 @@ def show_kline(request):
         #     alldata['data'+str(window)] = helpers.get_kline_ma(vrtg=1.4, window=window, airport=None)
         context = {'title': '重着陆趋势图', 'alldata': json.dumps(alldata)}
         return render(request, 'hardlanding/kline.html', context)
-        
-def show_overrun_bar(request):
-    path = "I:/Workspaces/python/django/LRAS/static/csv/data.txt"
-    data = ""
-    with open(path) as f:
-        for line in f.readlines():
-            data += line
-    context = {'title': '冲出跑道分布', 'data': data}
-    return render(request, 'hardlanding/overrun_bar.html', context)
-
-def show_overrun_kline(request):
-    path = "I:/Workspaces/python/django/LRAS/static/csv/data.txt"
-    data = ""
-    with open(path) as f:
-        for line in f.readlines():
-            data += line
-    context = {'title': '冲出跑道趋势', 'data': data}
-    return render(request, 'hardlanding/overrun_kline.html', context)

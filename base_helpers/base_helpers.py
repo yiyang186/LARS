@@ -37,3 +37,16 @@ class Airport(object):
                 'LDA Start Latitude', 'LDA Start Longitude', 'LDA Start Elevation']
             Airport.df = pd.read_csv(path, usecols=airport_info).dropna()
         return Airport.df
+
+class Overrun(object):
+    data = None
+    def __init__(self):
+        pass
+    def get_data(self):
+        if Overrun.data is None:
+            path = settings.STATIC_PATH + 'csv/data.txt'
+            Overrun.data = ""
+            with open(path) as f:
+                for line in f.readlines():
+                    Overrun.data += line
+        return Overrun.data
