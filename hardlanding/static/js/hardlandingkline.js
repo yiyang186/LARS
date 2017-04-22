@@ -125,12 +125,12 @@ option_other = {
         extraCssText: 'width: 170px',
     },
     grid: [
-        {left: "30px", top: "10%", height: '50%', right: '50px',
+        {left: "40px", top: "10%", height: '50%', right: '50px',
             tooltip: {
                 trigger: 'axis',
             },
         },
-        {left: "30px", top: "68%", height: '20%', right: '50px',
+        {left: "40px", top: "68%", height: '20%', right: '50px',
             tooltip: {
                 trigger: 'axis',
             },
