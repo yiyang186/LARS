@@ -14,12 +14,21 @@ def show_track(request):
     return render(request, 'pae/track.html', context)
 
 def show_driving_features(request):
-    dates = helpers.get_date_range('2016-01-01', 380, 'D')
-    counts = helpers.get_kline_counts()
-    alldata = {'dates': dates, 'counts': counts}
-    for span in list('DW'):
-        data_temp = helpers.get_kline(span)
-        alldata['entropy'+span] = data_temp['entropy']
-        alldata['crossrate'+span] = data_temp['crossrate']
-    context = {'title': '驾驶行为特征', 'alldata': json.dumps(alldata)}
-    return render(request, 'pae/driving_features.html', context)
+    if request.GET:
+        envdrv = request.GET.get('envdrv')
+        xy = request.GET.get('xy')
+        co = request.GET.get('co')
+        low = request.GET.get('low')
+        high = request.GET.get('high')
+        res = helpers.get_driving_features(envdrv, xy, co, low, high)
+        return JsonResponse(res, safe=False)
+    else:
+        dates = helpers.get_date_range('2016-01-01', 380, 'D')
+        counts = helpers.get_kline_counts()
+        alldata = {'dates': dates, 'counts': counts}
+        for span in list('DW'):
+            data_temp = helpers.get_kline(span)
+            alldata['entropy'+span] = data_temp['entropy']
+            alldata['crossrate'+span] = data_temp['crossrate']
+        context = {'title': '驾驶行为特征', 'alldata': json.dumps(alldata)}
+        return render(request, 'pae/driving_features.html', context)
