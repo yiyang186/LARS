@@ -9,6 +9,7 @@ from functools import wraps
 span_dict = {'D': '每天', 'W': '每周', 'M': '每月', 'Q': '每季'}
 col_dict = {'VRTG_MAX': '重着陆频率', 'ENTROPY': '环境熵', 'MIX_CROSS_RATE': '逆转率'}
 wd = 'L:/A320_300_20/'
+num_pregress = 0
 
 def get_all_airports_ent_opt():
     df = Table().get_dataFrame()
@@ -37,8 +38,8 @@ def get_ent_opt_track():
         result.append(mean + [num])
     return result
 
-def get_date_range(start, periods, freq):
-    rng = pd.date_range(start, periods=periods, freq=freq)
+def get_date_range(start, end, freq):
+    rng = pd.date_range(start, end, freq=freq)
     rng = rng.map(lambda x: x.strftime('%Y-%m-%d')).tolist()
     return rng
 
@@ -66,6 +67,9 @@ def get_kline(span):
     crossRate_means = get_dict_of_date_and_means(ts, span, 'MIX_CROSS_RATE')
     return {'entropy':entropy_means, 'crossrate':crossRate_means}
 
+def get_progress():
+    return num_pregress
+
 def decompose_wind(df):
     wind_long =(-df['_WIND_SPD'] * np.cos((df['_HEADING_LINEAR'] - df['_WINDIR']) / 180.0 * np.pi)).values
     wind_lati =(-df['_WIND_SPD'] * np.sin((df['_HEADING_LINEAR'] - df['_WINDIR']) / 180.0 * np.pi)).values
@@ -86,15 +90,19 @@ def get_entropy(array, threshold_border, db_eps):
     ent = -(pk * np.log(pk)).sum()
     return ent
 
-def get_feature_from_rawdata(func, colname, used, xy, low, high, func1=None):
+def get_feature_from_rawdata(func, colname, used, cbt, low, high, func1=None):
+    global num_pregress
     t1 = time.time()
     files = os.listdir(wd)
     table = pd.DataFrame(columns=['FILENAME', colname])
-    for i, fileName in enumerate(tqdm(files, miniters=3000, ncols=100)):
+    files_num = len(files)
+    # for i, fileName in enumerate(tqdm(files, miniters=3000, ncols=100)):
+    for i, fileName in enumerate(files):
+        num_pregress = i * 100 / files_num
         idf = pd.read_csv(wd+fileName, usecols=used)
         idf = idf.fillna(method='pad')
         idf = idf.loc[(idf['_ALTITUDE'] < int(high)) & (idf['_ALTITUDE'] > int(low)), used]
-        result = func(idf, xy, used, func1)
+        result = func(idf, cbt, used, func1)
         new = pd.DataFrame({'FILENAME': fileName.split('_')[-1], 
                             colname: result},
                             index=[i])
@@ -102,12 +110,12 @@ def get_feature_from_rawdata(func, colname, used, xy, low, high, func1=None):
     t2 = time.time()
     return table, t2-t1
 
-def wind_entropy(idf, xy, used, func1=None):
+def wind_entropy(idf, cbt, used, func1=None):
     wind_y, wind_x = decompose_wind(idf)
     ent_x, ent_y = 0, 0
-    if 'y' in xy:
+    if 'y' in cbt:
         ent_y = get_entropy(wind_y, 2, 1)
-    if 'x' in xy:
+    if 'x' in cbt:
         ent_x = get_entropy(wind_x, 2, 1)
     result = ent_x + ent_y
     return result
@@ -126,12 +134,12 @@ def crossrate(sstick, a):
 def optrate(sstick, a):
     return np.diff(np.abs(sstick) > 0).mean()
 
-def drv_rate(idf, xy, used, func1=None):
+def drv_rate(idf, cbt, used, func1=None):
     rate_x, rate_y = 0, 0
-    if 'x' in xy:
+    if 'x' in cbt:
         sstick_x = drv_sstick(idf, used, 0)
         rate_x = func1(sstick_x, -1.0)
-    if 'y' in xy:
+    if 'y' in cbt:
         sstick_y = drv_sstick(idf, used, 8)
         rate_y = func1(sstick_y, -1.0)
     rate = rate_x + rate_y
@@ -147,24 +155,24 @@ def arange_by_time(table, colname, span):
     res = pd.DataFrame({'DATE': date, 'means': means.values}).round(3).values.tolist()
     return res
 
-def get_driving_features(envdrv='env', xy='x', co='cross', low=0, high=100, span='W'):
-    if envdrv == 'env':
-        colname = '_'.join([envdrv, xy, low, high])
+def get_driving_features(obj='drv', ftr='cross', cbt='x+y', span='1W', low=0, high=100):
+    if obj == 'env':
+        colname = '_'.join([obj, cbt, low, high])
         used = ['_ALTITUDE', '_HEADING_LINEAR', '_WIND_SPD', '_WINDIR']
-        table, t = get_feature_from_rawdata(wind_entropy, colname, used, xy, low, high)
-    elif envdrv == 'drv':
-        colname = '_'.join([envdrv, xy, co, low, high])
+        table, t = get_feature_from_rawdata(wind_entropy, colname, used, cbt, low, high)
+    elif obj == 'drv':
+        colname = '_'.join([obj, ftr, cbt, low, high])
         used = [
             '_ROLL_CAPT_SSTICK', '_ROLL_CAPT_SSTICK-1', '_ROLL_CAPT_SSTICK-2', '_ROLL_CAPT_SSTICK-3',
             '_ROLL_FO_SSTICK', '_ROLL_FO_SSTICK-1', '_ROLL_FO_SSTICK-2', '_ROLL_FO_SSTICK-3',
             '_PITCH_CAPT_SSTICK', '_PITCH_CAPT_SSTICK-1', '_PITCH_CAPT_SSTICK-2', '_PITCH_CAPT_SSTICK-3', 
             '_PITCH_FO_SSTICK', '_PITCH_FO_SSTICK-1', '_PITCH_FO_SSTICK-2', '_PITCH_FO_SSTICK-3', 
             '_ALTITUDE', ]
-        if co == 'cross':
+        if ftr == 'cross':
             func = crossrate
-        if co == 'opt':
+        if ftr == 'opt':
             func = optrate
-        table, t = get_feature_from_rawdata(drv_rate, colname, used, xy, low, high, func1=func)
+        table, t = get_feature_from_rawdata(drv_rate, colname, used, cbt, low, high, func1=func)
     print(t, 's', '\n', table.head(3))
     res = arange_by_time(table, colname, span)
     return [colname, res]

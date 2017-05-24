@@ -15,15 +15,16 @@ def show_track(request):
 
 def show_driving_features(request):
     if request.GET:
-        envdrv = request.GET.get('envdrv')
-        xy = request.GET.get('xy')
-        co = request.GET.get('co')
+        obj = request.GET.get('obj') # object
+        ftr = request.GET.get('ftr') # feature
+        cbt = request.GET.get('cbt') # combination
+        span = request.GET.get('span') # frequnt
         low = request.GET.get('low')
         high = request.GET.get('high')
-        res = helpers.get_driving_features(envdrv, xy, co, low, high)
+        res = helpers.get_driving_features(obj, ftr, cbt, span, low, high)
         return JsonResponse(res, safe=False)
     else:
-        dates = helpers.get_date_range('2016-01-01', 380, 'D')
+        dates = helpers.get_date_range('2016-03-01', '2016-12-02', 'D')
         counts = helpers.get_kline_counts()
         alldata = {'dates': dates, 'counts': counts}
         for span in list('DW'):
@@ -32,3 +33,8 @@ def show_driving_features(request):
             alldata['crossrate'+span] = data_temp['crossrate']
         context = {'title': '驾驶行为特征', 'alldata': json.dumps(alldata)}
         return render(request, 'pae/driving_features.html', context)
+
+def show_progress(request):
+    res = helpers.get_progress()
+    print('>>>>>>>>>>>>>>>>', res)
+    return JsonResponse(res, safe=False)
