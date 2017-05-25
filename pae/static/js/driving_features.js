@@ -36,13 +36,9 @@ option_crossrate = {
     },
     legend: [
         {
-            data:['每天环境熵', '每天逆转率', '每周环境熵', '每周逆转率'],
+            data:['每周环境熵', '每周逆转率'],
             left: 'center',
             top: '4%',
-            selected: {
-                '每天环境熵': false,
-                '每天逆转率': false
-            }
         }
     ],
     axisPointer: {
@@ -132,17 +128,9 @@ option_crossrate = {
             type:'bar',
             yAxisIndex:0,
             xAxisIndex:0,
+            lineStyle:{normal: {color: '#CC5B58'}},
             hoverAnimation: false,
             data: alldata.counts
-        },
-        {
-            id: 'daily_entropy',
-            name: alldata.entropyD.name,
-            type:'line',
-            xAxisIndex:1,
-            yAxisIndex:1,
-            hoverAnimation: false,
-            data: alldata.entropyD.means
         },
         {
             id: 'weekly_entropy',
@@ -150,17 +138,9 @@ option_crossrate = {
             type:'line',
             xAxisIndex:1,
             yAxisIndex:1,
+            lineStyle:{normal: {color: '#7FB1B7'}},
             hoverAnimation: false,
             data: alldata.entropyW.means
-        },
-        {
-            id: 'daily_crossrate',
-            name: alldata.crossrateD.name,
-            type:'line',
-            xAxisIndex:1,
-            yAxisIndex:2,
-            hoverAnimation: false,
-            data: alldata.crossrateD.means
         },
         {
             id: 'weekly_crossrate',
@@ -168,6 +148,7 @@ option_crossrate = {
             type:'line',
             xAxisIndex:1,
             yAxisIndex:2,
+            lineStyle:{normal: {color: '#A5D0BC'}},
             hoverAnimation: false,
             data: alldata.crossrateW.means
         }
@@ -185,30 +166,30 @@ function DrawCharts(ec) {
     Draw(ec);
 }
 
-var num_panel = 4;
+var num_panel = 0;
 function addpanel() {
     var panel = `           
     <div class="panel panel-info" id="panel` + num_panel + `">
         <div class="panel-heading">
-            <h4 class="panel-title">
+            <p class="panel-title">
                 <label id="title` + num_panel + `" data-toggle="collapse" data-target="#collapse` + num_panel + `"></label>
-            </h4>
+            </p>
         </div>
         <div id="collapse` + num_panel + `" class="panel-collapse collapse in">
             <div class="panel-body">
                 <form class="form-horizontal" role="form" name="form` + num_panel + `">
                     <div class="form-group">
                         <label class="checkbox-inline">
-                        <select onchange="obj_change(this)">
+                        <select id="selectobj` + num_panel + `" onchange="obj_change(this)">
                             <option name="option` + num_panel + `obj" value="drv" selected>驾驶</option>
                             <option name="option` + num_panel + `obj"  value="env">环境</option>
                         </select>
-                        <select id="select` + num_panel + `ftr">
+                        <select id="selectftr` + num_panel + `">
                             <option name="option` + num_panel + `ftr" value="cross" selected>逆转率</option>
                             <option name="option` + num_panel + `ftr"  value="opt">操作率</option>
                             <option name="option` + num_panel + `ftr"  value="etp">熵</option>
                         </select>
-                        <select id="select` + num_panel + `cbt">
+                        <select id="selectcbt` + num_panel + `">
                             <option name="option` + num_panel + `cbt" value="x+y" selected>俯仰+滚转</option>
                             <option name="option` + num_panel + `cbt"  value="x">滚转</option>
                             <option name="option` + num_panel + `cbt"  value="y">俯仰</option>
@@ -216,7 +197,7 @@ function addpanel() {
                         &nbsp;&nbsp;
                         <label><font size="1">采样频率</font></label>
                         <input type="text" style="width:50px;" id="text` + num_panel + `span_num" value="1">
-                        <select id="text` + num_panel + `span">
+                        <select id="selectspan` + num_panel + `">
                             <option name="option` + num_panel + `span" value="D">天</option>
                             <option name="option` + num_panel + `span" value="W">周</option>
                             <option name="option` + num_panel + `span" value="SM">半月</option>
@@ -228,12 +209,12 @@ function addpanel() {
                         <label class="checkbox-inline">
                             <label><font size="1">高度</font></label>
                             <input type="text" style="width:50px;" id="text` + num_panel + `low" value="0">
-                            <label><font size="1">英尺~</font></label>
+                            <label><font size="1">~</font></label>
                             <input type="text" style="width:50px;" id="text` + num_panel + `high" value="100">
                             <label><font size="1">英尺</font></label>
                             &nbsp;
                             <label><font size="1">颜色</font></label>
-							<input type="text" id="color` + num_panel + `" data-control="brightness" value="#00ffff">
+							<input type="text" id="color` + num_panel + `" data-control="brightness" value="#576874">
                             <button type="button" class="btn btn-default" id="submit` + num_panel + `" onclick="submit_query(this)">提交</button>
                         </label>
                     </div>
@@ -246,7 +227,6 @@ function addpanel() {
         </div>
     </div>`;
     $('#accordion').append(panel);
-    $(function(){$('#collapse' + num_panel).collapse('show')});
     initColorById('#color' + num_panel);
     num_panel += 1;
     $('#addpanel').text('添加('+num_panel+')');
@@ -263,28 +243,40 @@ function initColorById(id){
         theme: 'default'
     });
 }
-    
+
+function setFormValue(i, obj, ftr, cbt, span_num, span, low, high, color, title){
+    $('#selectobj'+ i).val(obj);
+    $('#selectftr'+ i).val(ftr);
+    $('#selectcbt'+ i).val(cbt);
+    $('#text'+ i +'span_num').val(span_num);
+    $('#selectspan'+ i).val(span);
+    $('#text'+ i +'low').val(low);
+    $('#text'+ i +'high').val(high);
+    $('#color'+ i).val(color);
+    $('#title'+i).text(title);
+}
+
 function obj_change(sel){
-    var selected = $(sel).children('option:selected');
-    var i = selected.attr('name').slice(6,7);
-    if(selected.val() == 'env'){
-        $('option[name="option'+i+'cbt"][value="x+y"]').text("侧向+纵向");
-        $('option[name="option'+i+'cbt"][value="x"]').text("侧向");
-        $('option[name="option'+i+'cbt"][value="y"]').text("纵向");
-    } else if(selected.val() == 'drv'){
-        $('option[name="option'+i+'cbt"][value="x+y"]').text("俯仰+滚转");
-        $('option[name="option'+i+'cbt"][value="x"]').text("滚转");
-        $('option[name="option'+i+'cbt"][value="y"]').text("俯仰");
+    var i = $(sel).attr('id').match(/\d/g);
+    if($(sel).val() == 'env'){
+        $('#selectcbt' + i + ' option[value="x+y"]').text("侧向+纵向");
+        $('#selectcbt' + i + ' option[value="x"]').text("侧向");
+        $('#selectcbt' + i + ' option[value="y"]').text("纵向");
+    } else if($(sel).val() == 'drv'){
+        $('#selectcbt' + i + ' option[value="x+y"]').text("俯仰+滚转");
+        $('#selectcbt' + i + ' option[value="x"]').text("滚转");
+        $('#selectcbt' + i + ' option[value="y"]').text("俯仰");
     }
 }
 
 function deletepanel(){
-    if(num_panel < 6) return;
+    if(num_panel < 1) return;
     num_panel -= 1;
-    $('#panel'+num_panel).remove();
+
+    $('#panel' + num_panel).remove();
     $('#addpanel').text('添加('+num_panel+')');
     option_crossrate.legend[0].data.splice(num_panel, 1);
-    option_crossrate.series.splice(num_panel+1, 1);
+    option_crossrate.series.splice(num_panel + 1, 1);
     drv_chart.setOption(option_crossrate, true);
 }
 
@@ -293,18 +285,20 @@ function submit_query(btn){
     var title = getTitleByIndex(i);
     $('#title'+i).text(title);
     $('#submit'+i).text('加载中');
-    $('#submit'+i).attr("disabled","true");
+    $('#submit'+i).attr("disabled", true);
+    $('#deletepanel').attr("disabled", true);
+    $('#addpanel').attr("disabled", true);
     var sitv = setInterval(function(){get_progress(i);}, 5000);
     myrequestjson(getRequestJsonByIndex(i), i, sitv, title);
     $('#progress'+i).width('1%');
 }
 
 function getTitleByIndex(i){
-    var obj = $('option[name="option'+i+'obj"]:selected').text();
-    var ftr = $('option[name="option'+i+'ftr"]:selected').text();
-    var cbt = $('option[name="option'+i+'cbt"]:selected').text();
+    var obj = $("#selectobj"+i).find("option:selected").text();
+    var ftr = $("#selectftr"+i).find("option:selected").text();
+    var cbt = $("#selectcbt"+i).find("option:selected").text();
     var num_span = $('#text'+i+'span_num').val();
-    var span = (num_span == '1' ?'' :num_span) + $('option[name="option'+i+'span"]:selected').text();
+    var span = (num_span == '1' ?'' :num_span) + $("#selectspan"+i).find("option:selected").text();
     var low = $('#text'+i+'low').val();
     var high = $('#text'+i+'high').val();
     var title = '每' + span + cbt + obj + ftr + '(' + low + '-' + high + 'ft)';
@@ -313,10 +307,10 @@ function getTitleByIndex(i){
 
 function getRequestJsonByIndex(i){
     return {
-        "obj": $('option[name="option'+i+'obj"]:selected').val(), 
-        "ftr": $('option[name="option'+i+'ftr"]:selected').val(),
-        "cbt": $('option[name="option'+i+'cbt"]:selected').val(), 
-        "span": $('#text'+i+'span_num').val() + $('option[name="option'+i+'span"]:selected').val(),
+        "obj": $("#selectobj"+i).val(), 
+        "ftr": $("#selectftr"+i).val(),
+        "cbt": $("#selectcbt"+i).val(), 
+        "span": $('#text'+i+'span_num').val() + $("#selectspan"+i).val(),
         "low": $('#text'+i+'low').val(),
         "high": $('#text'+i+'high').val()
     };
@@ -342,8 +336,9 @@ function myrequestjson(requestJson, i, sitv, title) {
         option_crossrate.legend[0].data.push(title);
         option_crossrate.series.push(serie);
         drv_chart.setOption(option_crossrate, true);
-        $('#submit'+i).text('提交');
-        $('#submit'+i).attr("disabled","false");
+        $('#submit'+i).text("完成");
+        $('#deletepanel').attr("disabled", false);
+        $('#addpanel').attr("disabled", false);
         clearInterval(sitv);
         $('#progressdiv'+i).attr("class", "progress progress-bar-success");
     });
@@ -354,5 +349,13 @@ $('#deletepanel').click(function(){deletepanel()});
 
 $(function(){ 
     addpanel();
+    setFormValue(0, 'env', 'etp', 'x+y', '1', 'W', '100', '1000', '#7FB1B7', '每周侧向+纵向环境熵(100-1000ft)');
+    addpanel();
+    setFormValue(1, 'drv', 'cross', 'x+y', '1', 'W', '100', '1000', '#A5D0BC', '每周俯仰+滚转驾驶逆转率(100-1000ft)');
+    for(var i = 0; i < 2; i++){
+        $('#collapse' + i).collapse('hide');
+        $('#submit'+i).attr("disabled", true);
+        $('#submit'+i).text("完成");
+    }
 });
 DrawCharts(echarts);

@@ -27,10 +27,10 @@ def show_driving_features(request):
         dates = helpers.get_date_range('2016-03-01', '2016-12-02', 'D')
         counts = helpers.get_kline_counts()
         alldata = {'dates': dates, 'counts': counts}
-        for span in list('DW'):
-            data_temp = helpers.get_kline(span)
-            alldata['entropy'+span] = data_temp['entropy']
-            alldata['crossrate'+span] = data_temp['crossrate']
+        span = 'W'
+        data_temp = helpers.get_kline(span)
+        alldata['entropy'+span] = data_temp['entropy']
+        alldata['crossrate'+span] = data_temp['crossrate']
         context = {'title': '驾驶行为特征', 'alldata': json.dumps(alldata)}
         return render(request, 'pae/driving_features.html', context)
 
