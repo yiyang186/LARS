@@ -213,6 +213,7 @@ function addpanel() {
                             <option name="option` + num_panel + `cbt"  value="x">滚转</option>
                             <option name="option` + num_panel + `cbt"  value="y">俯仰</option>
                         </select>
+                        &nbsp;&nbsp;
                         <label><font size="1">采样频率</font></label>
                         <input type="text" style="width:50px;" id="text` + num_panel + `span_num" value="1">
                         <select id="text` + num_panel + `span">
@@ -229,9 +230,11 @@ function addpanel() {
                             <input type="text" style="width:50px;" id="text` + num_panel + `low" value="0">
                             <label><font size="1">英尺~</font></label>
                             <input type="text" style="width:50px;" id="text` + num_panel + `high" value="100">
-                            <label><font size="1">英尺  </font></label>
-                            <button type="button" class="btn btn-default" id="collapse` + num_panel + `submit" onclick="submit_query(this)">提交</button>
-                            <label id="loadlabel` + num_panel + `" hidden='hidden'><font size="1">加载中...</font></label>
+                            <label><font size="1">英尺</font></label>
+                            &nbsp;
+                            <label><font size="1">颜色</font></label>
+							<input type="text" id="color` + num_panel + `" data-control="brightness" value="#00ffff">
+                            <button type="button" class="btn btn-default" id="submit` + num_panel + `" onclick="submit_query(this)">提交</button>
                         </label>
                     </div>
                     <div id="progressdiv` + num_panel + `" class="progress progress-striped active">
@@ -244,10 +247,23 @@ function addpanel() {
     </div>`;
     $('#accordion').append(panel);
     $(function(){$('#collapse' + num_panel).collapse('show')});
+    initColorById('#color' + num_panel);
     num_panel += 1;
     $('#addpanel').text('添加('+num_panel+')');
 }
-
+    
+function initColorById(id){
+    $(id).minicolors({
+        control: $(id).attr('data-control') || 'hue',
+        defaultValue: $(id).attr('data-defaultValue') || '',
+        inline: $(id).attr('data-inline') === 'true',
+        letterCase: $(id).attr('data-letterCase') || 'lowercase',
+        opacity: $(id).attr('data-opacity'),
+        position: $(id).attr('data-position') || 'bottom left',
+        theme: 'default'
+    });
+}
+    
 function obj_change(sel){
     var selected = $(sel).children('option:selected');
     var i = selected.attr('name').slice(6,7);
@@ -273,10 +289,11 @@ function deletepanel(){
 }
 
 function submit_query(btn){
-    var i = $(btn).attr('id').slice(8,9);
-    var title = getTitleByIndex(i)
+    var i = $(btn).attr('id').match(/\d/g);
+    var title = getTitleByIndex(i);
     $('#title'+i).text(title);
-    $('#loadlabel'+i).show();
+    $('#submit'+i).text('加载中');
+    $('#submit'+i).attr("disabled","true");
     var sitv = setInterval(function(){get_progress(i);}, 5000);
     myrequestjson(getRequestJsonByIndex(i), i, sitv, title);
     $('#progress'+i).width('1%');
@@ -318,13 +335,15 @@ function myrequestjson(requestJson, i, sitv, title) {
             type:'line',
             xAxisIndex:1,
             yAxisIndex: (requestJson.obj == 'env'? 1: 2),
+            lineStyle:{normal: {color: $('#color'+i).val()}},
             hoverAnimation: false,
             data: res
         }
         option_crossrate.legend[0].data.push(title);
         option_crossrate.series.push(serie);
         drv_chart.setOption(option_crossrate, true);
-        $('#loadlabel'+i).hide();
+        $('#submit'+i).text('提交');
+        $('#submit'+i).attr("disabled","false");
         clearInterval(sitv);
         $('#progressdiv'+i).attr("class", "progress progress-bar-success");
     });
