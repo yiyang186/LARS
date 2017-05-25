@@ -75,7 +75,7 @@ def decompose_wind(df):
     wind_lati =(-df['_WIND_SPD'] * np.sin((df['_HEADING_LINEAR'] - df['_WINDIR']) / 180.0 * np.pi)).values
     return wind_long, wind_lati
 
-def get_entropy(array, threshold_border, db_eps):
+def entropy(array, threshold_border, db_eps):
     borders = np.arange(array.size-1)[np.abs(np.diff(array)) > threshold_border] + 1
     if borders.size == 0:
         return 0.0
@@ -110,13 +110,13 @@ def get_feature_from_rawdata(func, colname, used, cbt, low, high, func1=None):
     t2 = time.time()
     return table, t2-t1
 
-def wind_entropy(idf, cbt, used, func1=None):
+def wind_rate(idf, cbt, used, func1=None):
     wind_y, wind_x = decompose_wind(idf)
     ent_x, ent_y = 0, 0
     if 'y' in cbt:
-        ent_y = get_entropy(wind_y, 2, 1)
+        ent_y = func1(wind_y, 2, 1)
     if 'x' in cbt:
-        ent_x = get_entropy(wind_x, 2, 1)
+        ent_x = func1(wind_x, 2, 1)
     result = ent_x + ent_y
     return result
 
@@ -156,23 +156,23 @@ def arange_by_time(table, colname, span):
     return res
 
 def get_driving_features(obj='drv', ftr='cross', cbt='x+y', span='1W', low=0, high=100):
+    colname = '_'.join([obj, ftr, cbt, span, low, high])
     if obj == 'env':
-        colname = '_'.join([obj, cbt, low, high])
+        func0, func1 = wind_rate, entropy
         used = ['_ALTITUDE', '_HEADING_LINEAR', '_WIND_SPD', '_WINDIR']
-        table, t = get_feature_from_rawdata(wind_entropy, colname, used, cbt, low, high)
     elif obj == 'drv':
-        colname = '_'.join([obj, ftr, cbt, low, high])
+        func0 = drv_rate
+        if ftr == 'cross':
+            func1 = crossrate
+        if ftr == 'opt':
+            func1 = optrate
         used = [
             '_ROLL_CAPT_SSTICK', '_ROLL_CAPT_SSTICK-1', '_ROLL_CAPT_SSTICK-2', '_ROLL_CAPT_SSTICK-3',
             '_ROLL_FO_SSTICK', '_ROLL_FO_SSTICK-1', '_ROLL_FO_SSTICK-2', '_ROLL_FO_SSTICK-3',
             '_PITCH_CAPT_SSTICK', '_PITCH_CAPT_SSTICK-1', '_PITCH_CAPT_SSTICK-2', '_PITCH_CAPT_SSTICK-3', 
             '_PITCH_FO_SSTICK', '_PITCH_FO_SSTICK-1', '_PITCH_FO_SSTICK-2', '_PITCH_FO_SSTICK-3', 
             '_ALTITUDE', ]
-        if ftr == 'cross':
-            func = crossrate
-        if ftr == 'opt':
-            func = optrate
-        table, t = get_feature_from_rawdata(drv_rate, colname, used, cbt, low, high, func1=func)
-    print(t, 's', '\n', table.head(3))
+
+    table, t = get_feature_from_rawdata(func0, colname, used, cbt, low, high, func1=func1)
     res = arange_by_time(table, colname, span)
-    return [colname, res]
+    return res

@@ -187,12 +187,11 @@ function DrawCharts(ec) {
 
 var num_panel = 4;
 function addpanel() {
-    title = '第'+ num_panel + '个panel';
     var panel = `           
     <div class="panel panel-info" id="panel` + num_panel + `">
         <div class="panel-heading">
             <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#accordion" href="#collapse` + num_panel + `">` + title + `</a>
+                <label id="title` + num_panel + `" data-toggle="collapse" data-target="#collapse` + num_panel + `"></label>
             </h4>
         </div>
         <div id="collapse` + num_panel + `" class="panel-collapse collapse in">
@@ -207,7 +206,7 @@ function addpanel() {
                         <select id="select` + num_panel + `ftr">
                             <option name="option` + num_panel + `ftr" value="cross" selected>逆转率</option>
                             <option name="option` + num_panel + `ftr"  value="opt">操作率</option>
-                            <option name="option` + num_panel + `ftr"  value="etp" hidden='hidden'>环境熵</option>
+                            <option name="option` + num_panel + `ftr"  value="etp">熵</option>
                         </select>
                         <select id="select` + num_panel + `cbt">
                             <option name="option` + num_panel + `cbt" value="x+y" selected>俯仰+滚转</option>
@@ -217,11 +216,10 @@ function addpanel() {
                         <label><font size="1">采样频率</font></label>
                         <input type="text" style="width:50px;" id="text` + num_panel + `span_num" value="1">
                         <select id="text` + num_panel + `span">
+                            <option name="option` + num_panel + `span" value="D">天</option>
                             <option name="option` + num_panel + `span" value="W">周</option>
-                            <option name="option` + num_panel + `span" value="M">月</option>
                             <option name="option` + num_panel + `span" value="SM">半月</option>
-                            <option name="option` + num_panel + `span" value="D">日历日</option>
-                            <option name="option` + num_panel + `span" value="B">工作日</option>
+                            <option name="option` + num_panel + `span" value="M">月</option>
                         </select>
                         </label>
                     </div>
@@ -233,7 +231,7 @@ function addpanel() {
                             <input type="text" style="width:50px;" id="text` + num_panel + `high" value="100">
                             <label><font size="1">英尺  </font></label>
                             <button type="button" class="btn btn-default" id="collapse` + num_panel + `submit" onclick="submit_query(this)">提交</button>
-                            <label id="label` + num_panel + `" hidden='hidden'><font size="1">加载中...</font></label>
+                            <label id="loadlabel` + num_panel + `" hidden='hidden'><font size="1">加载中...</font></label>
                         </label>
                     </div>
                     <div id="progressdiv` + num_panel + `" class="progress progress-striped active">
@@ -254,16 +252,10 @@ function obj_change(sel){
     var selected = $(sel).children('option:selected');
     var i = selected.attr('name').slice(6,7);
     if(selected.val() == 'env'){
-        $('option[name="option'+i+'ftr"][value="cross"]').hide();
-        $('option[name="option'+i+'ftr"][value="opt"]').hide();
-        $('option[name="option'+i+'ftr"][value="etp"]').show();
         $('option[name="option'+i+'cbt"][value="x+y"]').text("侧向+纵向");
         $('option[name="option'+i+'cbt"][value="x"]').text("侧向");
         $('option[name="option'+i+'cbt"][value="y"]').text("纵向");
     } else if(selected.val() == 'drv'){
-        $('option[name="option'+i+'ftr"][value="cross"]').show();
-        $('option[name="option'+i+'ftr"][value="opt"]').show();
-        $('option[name="option'+i+'ftr"][value="etp"]').hide();
         $('option[name="option'+i+'cbt"][value="x+y"]').text("俯仰+滚转");
         $('option[name="option'+i+'cbt"][value="x"]').text("滚转");
         $('option[name="option'+i+'cbt"][value="y"]').text("俯仰");
@@ -282,8 +274,28 @@ function deletepanel(){
 
 function submit_query(btn){
     var i = $(btn).attr('id').slice(8,9);
-    $('#label'+i).show();
-    var requestJson = {
+    var title = getTitleByIndex(i)
+    $('#title'+i).text(title);
+    $('#loadlabel'+i).show();
+    var sitv = setInterval(function(){get_progress(i);}, 5000);
+    myrequestjson(getRequestJsonByIndex(i), i, sitv, title);
+    $('#progress'+i).width('1%');
+}
+
+function getTitleByIndex(i){
+    var obj = $('option[name="option'+i+'obj"]:selected').text();
+    var ftr = $('option[name="option'+i+'ftr"]:selected').text();
+    var cbt = $('option[name="option'+i+'cbt"]:selected').text();
+    var num_span = $('#text'+i+'span_num').val();
+    var span = (num_span == '1' ?'' :num_span) + $('option[name="option'+i+'span"]:selected').text();
+    var low = $('#text'+i+'low').val();
+    var high = $('#text'+i+'high').val();
+    var title = '每' + span + cbt + obj + ftr + '(' + low + '-' + high + 'ft)';
+    return title;
+}
+
+function getRequestJsonByIndex(i){
+    return {
         "obj": $('option[name="option'+i+'obj"]:selected').val(), 
         "ftr": $('option[name="option'+i+'ftr"]:selected').val(),
         "cbt": $('option[name="option'+i+'cbt"]:selected').val(), 
@@ -291,8 +303,6 @@ function submit_query(btn){
         "low": $('#text'+i+'low').val(),
         "high": $('#text'+i+'high').val()
     };
-    var sitv = setInterval(function(){get_progress(i);}, 5000);
-    myrequestjson(requestJson, i, sitv);
 }
 
 function get_progress(i) {
@@ -301,36 +311,29 @@ function get_progress(i) {
     });
 }
 
-function myrequestjson(requestJson, i, sitv) {
+function myrequestjson(requestJson, i, sitv, title) {
     $.getJSON(thisurl, requestJson, function(res){
         var serie = {
-            name: res[0],
+            name: title,
             type:'line',
             xAxisIndex:1,
             yAxisIndex: (requestJson.obj == 'env'? 1: 2),
             hoverAnimation: false,
-            data: res[1]
+            data: res
         }
-        option_crossrate.legend[0].data.push(res[0]);
+        option_crossrate.legend[0].data.push(title);
         option_crossrate.series.push(serie);
         drv_chart.setOption(option_crossrate, true);
-        $('#label'+i).hide();
+        $('#loadlabel'+i).hide();
         clearInterval(sitv);
         $('#progressdiv'+i).attr("class", "progress progress-bar-success");
     });
 }
-// $(function () { $('#collapseOne').collapse('show')});
-// $(function () { $('#collapseTwo').collapse('hide')});
-// $(function () { $('#collapseThree').collapse('hide')});
-// $(function () { $('#collapseFour').collapse('hide')});
-
 
 $('#addpanel').click(function(){addpanel()});
 $('#deletepanel').click(function(){deletepanel()});
 
 $(function(){ 
-    addpanel();
-    addpanel();
     addpanel();
 });
 DrawCharts(echarts);
