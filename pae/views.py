@@ -36,4 +36,5 @@ def show_driving_features(request):
 
 def show_progress(request):
     res = helpers.get_progress()
+    print(res)
     return JsonResponse(res, safe=False)

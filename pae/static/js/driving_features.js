@@ -32,15 +32,14 @@ option_crossrate = {
             obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 30;
             return obj;
         },
-        extraCssText: 'width: 250px'
+        extraCssText: 'width: 450px'
     },
-    legend: [
-        {
-            data:['每周环境熵', '每周逆转率'],
+    color: ['#CC5B58', '#576874', '#7FB1B7'],
+    legend: [{
+            data:['每周侧向+纵向环境熵(100-1000ft)', '每周俯仰+滚转驾驶逆转率(100-1000ft)'],
             left: 'center',
             top: '4%',
-        }
-    ],
+    }],
     axisPointer: {
         show: true,
         link: {xAxisIndex: 'all'}
@@ -134,21 +133,19 @@ option_crossrate = {
         },
         {
             id: 'weekly_entropy',
-            name: alldata.entropyW.name,
+            name: '每周侧向+纵向环境熵(100-1000ft)',
             type:'line',
             xAxisIndex:1,
             yAxisIndex:1,
-            lineStyle:{normal: {color: '#7FB1B7'}},
             hoverAnimation: false,
             data: alldata.entropyW.means
         },
         {
             id: 'weekly_crossrate',
-            name: alldata.crossrateW.name,
+            name: '每周俯仰+滚转驾驶逆转率(100-1000ft)',
             type:'line',
             xAxisIndex:1,
             yAxisIndex:2,
-            lineStyle:{normal: {color: '#A5D0BC'}},
             hoverAnimation: false,
             data: alldata.crossrateW.means
         }
@@ -181,27 +178,27 @@ function addpanel() {
                     <div class="form-group">
                         <label class="checkbox-inline">
                         <select id="selectobj` + num_panel + `" onchange="obj_change(this)">
-                            <option name="option` + num_panel + `obj" value="drv" selected>驾驶</option>
-                            <option name="option` + num_panel + `obj"  value="env">环境</option>
+                            <option value="drv" selected>驾驶</option>
+                            <option value="env">环境</option>
                         </select>
                         <select id="selectftr` + num_panel + `">
-                            <option name="option` + num_panel + `ftr" value="cross" selected>逆转率</option>
-                            <option name="option` + num_panel + `ftr"  value="opt">操作率</option>
-                            <option name="option` + num_panel + `ftr"  value="etp">熵</option>
+                            <option value="cross" selected>逆转率</option>
+                            <option value="opt">操作率</option>
+                            <option value="etp">熵</option>
                         </select>
                         <select id="selectcbt` + num_panel + `">
-                            <option name="option` + num_panel + `cbt" value="x+y" selected>俯仰+滚转</option>
-                            <option name="option` + num_panel + `cbt"  value="x">滚转</option>
-                            <option name="option` + num_panel + `cbt"  value="y">俯仰</option>
+                            <option value="x+y" selected>俯仰+滚转</option>
+                            <option value="x">滚转</option>
+                            <option value="y">俯仰</option>
                         </select>
                         &nbsp;&nbsp;
                         <label><font size="1">采样频率</font></label>
                         <input type="text" style="width:50px;" id="text` + num_panel + `span_num" value="1">
                         <select id="selectspan` + num_panel + `">
-                            <option name="option` + num_panel + `span" value="D">天</option>
-                            <option name="option` + num_panel + `span" value="W">周</option>
-                            <option name="option` + num_panel + `span" value="SM">半月</option>
-                            <option name="option` + num_panel + `span" value="M">月</option>
+                            <option value="D">天</option>
+                            <option value="W">周</option>
+                            <option value="SM">半月</option>
+                            <option value="M">月</option>
                         </select>
                         </label>
                     </div>
@@ -231,7 +228,13 @@ function addpanel() {
     num_panel += 1;
     $('#addpanel').text('添加('+num_panel+')');
 }
-    
+
+function finishButton(i) {
+    $('#submit'+i).attr("onclick", "setColor(this)");
+    $('#submit'+i).text("设置颜色");
+    $('#submit'+i).attr("disabled", false);
+}
+
 function initColorById(id){
     $(id).minicolors({
         control: $(id).attr('data-control') || 'hue',
@@ -259,14 +262,25 @@ function setFormValue(i, obj, ftr, cbt, span_num, span, low, high, color, title)
 function obj_change(sel){
     var i = $(sel).attr('id').match(/\d/g);
     if($(sel).val() == 'env'){
+        $('#selectftr' + i).val('etp');
         $('#selectcbt' + i + ' option[value="x+y"]').text("侧向+纵向");
         $('#selectcbt' + i + ' option[value="x"]').text("侧向");
         $('#selectcbt' + i + ' option[value="y"]').text("纵向");
     } else if($(sel).val() == 'drv'){
+        $('#selectftr' + i).val('cross');
         $('#selectcbt' + i + ' option[value="x+y"]').text("俯仰+滚转");
         $('#selectcbt' + i + ' option[value="x"]').text("滚转");
         $('#selectcbt' + i + ' option[value="y"]').text("俯仰");
     }
+}
+
+function setColor(btn) {
+    var i = $(btn).attr('id').match(/\d/g);
+    var mycolor = option_crossrate.color
+    mycolor.splice(parseInt(i) + 1, 1, $('#color'+i).val());
+    drv_chart.setOption({
+        color: mycolor
+    });
 }
 
 function deletepanel(){
@@ -277,6 +291,7 @@ function deletepanel(){
     $('#addpanel').text('添加('+num_panel+')');
     option_crossrate.legend[0].data.splice(num_panel, 1);
     option_crossrate.series.splice(num_panel + 1, 1);
+    option_crossrate.color.splice(num_panel + 1, 1);
     drv_chart.setOption(option_crossrate, true);
 }
 
@@ -329,14 +344,14 @@ function myrequestjson(requestJson, i, sitv, title) {
             type:'line',
             xAxisIndex:1,
             yAxisIndex: (requestJson.obj == 'env'? 1: 2),
-            lineStyle:{normal: {color: $('#color'+i).val()}},
             hoverAnimation: false,
             data: res
         }
         option_crossrate.legend[0].data.push(title);
         option_crossrate.series.push(serie);
+        option_crossrate.color.push($('#color'+i).val());
         drv_chart.setOption(option_crossrate, true);
-        $('#submit'+i).text("完成");
+        finishButton(i);
         $('#deletepanel').attr("disabled", false);
         $('#addpanel').attr("disabled", false);
         clearInterval(sitv);
@@ -349,13 +364,12 @@ $('#deletepanel').click(function(){deletepanel()});
 
 $(function(){ 
     addpanel();
-    setFormValue(0, 'env', 'etp', 'x+y', '1', 'W', '100', '1000', '#7FB1B7', '每周侧向+纵向环境熵(100-1000ft)');
+    setFormValue(0, 'env', 'etp', 'x+y', '1', 'W', '100', '1000', '#576874', '每周侧向+纵向环境熵(100-1000ft)');
     addpanel();
-    setFormValue(1, 'drv', 'cross', 'x+y', '1', 'W', '100', '1000', '#A5D0BC', '每周俯仰+滚转驾驶逆转率(100-1000ft)');
+    setFormValue(1, 'drv', 'cross', 'x+y', '1', 'W', '100', '1000', '#7FB1B7', '每周俯仰+滚转驾驶逆转率(100-1000ft)');
     for(var i = 0; i < 2; i++){
         $('#collapse' + i).collapse('hide');
-        $('#submit'+i).attr("disabled", true);
-        $('#submit'+i).text("完成");
+        finishButton(i);
     }
 });
 DrawCharts(echarts);
