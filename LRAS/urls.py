@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^airport/', include('airport.urls', namespace='airport')),
     url(r'^pae/', include('pae.urls', namespace='pae')),
     url(r'^overrun/', include('overrun.urls', namespace='overrun')),
+    url(r'^index/', include('index.urls', namespace='index')),
 ]

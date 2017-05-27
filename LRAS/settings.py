@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'airport',
     'pae',
     'overrun',
+    'index',
 ]
 
 MIDDLEWARE = [
