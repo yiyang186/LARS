@@ -122,7 +122,7 @@ option_other = {
         textStyle: {
             color: '#000'
         },
-        extraCssText: 'width: 170px',
+        extraCssText: 'width: 250px',
     },
     grid: [
         {left: "40px", top: "10%", height: '50%', right: '50px',
@@ -148,6 +148,19 @@ option_other = {
             }
         }
     ],
+    axisPointer: {
+        show: true,
+        link: {xAxisIndex: 'all'}
+    },
+    toolbox: {
+        feature: {
+            dataZoom: {
+                yAxisIndex: 'none'
+            },
+            restore: {},
+            saveAsImage: {}
+        }
+    },
     dataZoom: [
         {
             type: 'inside',

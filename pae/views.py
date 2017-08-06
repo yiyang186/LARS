@@ -5,7 +5,9 @@ import json
 
 def show_ent_opt(request):
     alldata = helpers.get_all_airports_ent_opt()
-    context = {'title': '所有机场的环境熵与逆转率', 'alldata': json.dumps(alldata)}
+    hotdata = helpers.get_heatmap_data()
+    context = {'title': '所有机场的环境熵与逆转率', 'alldata': json.dumps(alldata),
+               'hotdata': json.dumps(hotdata)}
     return render(request, 'pae/ent_opt.html', context)
 
 def show_track(request):
@@ -29,12 +31,11 @@ def show_driving_features(request):
         alldata = {'dates': dates, 'counts': counts}
         span = 'W'
         data_temp = helpers.get_kline(span)
-        alldata['entropy'+span] = data_temp['entropy']
+        alldata['entropy'+span] = data_temp['ENTROPY']
         alldata['crossrate'+span] = data_temp['crossrate']
         context = {'title': '驾驶行为特征', 'alldata': json.dumps(alldata)}
         return render(request, 'pae/driving_features.html', context)
 
 def show_progress(request):
     res = helpers.get_progress()
-    print(res)
     return JsonResponse(res, safe=False)

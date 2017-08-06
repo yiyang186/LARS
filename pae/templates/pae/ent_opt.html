@@ -1,9 +1,17 @@
 {% extends 'base.html' %}
     {% block content %}
-        <div class='col-md-10 col-md-offset-1'>
-            <div id="container" style="width: 100%;height:800px;"></div>
+        <div class='col-md-6'>
+            <div id="container_scatter" style="width: 100%;height:800px;"></div>
+        </div>
+        <div class='col-md-6'>
+            <select id="count_vrtg" onchange="select_change(this)">
+                <option value="count" selected>数量分布</option>
+                <option value="vrtg">平均着陆载荷</option>
+            </select>
+            <div id="container_hot" style="width: 100%;height:800px;"></div>
         </div>
         <p id='alldata' hidden='hidden'>{{ alldata|safe }}</p>
+        <p id='hotdata' hidden='hidden'>{{ hotdata|safe }}</p>
 
         {% load staticfiles %}
 

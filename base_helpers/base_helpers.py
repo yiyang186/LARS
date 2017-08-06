@@ -19,7 +19,7 @@ class Chinese_airports(object):
         pass
     def get_dataFrame(self):
         if Chinese_airports.df is None:
-            path = settings.STATIC_PATH + 'csv/chinese_airports.csv'
+            path = settings.STATIC_PATH + 'csv/table_with_chinese_airports.csv'
             Chinese_airports.df = pd.read_csv(path).dropna()
             Chinese_airports.df = Chinese_airports.df.set_index('AIRPORT')
         return Chinese_airports.df

@@ -10,6 +10,8 @@
     - boostrap
 ------------
 ## 脱敏后的截图
-![img](png/搜狗截图20170405224427.png)
-![img](png/搜狗截图20170405224547.png)
-![img](png/搜狗截图20170405224640.png)
+![img](http://i4.bvimg.com/602416/c11da009a197c2fe.png)
+![img](http://i4.bvimg.com/602416/83934375457fbc11.png)
+![img](http://i4.bvimg.com/602416/16a310a55bb73bf8.png)
+![img](http://i4.bvimg.com/602416/6d40b8ec571d0efa.png)
+![img](http://i4.bvimg.com/602416/100c8e62f7e8f144.png)

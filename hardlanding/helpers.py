@@ -17,7 +17,7 @@ def get_column_names():
 
 def get_chinese_airport_name(airport):
     ca = Chinese_airports().get_dataFrame()
-    cn = ca.ix[airport]['ChineseCityName'] + ca.ix[airport]['ChineseName']
+    cn = ca.ix[airport]['ChineseCityName'].values[0] + ca.ix[airport]['ChineseName'].values[0]
     return cn
 
 def get_pyramid_vrtg():

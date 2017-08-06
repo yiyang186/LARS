@@ -1,6 +1,8 @@
 var alldata = JSON.parse(document.getElementById("alldata").textContent);
+var hotdata = JSON.parse(document.getElementById("hotdata").textContent);
+var hot_chart;
 
-var option = {
+var option_scatter = {
     animation: false,
     title: {
         text: '全国航班的环境熵与逆转率',
@@ -73,7 +75,7 @@ var option = {
     series: []
 };
 
-var series = option['series'];
+var series = option_scatter['series'];
 var splits = alldata.splits;
 var legend_data = [];
 for(var i = 1; i < splits.length; i++){
@@ -111,17 +113,123 @@ for(var i = 1; i < splits.length; i++){
     };
     series.push(one_series);
 }
-option['series'] = series;
-option['legend']['data'] = legend_data;
+option_scatter['series'] = series;
+option_scatter['legend']['data'] = legend_data;
 
-function DrawCharts(ec) {
-    Draw(ec);
+
+counts_matrix_count = hotdata.counts_matrix.map(function (item) {
+    return [item[0], item[1], item[2] || '-'];
+});
+
+counts_matrix_vrtg = hotdata.counts_matrix.map(function (item) {
+    if(item[2] == 0){
+        var vrtg = '-';
+    }else{
+        var vrtg = (item[3] / item[2]).toFixed(2);
+    }
+    return [item[0], item[1], vrtg];
+});
+
+option_hot = {
+    tooltip: {
+        position: 'top',
+        formatter: function(params){
+            return (params.data[0]*0.25).toFixed(2)+', '
+            +(params.data[1]*0.025).toFixed(3)+': '
+            +params.data[2];
+        }
+    },
+    animation: false,
+    grid: {
+        height: '80%',
+        y: '10%'
+    },
+    xAxis: {
+        type: 'category',
+        data: hotdata.env_axis,
+        splitArea: {
+            show: true
+        }
+    },
+    yAxis: {
+        type: 'category',
+        data: hotdata.drv_axis,
+        splitArea: {
+            show: true
+        }
+    },
+    visualMap: {
+        min: 0,
+        max: 800,
+        calculable: true,
+        orient: 'horizontal',
+        left: 'center',
+        bottom: '0%'
+    },
+    series: [{
+        id: 'hot',
+        type: 'heatmap',
+        data: counts_matrix_count,
+        label: {
+            normal: {
+                show: true
+            }
+        },
+        itemStyle: {
+            emphasis: {
+                shadowBlur: 10,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+        }
+    }]
+};
+
+function select_change(sel){
+    var opt = $(sel).find("option:selected").val();
+    console.log(opt);
+    if(opt == 'vrtg'){
+        hot_chart.setOption({
+            visualMap: {
+                min: 1.2,
+                max: 1.6,
+                precision: 1
+            },
+            series: [{
+                id: 'hot',
+                data: counts_matrix_vrtg,
+            }]
+        });
+    }
+    if(opt == 'count'){
+        hot_chart.setOption({
+            visualMap: {
+                min: 0,
+                max: 800,
+                precision: 0
+            },
+            series: [{
+                id: 'hot',
+                data: counts_matrix_count,
+            }]
+        });
+    }
 }
 
-function Draw(ec) {
-    var dom = document.getElementById("container");
+function draw_scatter(ec) {
+    var dom = document.getElementById("container_scatter");
     var myChart = ec.init(dom);
-    myChart.setOption(option, true);
+    myChart.setOption(option_scatter, true);
+}
+
+function draw_hot(ec) {
+    var dom = document.getElementById("container_hot");
+    hot_chart = ec.init(dom);
+    hot_chart.setOption(option_hot, true);
+}
+
+function DrawCharts(ec) {
+    draw_scatter(ec);
+    draw_hot(ec);
 }
 
 DrawCharts(echarts);
