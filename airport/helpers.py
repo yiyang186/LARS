@@ -62,7 +62,6 @@ def get_data_in_month_and_airport(month, airport):
         temp = df.loc[(df['MONTH'] == month) & (df['AIRPORT'] == airport), usedcols]
     else:
         temp = df.loc[df['AIRPORT'] == airport, usedcols]
-    print(airport)
     airport, city, name, country = temp.iloc[0]\
         [['AIRPORT', 'ChineseCityName', 'ChineseName', 'ChineseCountryName']].values.tolist()
     title = '{0}{1}{2}机场\r代码:{3}\r航班量:{4}'.format(country, city, name, airport, temp.shape[0])

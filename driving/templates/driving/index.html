@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Hello~ {{ data|safe }}</h1>
+
+    {% load staticfiles %}
+    <link href="{% static 'css/jquery.minicolors.css' %}" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="{% static 'js/jquery.minicolors.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/driving.js' %}"></script>
+{% endblock %}

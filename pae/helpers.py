@@ -199,7 +199,6 @@ def get_heatmap_data():
     for (ent, crs, v) in df[[env_entropy, drv_crossrate, 'VRTG_MAX']].values:
         counts_matrix[int(ent / env_i), int(crs / drv_j), 2] += 1
         counts_matrix[int(ent / env_i), int(crs / drv_j), 3] += v
-    print(counts_matrix)
     env_axis = np.arange(env_num) * env_i
     drv_axis = np.arange(drv_num) * drv_j
     return {'env_axis': env_axis.round(2).tolist(), 

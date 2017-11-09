@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'pae',
     'overrun',
     'index',
+    'driving',
 ]
 
 MIDDLEWARE = [

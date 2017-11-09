@@ -7,7 +7,6 @@ import json
 def index(request):
     if request.GET:
         col = request.GET.get('col')
-        print(col)
         data = helpers.show_the_column(col)
         return JsonResponse(data, safe=False)
     else:
