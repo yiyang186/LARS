@@ -1,6 +1,15 @@
 from django.conf import settings
 import pandas as pd
 
+wd = 'G:/A320_300_20/'
+env_cols = ['_ALTITUDE', '_HEADING_LINEAR', '_WIND_SPD', '_WINDIR']
+drv_cols = [
+    '_ROLL_CAPT_SSTICK', '_ROLL_CAPT_SSTICK-1', '_ROLL_CAPT_SSTICK-2', '_ROLL_CAPT_SSTICK-3',
+    '_ROLL_FO_SSTICK', '_ROLL_FO_SSTICK-1', '_ROLL_FO_SSTICK-2', '_ROLL_FO_SSTICK-3',
+    '_PITCH_CAPT_SSTICK', '_PITCH_CAPT_SSTICK-1', '_PITCH_CAPT_SSTICK-2', '_PITCH_CAPT_SSTICK-3', 
+    '_PITCH_FO_SSTICK', '_PITCH_FO_SSTICK-1', '_PITCH_FO_SSTICK-2', '_PITCH_FO_SSTICK-3', 
+    '_ALTITUDE', ]
+    
 class Table(object):
     df = None
     def __init__(self):
