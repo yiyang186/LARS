@@ -8,7 +8,31 @@ drv_cols = [
     '_ROLL_FO_SSTICK', '_ROLL_FO_SSTICK-1', '_ROLL_FO_SSTICK-2', '_ROLL_FO_SSTICK-3',
     '_PITCH_CAPT_SSTICK', '_PITCH_CAPT_SSTICK-1', '_PITCH_CAPT_SSTICK-2', '_PITCH_CAPT_SSTICK-3', 
     '_PITCH_FO_SSTICK', '_PITCH_FO_SSTICK-1', '_PITCH_FO_SSTICK-2', '_PITCH_FO_SSTICK-3', 
-    '_ALTITUDE', ]
+    '_ALTITUDE']
+    
+usedColumns =['_ALTITUDE', '_GLIDE', '_LOC', 
+              '_SSTICK_CAPT', '_SSTICK_CAPT-1', '_SSTICK_CAPT-2', '_SSTICK_CAPT-3',
+              '_PITCH_CAPT_SSTICK', '_PITCH_CAPT_SSTICK-1', '_PITCH_CAPT_SSTICK-2', '_PITCH_CAPT_SSTICK-3', 
+              '_ROLL_CAPT_SSTICK', '_ROLL_CAPT_SSTICK-1', '_ROLL_CAPT_SSTICK-2', '_ROLL_CAPT_SSTICK-3',
+              '_SSTICK_FO', '_SSTICK_FO-1', '_SSTICK_FO-2', '_SSTICK_FO-3',
+              '_PITCH_FO_SSTICK', '_PITCH_FO_SSTICK-1', '_PITCH_FO_SSTICK-2', '_PITCH_FO_SSTICK-3', 
+              '_ROLL_FO_SSTICK', '_ROLL_FO_SSTICK-1', '_ROLL_FO_SSTICK-2', '_ROLL_FO_SSTICK-3',
+              '_HEADING_LINEAR', '_WIND_SPD', '_WINDIR', 
+              '_VRTG', '_VRTG-1', '_VRTG-2', '_VRTG-3', '_VRTG-4', '_VRTG-5', '_VRTG-6', '_VRTG-7',
+              '_LONG_ACC', '_LONG_ACC-1', '_LONG_ACC-2', '_LONG_ACC-3',
+              '_LAT_ACC', '_LAT_ACC-1', '_LAT_ACC-2', '_LAT_ACC-3'
+]
+
+sstickCaptColumns = usedColumns[3:7]
+pitchCaptColumns = usedColumns[7:11]
+rollCaptColumns = usedColumns[11:15]
+sstickFoColumns = usedColumns[15:19]
+pitchFoColumns = usedColumns[19:23]
+rollFoColumns = usedColumns[23: 27]
+windColumns = usedColumns[27: 30]
+vrtgColumns = usedColumns[30: 38]
+longColumns = usedColumns[38: 42]
+latgColumns = usedColumns[42:]
     
 class Table(object):
     df = None

@@ -1,20 +1,83 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div class='col-md-5'>
-        <h1>Capt</h1>
-        <div id="stick_capt" style="width: 100%;height:500px;"></div>
+    <div class="col-md-3 col-md-offset">
+        <div class="col-md-10">
+            <div class="row">
+                <h1>Capt</h1>
+                <div id="stick_capt" style="width: 100%;height:250px;"></div>
+            </div>
+            <div class="row">
+                <h1>FO</h1>
+                <div id="stick_fo" style="width: 100%;height:250px;"></div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <p>
+                <label for="time">时间：</label>
+                <input type="text" id="time" style="border:0; color:#f6931f; font-weight:bold;">
+            </p>
+            <div id="slider-vertical" style="height:600px;"></div>
+        </div>
     </div>
-    <div class='col-md-2'>
-        <p>
-            <label for="time">时间：</label>
-            <input type="text" id="time" style="border:0; color:#f6931f; font-weight:bold;">
-        </p>
-        <div id="slider-vertical" style="height:500px;"></div>
+
+
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col-md-2">
+                <p align="center">时间片1</p>
+                <div id="drv_0" style="width: 100%;height:150px;"></div>
+            </div>
+            <div class="col-md-2">
+                <p align="center">时间片2</p>
+                <div id="drv_1" style="width: 100%;height:150px;"></div>
+            </div>
+            <div class="col-md-2">
+                <p align="center">时间片3</p>
+                <div id="drv_2" style="width: 100%;height:150px;"></div>
+            </div>
+            <div class="col-md-2">
+                <p align="center">时间片4</p>
+                <div id="drv_3" style="width: 100%;height:150px;"></div>
+            </div>
+            <div class="col-md-2">
+                <p align="center">时间片5</p>
+                <div id="drv_4" style="width: 100%;height:150px;"></div>
+            </div>
+            <div class="col-md-2">
+                <p align="center">时间片6</p>
+                <div id="drv_5" style="width: 100%;height:150px;"></div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-2">
+                <p align="center">时间片7</p>
+                <div id="drv_6" style="width: 100%;height:150px;"></div>
+            </div>
+            <div class="col-md-2">
+                <p align="center">时间片8</p>
+                <div id="drv_7" style="width: 100%;height:150px;"></div>
+            </div>
+            <div class="col-md-2">
+                <p align="center">时间片9</p>
+                <div id="drv_8" style="width: 100%;height:150px;"></div>
+            </div>
+            <div class="col-md-2">
+                <p align="center">时间片10</p>
+                <div id="drv_9" style="width: 100%;height:150px;"></div>
+            </div>
+            <div class="col-md-2">
+                <p align="center">时间片11</p>
+                <div id="drv_10" style="width: 100%;height:150px;"></div>
+            </div>   
+        </div>
+
+        <div class="row">
+            <div id="attention" style="width: 100%;height:350px;"></div>
+        </div>
     </div>
-    <div class='col-md-5'>
-        <h1>FO</h1>
-        <div id="stick_fo" style="width: 100%;height:500px;"></div>
-    </div>
+
+        
     <p id='alldata' hidden='hidden'>{{ alldata|safe }}</p>
     {% load staticfiles %}
     <link href="{% static 'css/jquery.minicolors.css' %}" rel="stylesheet" type="text/css">
