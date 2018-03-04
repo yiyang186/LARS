@@ -1,7 +1,7 @@
 var alldata = JSON.parse($("#alldata").text());
+var thisurl = $("#thisurl").text();
 var i = 0;
 // var airporturl = document.getElementById("airporturl").textContent;
-
 
 option_drv = {
     polar: {
@@ -9,7 +9,10 @@ option_drv = {
     },
     angleAxis: {
         type: 'value',
-        startAngle: 0
+        startAngle: 0,
+        clockwise: false,
+        min: 0,
+        max: 360
     },
     radiusAxis: {
         min: 0,
@@ -25,7 +28,7 @@ option_drv = {
 };
 
 function DrawDrvPolar(ec, index) {
-    var id = "drv_" + index
+    var id = "drv_" + (index + 1)
     var dom = document.getElementById(id);
     var myChart = ec.init(dom);
     myChart.setOption(option_drv, true);
@@ -50,15 +53,8 @@ option_attention = {
         }
     },
     legend: {
-        data:['注意力', '逆转率', '操作率', '环境熵']
-    },
-    toolbox: {
-        show: true,
-        feature: {
-            dataView: {readOnly: false},
-            restore: {},
-            saveAsImage: {}
-        }
+        data:['注意力', '逆转率', '操作率', '环境熵'],
+        right: '5%'
     },
     dataZoom: {
         show: false,
@@ -122,6 +118,15 @@ function DrawAttention(ec) {
     var dom = document.getElementById('attention');
     var myChart = ec.init(dom);
     myChart.setOption(option_attention, true);
+    myChart.setOption({
+        title: {text: alldata['title']},
+        series: [
+            {name:'注意力', data: alldata["attention"]},
+            {name:'逆转率', data: alldata["crs_rate"]},
+            {name:'操作率', data: alldata["opt_rate"]},
+            {name:'环境熵', data: alldata["ent"]},
+        ]
+    });
 }
 
 $(function() {
@@ -202,5 +207,16 @@ function DrawCharts(ec) {
         DrawDrvPolar(ec, i);
     }
 }
+
+$('#show').click(function(){
+    $.getJSON(thisurl, {"filename": $("#select_file").val()}, function(res){
+        alldata = res;
+    });
+    DrawAttention(echarts);
+    
+    for(var i = 0; i < 11; i++) {
+        DrawDrvPolar(echarts, i);
+    }
+});
 
 DrawCharts(echarts);

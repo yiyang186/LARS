@@ -19,8 +19,8 @@ NEED = slice(267, 297)
 # print(risk[0])
 # assert risk[0] > 0
 
-def get_title(i, max_vrtg):
-    fn = files[i].split('_')
+def get_title(file_, max_vrtg):
+    fn = file_.split('_')
     airport = Table().get_dataFrame()
     name, city, contry = airport.loc[airport['Airport ICAO code'] == fn[-3], ['ChineseName','ChineseCityName','ChineseCountryName']].values[0, :]
     location_string = contry + city + name  + '机场'
@@ -110,8 +110,8 @@ def draw_env(df):
         ed += 2
     return codes, ent
 
-def get_time_drv_env(i):
-    df = pd.read_csv(wd+files[i], usecols=usedColumns)
+def get_time_drv_env(file_):
+    df = pd.read_csv(wd+file_, usecols=usedColumns)
     df = df.fillna(method='pad')
     max_vrtg = df[vrtgColumns].max().max()
     df = df.iloc[NEED, :]
@@ -130,19 +130,21 @@ def get_time_drv_env(i):
     return max_vrtg, crosses, codes, ent.tolist(), crs_rate.tolist(), \
            opt_rate.tolist(), attention.tolist()
 
-def get_driving_data_by_who(who, i):
-    df = pd.read_csv(wd + files[i], usecols=drv_cols)
+def get_driving_data_by_who(who, filename):
+    df = pd.read_csv(wd + filename, usecols=drv_cols)
     roll_col = list(filter(lambda col: 'ROLL' in col and who in col, drv_cols))
     roll_data = df[roll_col].values.ravel()
     pitch_col = list(filter(lambda col: 'PITCH' in col and who in col, drv_cols))
     pitch_data = df[pitch_col].values.ravel()
     return transfer_to_polar(roll_data, pitch_data)
 
-def get_driving_data():
+def get_driving_data(file_=None):
+    if file_ is None:
+        file_ = files[0]
+
     data = {}
-    i = np.random.randint(0, 5000, 1)[0]
-    data['capt'] = get_driving_data_by_who('CAPT', i)
-    data['fo'] = get_driving_data_by_who('FO', i)
+    data['capt'] = get_driving_data_by_who('CAPT', file_)
+    data['fo'] = get_driving_data_by_who('FO', file_)
 
     (max_vrtg, 
     crosses, 
@@ -150,9 +152,9 @@ def get_driving_data():
     ent, 
     crs_rate, 
     opt_rate, 
-    attention) = get_time_drv_env(i)
+    attention) = get_time_drv_env(file_)
 
-    data['title'] = get_title(i, max_vrtg)
+    data['title'] = get_title(file_, max_vrtg)
     data['crosses'] = crosses
     data['codes'] = codes
     data['ent'] = ent

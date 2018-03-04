@@ -5,6 +5,13 @@ import json
 
 # Create your views here.
 def index(request):
-    alldata = helpers.get_driving_data()
-    context = {'title': '驾驶模型', 'alldata': json.dumps(alldata)}
-    return render(request, 'driving/index.html', context)
+    if request.GET:
+        filename = request.GET.get('filename')
+        alldata = helpers.get_driving_data(filename)
+        return JsonResponse(alldata, safe=False)
+    else:
+        alldata = helpers.get_driving_data()
+        context = {'title': '驾驶模型', 'alldata': json.dumps(alldata), 
+        'files': helpers.files, 'row1': list(range(1, 7)), 'row2': list(range(7, 12))}
+        return render(request, 'driving/index.html', context)
+        

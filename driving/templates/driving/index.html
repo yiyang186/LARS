@@ -19,57 +19,34 @@
             <div id="slider-vertical" style="height:600px;"></div>
         </div>
     </div>
-
+    
 
     <div class="col-md-9">
         <div class="row">
-            <div class="col-md-2">
-                <p align="center">时间片1</p>
-                <div id="drv_0" style="width: 100%;height:150px;"></div>
-            </div>
-            <div class="col-md-2">
-                <p align="center">时间片2</p>
-                <div id="drv_1" style="width: 100%;height:150px;"></div>
-            </div>
-            <div class="col-md-2">
-                <p align="center">时间片3</p>
-                <div id="drv_2" style="width: 100%;height:150px;"></div>
-            </div>
-            <div class="col-md-2">
-                <p align="center">时间片4</p>
-                <div id="drv_3" style="width: 100%;height:150px;"></div>
-            </div>
-            <div class="col-md-2">
-                <p align="center">时间片5</p>
-                <div id="drv_4" style="width: 100%;height:150px;"></div>
-            </div>
-            <div class="col-md-2">
-                <p align="center">时间片6</p>
-                <div id="drv_5" style="width: 100%;height:150px;"></div>
-            </div>
+            <select id="select_file">
+                {% for f in files %}
+                    <option value="{{ f }}">{{ f }}</option>
+                {% endfor %}
+            </select>
+            <button type="button" class="btn btn-primary" style="width: 100px" id="show">查看</button>
+        </div>
+
+        <div class="row">
+            {% for i_time in row1 %}
+                <div class="col-md-2">
+                    <p align="center">时间片{{ i_time }}</p>
+                    <div id="drv_{{ i_time }}" style="width: 100%;height:150px;"></div>
+                </div>
+            {% endfor %}
         </div>
         <br>
         <div class="row">
-            <div class="col-md-2">
-                <p align="center">时间片7</p>
-                <div id="drv_6" style="width: 100%;height:150px;"></div>
-            </div>
-            <div class="col-md-2">
-                <p align="center">时间片8</p>
-                <div id="drv_7" style="width: 100%;height:150px;"></div>
-            </div>
-            <div class="col-md-2">
-                <p align="center">时间片9</p>
-                <div id="drv_8" style="width: 100%;height:150px;"></div>
-            </div>
-            <div class="col-md-2">
-                <p align="center">时间片10</p>
-                <div id="drv_9" style="width: 100%;height:150px;"></div>
-            </div>
-            <div class="col-md-2">
-                <p align="center">时间片11</p>
-                <div id="drv_10" style="width: 100%;height:150px;"></div>
-            </div>   
+            {% for i_time in row2 %}
+                <div class="col-md-2">
+                    <p align="center">时间片{{ i_time }}</p>
+                    <div id="drv_{{ i_time }}" style="width: 100%;height:150px;"></div>
+                </div>
+            {% endfor %}
         </div>
 
         <div class="row">
@@ -79,6 +56,7 @@
 
         
     <p id='alldata' hidden='hidden'>{{ alldata|safe }}</p>
+    <p id='thisurl' hidden='hidden'>{% url 'driving:index' %}</p>
     {% load staticfiles %}
     <link href="{% static 'css/jquery.minicolors.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'css/jquery-ui.min.css' %}" rel="stylesheet" type="text/css">
