@@ -1,5 +1,6 @@
 from django.conf import settings
 import pandas as pd
+import os
 
 wd = 'G:/A320_300_20/'
 env_cols = ['_ALTITUDE', '_HEADING_LINEAR', '_WIND_SPD', '_WINDIR']
@@ -34,6 +35,8 @@ vrtgColumns = usedColumns[30: 38]
 longColumns = usedColumns[38: 42]
 latgColumns = usedColumns[42:]
     
+filename_map = {f.split('_')[-1]: f for f in os.listdir(wd)}
+
 class Table(object):
     df = None
     def __init__(self):

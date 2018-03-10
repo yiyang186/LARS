@@ -54,6 +54,7 @@ option_attention = {
     },
     legend: {
         data:['注意力', '逆转率', '操作率', '环境熵'],
+        selected: {'操作率': false},
         right: '5%'
     },
     dataZoom: {
@@ -209,7 +210,7 @@ function DrawCharts(ec) {
 }
 
 $('#show').click(function(){
-    $.getJSON(thisurl, {"filename": $("#select_file").val()}, function(res){
+    $.getJSON(thisurl, {"filename": $("#select_file").val(), "json": "yes"}, function(res){
         alldata = res;
     });
     DrawAttention(echarts);

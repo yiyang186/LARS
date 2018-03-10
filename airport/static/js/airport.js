@@ -2,6 +2,7 @@ var dom = document.getElementById("map");
 var myChart = echarts.init(dom);
 var alldata = JSON.parse(document.getElementById("alldata").textContent);
 var airporturl = document.getElementById("airporturl").textContent;
+var drivingurl = document.getElementById("drivingurl").textContent;
 
 option = {
     baseOption: {
@@ -115,8 +116,8 @@ option = {
                 type: 'value',
                 scale: true,
                 position: 'top',
-                min: 1.2,
-                max: 1.8,
+                min: 0,
+                max: 5,
                 boundaryGap: false,
                 splitLine: {show: false},
                 axisLine: {show: false},
@@ -140,7 +141,7 @@ option = {
             {
                 gridIndex: 0,
                 type: 'category',
-                name: 'TOP 10',
+                name: '环境熵 TOP 10 机场',
                 nameGap: 16,
                 inverse: true,
                 axisLine: {show: true, lineStyle: {color: '#fff'}},
@@ -207,7 +208,7 @@ option = {
                     formatter: function (param) {
                         return [
                             '机场: ' + param.name + '<hr size=1 style="margin: 3px 0">',
-                            '最重垂直过载: ' + param.value + '<br/>'
+                            '环境熵: ' + param.value + '<br/>'
                         ].join('');
                     }                    
                 },
@@ -231,7 +232,8 @@ option = {
                         return [
                             '环境熵: ' + param.value[0] + '<br/>',
                             '逆转率: ' + param.value[1] + '<br/>',
-                            '垂直过载: ' + param.value[2] + '<br/>'
+                            '垂直过载: ' + param.value[2] + '<br/>',
+                            '文件名：' +  param.value[3] + '<br/>',
                         ].join('');
                     }                    
                 },
@@ -282,11 +284,14 @@ myChart.on('click', function (params) {
             }},
             options: alldata.china.options
         });
-    }
-    if(re.test(params.seriesName)) {
+    } else if(re.test(params.seriesName)) {
         show_scatter(params);
+    } else {
+        var filename = params.value[3];
+        if(filename.substring(filename.length-3) == 'csv'){
+            window.open(drivingurl + '?filename=' + filename);
+        }
     }
-    
 });
 
 myChart.on('dblclick', function (params) {

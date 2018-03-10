@@ -2,51 +2,61 @@
     {% block content %}
     <div class="container">
         <div class="row">
-            <div class="jumbotron">
-                <h1>Welcome to LRAS!</h1>
+            <div class="jumbotron" style="background: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1520702176142&di=8cd21819d151aa037d3b29b4c08bf87d&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2F7e3e6709c93d70cf078de62af2dcd100baa12ba5.jpg">
+                <h1 style="color: black">Welcome to LRAS!</h1>
                 <p>...</p>
                 <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
             </div>
         </div>
 
         <div class="row">
-        <div class="col-sm-6 col-md-3">
+        <div class="col-md-2 col-md-offset-1">
             <div class="thumbnail">
-            <img src="..." alt="...">
+            <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1520701378992&di=2d1aa08935e64064d344688dfffdc186&imgtype=0&src=http%3A%2F%2Fhimg2.huanqiu.com%2Fattachment2010%2F2012%2F0723%2F20120723101308689.jpg" alt="...">
             <div class="caption">
-                <h3>机场</h3>
+                <h3>全国机场情况</h3>
                 <p>...</p>
-                <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
+                <p><a href="{% url 'airport:airport' %}" class="btn btn-primary" role="button">打开</a></p>
             </div>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3">
+        <div class="col-md-2">
             <div class="thumbnail">
-            <img src="..." alt="...">
-            <div class="caption">
-                <h3>重着陆</h3>
-                <p>...</p>
-                <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
-            </div>
-            </div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-            <div class="thumbnail">
-            <img src="..." alt="...">
+            <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1520700995085&di=e8daf7a5c69521406b47b2632465f4bd&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimage%2Fc0%253Dpixel_huitu%252C0%252C0%252C294%252C40%2Fsign%3Db58dc34da6345982d187edd2658c54c1%2Fa6efce1b9d16fdfa8d0191d7bf8f8c5494ee7b9d.jpg" alt="...">
             <div class="caption">
                 <h3>人机环</h3>
                 <p>...</p>
-                <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
+                <p><a href="{% url 'pae:ent_opt' %}" class="btn btn-primary" role="button">打开</a></p>
             </div>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3">
+        <div class="col-md-2">
             <div class="thumbnail">
-            <img src="..." alt="...">
+            <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1520701915269&di=ddab1bdbc0d928e56081a526f6f0dc5e&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2Fdbb44aed2e738bd4ba7a7a1caa8b87d6277ff940.jpg" alt="...">
+            <div class="caption">
+                <h3>着陆风险趋势</h3>
+                <p>...</p>
+                <p><a href="{% url 'hardlanding:kline' %}" class="btn btn-primary" role="button">打开</a></p>
+            </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="thumbnail">
+            <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1520701048374&di=ac88b779652a53f7a7e8e9239298884e&imgtype=0&src=http%3A%2F%2Fpic.qiantucdn.com%2F58pic%2F19%2F19%2F66%2F568449c186347_1024.jpg" alt="...">
+            <div class="caption">
+                <h3>驾驶环境</h3>
+                <p>...</p>
+                <p><a href="{% url 'driving:index' %}" class="btn btn-primary" role="button">打开</a></p>
+            </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="thumbnail">
+            <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1520701063458&di=485cd0b1c13ec5229b0523472b86ee34&imgtype=0&src=http%3A%2F%2Fimg02.tooopen.com%2Fimages%2F20160607%2Ftooopen_sy_164454788618.jpg" alt="...">
             <div class="caption">
                 <h3>冲偏出跑道</h3>
                 <p>...</p>
-                <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
+                <p><a href="{% url 'overrun:bar' %}" class="btn btn-primary" role="button">打开</a></p>
             </div>
             </div>
         </div>

@@ -4,13 +4,14 @@ import pandas as pd
 sys.path.append("..")
 from base_helpers.base_helpers import *
 
-files = os.listdir(wd)
+files = Chinese_airports().get_dataFrame().sort_values(by='VRTG_MAX')['FILENAME'][-200:].tolist()
 
 th = 0
 th_w = 1
 # indics = (2251, 230, 191, 23, 100, 111, 1000)
 # ii = 2
 NEED = slice(267, 297)
+weight_att = np.array([0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.])
 # risks = [[0, 0, 0.05, 0.0223, 0.0634, 0.0423, 0, 0.0242, 0.2534, 0.33433, 0.1043],
 #             [0, 0, 0, 0.0242, 0.2534, 0.33433, 0.1043, 0.1134, 0.0423, 0, 0],
 #             [0, 0.06, 0.1342, 0.1834, 0.1443,0.22433, 0.1934, 0.11, 0.0423, 0, 0]]
@@ -111,6 +112,7 @@ def draw_env(df):
     return codes, ent
 
 def get_time_drv_env(file_):
+
     df = pd.read_csv(wd+file_, usecols=usedColumns)
     df = df.fillna(method='pad')
     max_vrtg = df[vrtgColumns].max().max()
@@ -124,9 +126,12 @@ def get_time_drv_env(file_):
     crs_rate = (crs_rate - crs_rate.min()) / (crs_rate.max() - crs_rate.min())
     ent = np.array(ent)
     ent = (ent - ent.min()) / (ent.max() - ent.min())
+    if len(set(ent.tolist())) == 2:
+        ent -= ent
 
     attention = np.abs(crs_rate - ent) + np.random.randn(11) / 20
-    attention = attention / attention.sum()
+    attention *= weight_att
+    attention /= attention.sum()
     return max_vrtg, crosses, codes, ent.tolist(), crs_rate.tolist(), \
            opt_rate.tolist(), attention.tolist()
 
@@ -141,6 +146,7 @@ def get_driving_data_by_who(who, filename):
 def get_driving_data(file_=None):
     if file_ is None:
         file_ = files[0]
+    file_ = filename_map[file_]
 
     data = {}
     data['capt'] = get_driving_data_by_who('CAPT', file_)

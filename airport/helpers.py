@@ -11,14 +11,14 @@ def get_map_scatter_data(data, month):
     optionItem = {}
     if month > 0:
         itemTitle = '2016年{0}月全国机场着陆情况'.format(month)
-        seriesData = data.ix[month, ['Longitude', 'Latitude', 'VRTG_MAX', 'ChineseCityName', 'ChineseName']]
+        seriesData = data.ix[month, ['Longitude', 'Latitude', 'VRTG_MAX', 'ENTROPY', 'ChineseCityName', 'ChineseName', 'FILENAME']]
     else:
         itemTitle = '2016年全国机场着陆情况'
-        seriesData = data[['Longitude', 'Latitude', 'VRTG_MAX', 'ChineseCityName', 'ChineseName']]
+        seriesData = data[['Longitude', 'Latitude', 'VRTG_MAX', 'ENTROPY', 'ChineseCityName', 'ChineseName', 'FILENAME']]
     optionItem['title'] = {'text': itemTitle}
-    seriesData = list(map(lambda i, r: {'name': r[3]+r[4]+i, 'value': r[:3]}, seriesData.index, seriesData.values.tolist()))
-    top10Data = sorted(seriesData, key=lambda x:x['value'][2], reverse=True)[:10]
-    top10 = list(map(lambda x: {'name': x['name'], 'value': x['value'][2]}, top10Data))
+    seriesData = list(map(lambda i, r: {'name': r[4]+r[5]+i, 'value': r[:4]}, seriesData.index, seriesData.values.tolist()))
+    top10Data = sorted(seriesData, key=lambda x:x['value'][3], reverse=True)[:10]
+    top10 = list(map(lambda x: {'name': x['name'], 'value': x['value'][3]}, top10Data))
     optionItem['series'] = [{'name': month, 'data': seriesData}, {'name': month, 'data': top10}]
     
     yAxisLabels = list(map(lambda x: x['name'], top10))
@@ -28,11 +28,10 @@ def get_map_scatter_data(data, month):
 
 def get_map_data(df):
     months = df.loc[:, 'MONTH'].sort_values().unique().tolist()
-    data0 = df[['AIRPORT','MONTH', 'ChineseCityName', 'ChineseName', 'Latitude', 'Longitude', 'VRTG_MAX']] \
+    data0 = df[['AIRPORT','MONTH', 'ChineseCityName', 'ChineseName', 'Latitude', 'Longitude', 'VRTG_MAX', 'ENTROPY', 'FILENAME']] \
             .groupby('AIRPORT').max().round(3)
-    data = df[['AIRPORT','MONTH', 'ChineseCityName', 'ChineseName', 'Latitude', 'Longitude', 'VRTG_MAX']] \
+    data = df[['AIRPORT','MONTH', 'ChineseCityName', 'ChineseName', 'Latitude', 'Longitude', 'VRTG_MAX', 'ENTROPY', 'FILENAME']] \
             .groupby(['MONTH','AIRPORT']).max().round(3)
-    
     options = [get_map_scatter_data(data0, 0)]
     for month in months:
         optionItem = get_map_scatter_data(data, month)
@@ -57,7 +56,7 @@ def get_data_in_month_and_airport(month, airport):
     df = Table().get_dataFrame()
     month = int(month)
     usedcols = ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX', 'AIRPORT', 
-        'ChineseCityName', 'ChineseName', 'ChineseCountryName']
+        'ChineseCityName', 'ChineseName', 'ChineseCountryName', 'FILENAME']
     if month > 0:
         temp = df.loc[(df['MONTH'] == month) & (df['AIRPORT'] == airport), usedcols]
     else:
@@ -65,6 +64,6 @@ def get_data_in_month_and_airport(month, airport):
     airport, city, name, country = temp.iloc[0]\
         [['AIRPORT', 'ChineseCityName', 'ChineseName', 'ChineseCountryName']].values.tolist()
     title = '{0}{1}{2}机场\r代码:{3}\r航班量:{4}'.format(country, city, name, airport, temp.shape[0])
-    data = temp.loc[:, ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX']] \
+    data = temp.loc[:, ['ENTROPY', 'MIX_CROSS_RATE', 'VRTG_MAX', 'FILENAME']] \
                .sort_values(by='VRTG_MAX').round(3).values.tolist()
     return title, data
